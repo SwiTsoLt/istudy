@@ -11,8 +11,11 @@ const staticPath = path.join(__dirname, "client", "build")
 
 const server = http.createServer((req, res) => {
     const filePath = path.join(staticPath, req.url === "/" ? "index.html" : req.url)
-    const fileIsExist = fs.existsSync(filePath)
-    if (fileIsExist) {
+    const fileIsExists = fs.existsSync(filePath)
+    console.log("url: ", req.url);
+    console.log("path: ", filePath);
+    console.log("exist", fileIsExists);
+    if (fileIsExists) {
         const file = fs.readFileSync(filePath)
         res.end(file)
     } else {
