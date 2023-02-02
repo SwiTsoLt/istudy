@@ -1,12 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "./home.scss"
+import styles from "./home.module.scss"
 
 export function Home() {
   return (
-    <div className="home">
+    <div className={styles.home}>
       <nav>
-        <ul className="links">
+        <ul className={styles.links}>
           <li>
             <Link to="/display">Display</Link>
           </li>

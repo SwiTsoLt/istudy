@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as ws from "../../hook/ws.hook";
-import "./controller.scss";
+import styles from "./controller.module.scss";
 
 interface IPos {
   x: number;
@@ -77,11 +77,11 @@ export function Controller() {
   }, []);
 
   return (
-    <div className="controller">
-      <div className="title">
+    <div className={styles.controller}>
+      <div className={styles.title}>
         <h1>Controller</h1>
       </div>
-      <div className="info">
+      <div className={styles.info}>
         <p>
           x: <strong>{pos.x}</strong>
         </p>
@@ -95,10 +95,10 @@ export function Controller() {
           coonection state: <strong>{controllerConectionState.toString()}</strong>
         </p>
       </div>
-      <div className="map">
-        <div className="ball" ref={ballRef}></div>
+      <div className={styles.map}>
+        <div className={styles.ball} ref={ballRef}></div>
       </div>
-      <div className="form">
+      <div className={styles.form}>
         <input
           type="string"
           placeholder="room code"

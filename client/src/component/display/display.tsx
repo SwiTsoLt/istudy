@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as ws from "../../hook/ws.hook";
-import "./display.scss"
+import styles from "./display.module.scss"
 
 export function Display() {
   const [roomCode, setRoomCode] = useState<string | null>(null);
@@ -52,25 +52,25 @@ export function Display() {
   }, []);
 
   return (
-    <div className="display">
-      <div className="title">
+    <div className={styles.display}>
+      <div className={styles.title}>
         <h1>Display</h1>
       </div>
 
-      <div className="info">
-        <div className="roomCode">
+      <div className={styles.info}>
+        <div className={styles.roomCode}>
           <p>
             Room code: <strong>{roomCode}</strong>
           </p>
           <p>
-            Connection state:{" "}
+            Connection state:{controllerConectionState}
             <strong>{controllerConectionState.toString()}</strong>
           </p>
         </div>
       </div>
 
-      <div className="map">
-        <div className="ball" ref={ballRef}></div>
+      <div className={styles.map}>
+        <div className={styles.ball} ref={ballRef}></div>
       </div>
     </div>
   );
