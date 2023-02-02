@@ -10,9 +10,17 @@ const PORT = process.env.PORT || config.get("PORT")
 const staticPath = path.join(__dirname, "client", "build")
 
 const server = http.createServer((req, res) => {
-    const filePath = path.join(staticPath, req.url === "/" ? "index.html" : (req.url.includes(".") ? req.url : "index.html"))
-    const file = fs.readFileSync(filePath)
-    res.end(file)
+    const filePath = path.join(staticPath, req.url === "/" ? "index.html" : req.url)
+    const fileIsExist = fs.existsSync(filePath)
+    if (fileIsExist) {
+        const file = fs.readFileSync(filePath)
+        res.end(file)
+    } else {
+        const indexFilePath = path.join(staticPath, "index.html")
+        const file = fs.readFileSync(indexFilePath)
+        res.end(file)
+    }
+
 }).listen(PORT)
 
 // WS
