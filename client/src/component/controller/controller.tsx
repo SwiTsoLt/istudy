@@ -49,7 +49,6 @@ export function Controller() {
         if (ws && ws.ws) {
           ws.ws.addEventListener("message", (response) => {
             const data = JSON.parse(response.data);
-            console.log(data);
 
             switch (data?.type) {
               case "successJoin":

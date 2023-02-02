@@ -19,7 +19,6 @@ export function Display() {
 
       socket.addEventListener("message", (response) => {
         const data = JSON.parse(response.data);
-        console.log(data);
 
         switch (data?.type) {
           case "successCreated":

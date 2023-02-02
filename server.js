@@ -38,8 +38,6 @@ wss.on("connection", socket => {
     socket.on("message", rawMessage => {
         const data = JSON.parse(rawMessage)
 
-        console.log(data);
-
         switch (data?.type) {
             case "connect":
                 clients[id].deviceType = data?.deviceType
