@@ -23,6 +23,8 @@ const server = http.createServer((req, res) => {
                 const file = fs.readFileSync(mapFilePath)
                 res.end(file)
             }
+
+            console.log('not exists: ', mapFilePath);
         } else {
             const mapFilePath = path.join(staticPath, "static", filePath.split("\\")[filePath.split("\\").length - 2], filePath.split("\\")[filePath.split("\\").length - 1])
             console.log("map '\\': ", mapFilePath);
@@ -33,6 +35,8 @@ const server = http.createServer((req, res) => {
                 const file = fs.readFileSync(mapFilePath)
                 res.end(file)
             }
+
+            console.log('not exists: ', mapFilePath);
         }
     } else {
         const fileIsExists = fs.existsSync(filePath)
