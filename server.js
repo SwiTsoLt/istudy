@@ -11,17 +11,26 @@ const staticPath = path.join(__dirname, "client", "build")
 
 const server = http.createServer((req, res) => {
     const filePath = path.join(staticPath, req.url === "/" ? "index.html" : req.url)
-    const fileIsExists = fs.existsSync(filePath)
-    console.log("url: ", req.url);
-    console.log("path: ", filePath);
-    console.log("exist", fileIsExists);
-    if (fileIsExists) {
-        const file = fs.readFileSync(filePath)
+    if (filePath.includes(".css.map")) {
+        console.log("css url: ", req.url);
+        console.log("css path: ", filePath);
+        console.log("css exist", fileIsExists);
+        const cssFilePath = path.join(staticPath, "static", "css", filePath.split("/")[filePath.split("/").length-1])
+        const file = fs.readFileSync(cssFilePath)
         res.end(file)
     } else {
-        const indexFilePath = path.join(staticPath, "index.html")
-        const file = fs.readFileSync(indexFilePath)
-        res.end(file)
+        const fileIsExists = fs.existsSync(filePath)
+        console.log("url: ", req.url);
+        console.log("path: ", filePath);
+        console.log("exist", fileIsExists);
+        if (fileIsExists) {
+            const file = fs.readFileSync(filePath)
+            res.end(file)
+        } else {
+            const indexFilePath = path.join(staticPath, "index.html")
+            const file = fs.readFileSync(indexFilePath)
+            res.end(file)
+        }
     }
 
 }).listen(PORT)
