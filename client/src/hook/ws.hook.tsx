@@ -13,7 +13,7 @@ export let createState: boolean = false;
 
 export function connect(): WebSocket {
   if (!ws) {
-    const origin = window.location.href.split("//")[1].split(":")[0];
+    const origin = window.location.href.split("//")[1].split(":")[0].split("/")[0];
     const url = window.location.href.includes("https")
       ? `wss://${origin}`
       : `ws://${origin}:8000`;
