@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "npm install && node server",
+    "start:prod": "npm install && node server --prod=true",
     "dev": "nodemon server",
     "build": "npm run build --prefix client",
     "inst": "npm install --prefix client"
