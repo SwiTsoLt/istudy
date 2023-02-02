@@ -11,45 +11,16 @@ const staticPath = path.join(__dirname, "client", "build")
 
 const server = http.createServer((req, res) => {
     const filePath = path.join(staticPath, req.url === "/" ? "index.html" : req.url)
-    console.log(filePath);
-    if (filePath.includes(".map")) {
-        if (filePath.split("\\").length === 1) {
-            const mapFilePath = path.join(staticPath, "static", filePath.split("/")[filePath.split("/").length - 2], filePath.split("/")[filePath.split("/").length - 1])
-            console.log("map '/': ", mapFilePath);
-
-            const fileIsExists = fs.existsSync(mapFilePath)
-
-            if (fileIsExists) {
-                const file = fs.readFileSync(mapFilePath)
-                res.end(file)
-            }
-
-            console.log('not exists: ', mapFilePath);
-        } else {
-            const mapFilePath = path.join(staticPath, "static", filePath.split("\\")[filePath.split("\\").length - 2], filePath.split("\\")[filePath.split("\\").length - 1])
-            console.log("map '\\': ", mapFilePath);
-
-            const fileIsExists = fs.existsSync(mapFilePath)
-
-            if (fileIsExists) {
-                const file = fs.readFileSync(mapFilePath)
-                res.end(file)
-            }
-
-            console.log('not exists: ', mapFilePath);
-        }
+    const fileIsExists = fs.existsSync(filePath)
+    console.log(fileIsExists, " - ", req.url, " - ", filePath);
+    if (fileIsExists) {
+        const file = fs.readFileSync(filePath)
+        res.end(file)
     } else {
-        const fileIsExists = fs.existsSync(filePath)
-        if (fileIsExists) {
-            const file = fs.readFileSync(filePath)
-            res.end(file)
-        } else {
-            const indexFilePath = path.join(staticPath, "index.html")
-            const file = fs.readFileSync(indexFilePath)
-            res.end(file)
-        }
+        const indexFilePath = path.join(staticPath, "index.html")
+        const file = fs.readFileSync(indexFilePath)
+        res.end(file)
     }
-
 }).listen(PORT)
 
 // WS
