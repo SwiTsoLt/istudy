@@ -13,14 +13,26 @@ const server = http.createServer((req, res) => {
     const filePath = path.join(staticPath, req.url === "/" ? "index.html" : req.url)
     console.log(filePath);
     if (filePath.includes(".map")) {
-        const mapFilePath = path.join(staticPath, "static", "css", filePath.split("\\")[filePath.split("\\").length - 1])
-        console.log("map: ", mapFilePath);
-        
-        const fileIsExists = fs.existsSync(mapFilePath)
-        
-        if (fileIsExists) {
-            const file = fs.readFileSync(mapFilePath)
-            res.end(file)
+        if (filePath.split("\\").length === 1) {
+            const mapFilePath = path.join(staticPath, "static", filePath.split("/")[filePath.split("/").length - 2], filePath.split("/")[filePath.split("/").length - 1])
+            console.log("map '/': ", mapFilePath);
+
+            const fileIsExists = fs.existsSync(mapFilePath)
+
+            if (fileIsExists) {
+                const file = fs.readFileSync(mapFilePath)
+                res.end(file)
+            }
+        } else {
+            const mapFilePath = path.join(staticPath, "static", filePath.split("\\")[filePath.split("\\").length - 2], filePath.split("\\")[filePath.split("\\").length - 1])
+            console.log("map '\\': ", mapFilePath);
+
+            const fileIsExists = fs.existsSync(mapFilePath)
+
+            if (fileIsExists) {
+                const file = fs.readFileSync(mapFilePath)
+                res.end(file)
+            }
         }
     } else {
         const fileIsExists = fs.existsSync(filePath)
