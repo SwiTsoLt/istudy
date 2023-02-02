@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as ws from "../../hook/ws.hook";
-import styles from "./display.module.scss"
+import styles from "./display.module.css"
 
 export function Display() {
   const [roomCode, setRoomCode] = useState<string | null>(null);

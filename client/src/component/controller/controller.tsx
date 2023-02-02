@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as ws from "../../hook/ws.hook";
-import styles from "./controller.module.scss";
+import styles from "./controller.module.css";
 
 interface IPos {
   x: number;
