@@ -1,6 +1,5 @@
 // const express = require('express');
 const http = require('http');
-const https = require('https');
 const ws = require('ws');
 const config = require('config');
 const uuid = require('uuid').v4;
@@ -8,32 +7,13 @@ const path = require('path');
 const fs = require('fs');
 
 const PORT = process.env.PORT || config.get("PORT")
-// const WS_PORT = process.env.WS_PORT || config.get("WS_PORT")
 const staticPath = path.join(__dirname, "client", "build")
 
-let server;
-const prodArg = process.argv[2]
-const isProdArg = prodArg && prodArg.split("=")[0] === "--prod"
-const isProd = isProdArg && prodArg.split("=")[1] === "true"
-
-if (isProd) {
-    server = https.createServer((req, res) => {
-        const filePath = path.join(staticPath, req.url === "/" ? "index.html" : (req.url.includes(".") ? req.url : "index.html"))
-        const file = fs.readFileSync(filePath)
-        res.end(file)
-    }).listen(PORT)
-} else {
-    server = http.createServer((req, res) => {
-        const filePath = path.join(staticPath, req.url === "/" ? "index.html" : (req.url.includes(".") ? req.url : "index.html"))
-        const file = fs.readFileSync(filePath)
-        res.end(file)
-    }).listen(PORT)
-}
-
-// const app = express()
-// app.use(express.static(staticPath))
-
-// app.listen(PORT, () => console.log(`Server start on http://localhost:${PORT}`))
+const server = http.createServer((req, res) => {
+    const filePath = path.join(staticPath, req.url === "/" ? "index.html" : (req.url.includes(".") ? req.url : "index.html"))
+    const file = fs.readFileSync(filePath)
+    res.end(file)
+}).listen(PORT)
 
 // WS
 
