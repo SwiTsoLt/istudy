@@ -15,16 +15,7 @@ const server = http.createServer((req, res) => {
     console.log(fileIsExists, " - ", req.url, " - ", filePath);
     if (fileIsExists) {
         const file = fs.readFileSync(filePath)
-
-        if (filePath.includes(".css")) {
-            const fileString = file.toString()
-            const clearFileString = fileString.split("/*")[0]
-            const clearFile = Buffer.from(clearFileString)
-            res.end(clearFile)
-        } else {
-            res.end(file)
-        }
-
+        res.end(file)
     } else {
         const indexFilePath = path.join(staticPath, "index.html")
         const file = fs.readFileSync(indexFilePath)
