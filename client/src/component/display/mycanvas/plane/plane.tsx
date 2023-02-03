@@ -35,8 +35,6 @@ export function Plane(props: IPlaneProps) {
       ws.ws.addEventListener("message", (response) => {
         const data = JSON.parse(response.data);
 
-        console.log(data);
-
         if (data?.type === "position") {
           moveCamera({
             x: data?.pos?.x / 100,
@@ -50,7 +48,6 @@ export function Plane(props: IPlaneProps) {
 
   useEffect(() => {
     subscribeController();
-    console.log(props);
   }, [props.webSocket]);
 
   return (

@@ -21,7 +21,7 @@ export function Controller() {
       const y = Math.round(data.beta || 0);
       const z = Math.round(data.alpha || 0);
 
-      // setPos({ x, y, z });
+      setPos({ x, y, z });
 
       if (ballRef.current) {
         ballRef.current.style.transform = `translate(${x * 4}px, ${y * 4}px)`;
