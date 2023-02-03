@@ -39,9 +39,9 @@ export function Plane(props: IPlaneProps) {
 
         if (data?.type === "position") {
           moveCamera({
-            x: data?.pos?.x / 10,
-            y: data?.pos?.y / 10,
-            z: data?.pos?.z / 10,
+            x: data?.pos?.x / 100,
+            y: data?.pos?.y / 100,
+            z: data?.pos?.z / 100,
           });
         }
       });
