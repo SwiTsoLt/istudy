@@ -20,7 +20,7 @@ export function Hand(props: IHandProps) {
     }, [props.handPos])
 
     return (
-        <mesh position={[4 - handPos[0] / 60, 4 - handPos[1] / 60, 1]}>
+        <mesh position={[5 - handPos[0] / 60, 5 - handPos[1] / 60, 1]}>
             <sphereGeometry />
             <meshStandardMaterial map={handTexture}/>
         </mesh>
