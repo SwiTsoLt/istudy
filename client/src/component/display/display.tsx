@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as ws from "../../hook/ws.hook";
 import styles from "./display.module.css"
+import { MyCanvas } from "./mycanvas/mycanvas";
 
 export function Display() {
   const [roomCode, setRoomCode] = useState<string | null>(null);
   const [controllerConectionState, setControllerConectionState] =
     useState<boolean>(false);
   const ballRef = useRef<HTMLDivElement | null>(null);
+  const [webSocket, setWebSocket] = useState<WebSocket | null>(null)
 
   function connect(): WebSocket {
     return ws.connect();
@@ -47,6 +49,7 @@ export function Display() {
 
   useEffect(() => {
     const socket = connect();
+    setWebSocket(socket)
     subscribe(socket);
   }, []);
 
@@ -69,7 +72,8 @@ export function Display() {
       </div>
 
       <div className={styles.map}>
-        <div className={styles.ball} ref={ballRef}></div>
+        {/* <div className={styles.ball} ref={ballRef}></div> */}
+        <MyCanvas webSocket={webSocket} />
       </div>
     </div>
   );
