@@ -16,6 +16,8 @@ export function Controller() {
   useState<boolean>(false);
 
   function subscribeToMove() {
+    let isSend: boolean = true
+    
     window.addEventListener("deviceorientation", (data) => {
       const x = Math.round(data.gamma || 0);
       const y = Math.round(data.beta || 0);
@@ -28,7 +30,12 @@ export function Controller() {
       }
 
       if (ws.roomConnectState) {
-        ws.sendMessage({ type: "position", pos: { x, y, z } });        
+        if (isSend) {
+          ws.sendMessage({ type: "position", pos: { x, y, z } }); 
+          isSend = false       
+        } else {
+          isSend = true
+        }
       }
     });
     // let testpos = {x: 0, y: 0, z:0}
