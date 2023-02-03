@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { usePlane } from "@react-three/cannon";
-import { TextureLoader } from "three/src/loaders/TextureLoader";
+// import { TextureLoader } from "three/src/loaders/TextureLoader";
 import { useLoader, useThree } from "@react-three/fiber";
-import { Mesh } from "three";
+import { Mesh, TextureLoader } from "three";
 import * as ws from "../../../../hook/ws.hook";
 
 interface IPosition {
