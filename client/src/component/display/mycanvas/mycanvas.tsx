@@ -3,9 +3,11 @@ import { Canvas } from "@react-three/fiber";
 import { Physics } from "@react-three/cannon";
 import { Plane } from "./plane/plane";
 import { Sphere } from "./sphere/sphere";
+import { Hand } from "../../hand/hand";
 
 interface ICanvasProps {
-    webSocket: WebSocket | null
+    webSocket: WebSocket | null,
+    handPos: number[]
 }
 
 export function MyCanvas(props: ICanvasProps) {
@@ -17,6 +19,7 @@ export function MyCanvas(props: ICanvasProps) {
           <pointLight position={[10, 10, 10]} />
           <Plane webSocket={props.webSocket} />
           <Sphere />
+          <Hand handPos={props.handPos} />
         </Physics>
       </Canvas>
     </Suspense>

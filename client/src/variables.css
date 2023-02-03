@@ -1,6 +1,8 @@
 :root {
   --text-color: #303030;
 
+  --canvas-bg-color: #1a237eee;
+
   --link-bg-color-1: #e3f2fd;
   --link-bg-color-2: #e8f5e9;
   --link-bg-color-1-hover: #bbdefb;
