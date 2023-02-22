@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, Suspense } from "react";
 import Webcam from "react-webcam";
+import { Canvas } from "@react-three/fiber";
 import * as ws from "../../hook/ws.hook";
 import styles from "./display.module.css";
 import { MyCanvas } from "./mycanvas/mycanvas";
@@ -17,7 +18,7 @@ export function Display() {
   const ballRef = useRef<HTMLDivElement | null>(null);
   const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
   const [handPose, setHandPose] = useState<number[]>([0, 0, 0]);
-  const [ isGrab, setIsGrab ] = useState<boolean>(false)
+  const [isGrab, setIsGrab] = useState<boolean>(false);
 
   function connect(): WebSocket {
     return ws.connect();
@@ -102,15 +103,14 @@ export function Display() {
           );
 
           if (gesture.gestures[maxConfidence].name === fingerPoseName.fist) {
-            setIsGrab(true)
+            setIsGrab(true);
           } else {
-            setIsGrab(false)
+            setIsGrab(false);
           }
 
-          
           // console.log(gesture.gestures[maxConfidence].name);
         } else {
-          setIsGrab(false)
+          setIsGrab(false);
         }
 
         if (canvasRef.current) {
@@ -158,7 +158,15 @@ export function Display() {
 
       <div className={styles.map}>
         {/* <div className={styles.ball} ref={ballRef}></div> */}
-        <MyCanvas webSocket={webSocket} handPos={handPose} isGrab={isGrab} />
+        <Suspense>
+          <Canvas>
+            <MyCanvas
+              webSocket={webSocket}
+              handPos={handPose}
+              isGrab={isGrab}
+            />
+          </Canvas>
+        </Suspense>
       </div>
     </div>
   );
