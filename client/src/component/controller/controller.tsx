@@ -30,6 +30,8 @@ export function Controller() {
         ballRef.current.style.transform = `translate(${x * 4}px, ${y * 4}px)`;
       }
 
+      console.log(ws)
+
       if (ws.roomConnectState) {
         if (isSend && isPress) {
           alert(`send: ${x}/${y}/${z}`)
