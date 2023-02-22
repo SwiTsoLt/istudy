@@ -61,13 +61,18 @@ export function Controller() {
   }
 
   function subscribe() {
+    console.log(ws);
+
     if (ws && ws.ws) {
       ws.ws.addEventListener("open", () => {
         ws.sendMessage({ type: "connect", deviceType: "controller" });
 
+        console.log('2', ws);
         if (ws && ws.ws) {
           ws.ws.addEventListener("message", (response) => {
             const data = JSON.parse(response.data);
+
+            console.log('after ws 2', data);
 
             switch (data?.type) {
               case "successJoin":
