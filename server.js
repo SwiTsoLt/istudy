@@ -83,6 +83,7 @@ wss.on("connection", socket => {
                 return;
 
             case "position":
+                console.log(data)
                 send(clients[id].roomId, data)
                 break;
 

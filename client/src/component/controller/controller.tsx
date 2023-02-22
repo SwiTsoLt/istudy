@@ -89,7 +89,7 @@ export function Controller() {
   useEffect(() => {
     connect();
     subscribe();
-  }, []);
+  }, [ws]);
 
   return (
     <div className={styles.controller} onTouchStart={() => setIsPress(true)} onTouchEnd={() => setIsPress(false)}>
