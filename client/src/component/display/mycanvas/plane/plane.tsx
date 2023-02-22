@@ -47,12 +47,13 @@ export function Plane(props: IPlaneProps) {
   }
 
   useEffect(() => {
+    camera.position.y = 18
     subscribeController();
   }, [props.webSocket]);
 
   return (
-    <mesh ref={planeRef}>
-      <planeGeometry args={[10, 10]} />
+    <mesh ref={planeRef} scale={[300, 100, 1]}>
+      <planeGeometry args={[10, 10, 1]} />
       <meshStandardMaterial map={planeTexture} />
     </mesh>
   );

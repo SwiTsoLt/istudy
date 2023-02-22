@@ -10,6 +10,7 @@ interface IPos {
 
 export function Controller() {
   const ballRef = useRef<HTMLDivElement>(null);
+  const [isPress, setIsPress] = useState<boolean>(false)
   const [pos, setPos] = useState<IPos>({ x: 0, y: 0, z: 0 });
   const [roomCode, setRoomCode] = useState<string | null>(null);
   const [controllerConectionState, setControllerConectionState] =
@@ -30,7 +31,7 @@ export function Controller() {
       }
 
       if (ws.roomConnectState) {
-        if (isSend) {
+        if (isSend && isPress) {
           ws.sendMessage({ type: "position", pos: { x, y, z } }); 
           isSend = false       
         } else {
@@ -89,7 +90,7 @@ export function Controller() {
   }, []);
 
   return (
-    <div className={styles.controller}>
+    <div className={styles.controller} onTouchStart={() => setIsPress(true)} onTouchEnd={() => setIsPress(false)}>
       <div className={styles.title}>
         <h1>Controller</h1>
       </div>

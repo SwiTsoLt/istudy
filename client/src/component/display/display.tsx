@@ -6,7 +6,9 @@ import { MyCanvas } from "./mycanvas/mycanvas";
 import * as handpose from "@tensorflow-models/handpose";
 // @ts-ignore
 import * as fp from "fingerpose";
+import * as fg from "../../gestures";
 import { drawHand } from "../../hook/tracking";
+import { fingerPoseName } from "../../gestures";
 
 export function Display() {
   const [roomCode, setRoomCode] = useState<string | null>(null);
@@ -14,7 +16,8 @@ export function Display() {
     useState<boolean>(false);
   const ballRef = useRef<HTMLDivElement | null>(null);
   const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
-  const [handPose, setHandPose] = useState<number[]>([ 0, 0, 0 ])
+  const [handPose, setHandPose] = useState<number[]>([0, 0, 0]);
+  const [ isGrab, setIsGrab ] = useState<boolean>(false)
 
   function connect(): WebSocket {
     return ws.connect();
@@ -84,10 +87,31 @@ export function Display() {
 
       const hands = await net.estimateHands(video);
 
-      hands[0]?.annotations?.palmBase[0] && setHandPose(hands[0]?.annotations?.palmBase[0])
+      hands[0]?.annotations?.palmBase[0] &&
+        setHandPose(hands[0]?.annotations?.palmBase[0]);
       hands.forEach(async (hand: any) => {
-        const GE = new fp.GestureEstimator([]);
+        const GE = new fp.GestureEstimator([fg.default.fist]);
         const gesture = await GE.estimate(hand.landmarks, 7.5);
+        if (gesture.gestures !== undefined && gesture.gestures.length > 0) {
+          const confidence = gesture.gestures.reduce(
+            (acc: number[], cur: any) => [...acc, cur.score],
+            []
+          );
+          const maxConfidence = confidence.indexOf(
+            Math.max.apply(null, confidence)
+          );
+
+          if (gesture.gestures[maxConfidence].name === fingerPoseName.fist) {
+            setIsGrab(true)
+          } else {
+            setIsGrab(false)
+          }
+
+          
+          // console.log(gesture.gestures[maxConfidence].name);
+        } else {
+          setIsGrab(false)
+        }
 
         if (canvasRef.current) {
           const ctx = canvasRef.current.getContext("2d");
@@ -101,7 +125,7 @@ export function Display() {
     const socket = connect();
     setWebSocket(socket);
     subscribe(socket);
-    runHandpose()
+    runHandpose();
   }, []);
 
   return (
@@ -134,7 +158,7 @@ export function Display() {
 
       <div className={styles.map}>
         {/* <div className={styles.ball} ref={ballRef}></div> */}
-        <MyCanvas webSocket={webSocket} handPos={handPose} />
+        <MyCanvas webSocket={webSocket} handPos={handPose} isGrab={isGrab} />
       </div>
     </div>
   );

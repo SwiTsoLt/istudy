@@ -52,6 +52,7 @@
 .trackingCam > canvas {
   width: auto;
   height: 100%;
+  aspect-ratio: 16/9;
   border: 2px solid var(--border-color);
   background-color: var(--canvas-bg-color);
   border-top: none;
