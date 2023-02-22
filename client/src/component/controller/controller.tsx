@@ -33,9 +33,9 @@ export function Controller() {
       console.log(ws)
 
       if (ws.roomConnectState) {
+        ws.sendMessage({ type: "position", pos: { x, y, z } }); 
         if (isSend && isPress) {
           alert(`send: ${x}/${y}/${z}`)
-          ws.sendMessage({ type: "position", pos: { x, y, z } }); 
           isSend = false       
         } else {
           isSend = true
