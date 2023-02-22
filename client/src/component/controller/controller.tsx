@@ -37,6 +37,8 @@ export function Controller() {
         } else {
           isSend = true
         }
+      } else {
+        console.log("connect state:", ws?.roomConnectState)
       }
     });
     // let testpos = {x: 0, y: 0, z:0}
