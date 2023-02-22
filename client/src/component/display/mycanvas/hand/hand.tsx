@@ -22,8 +22,8 @@ export function Hand(props: IHandProps) {
     return (
         <mesh position={[
             (8 - handPos[0] / 40) / 3,
-            (6 - handPos[1] / 50) / 3,
-            1
+            (6 - handPos[1] / 50) / 3 + 18,
+            -1
             ]}>
             <sphereGeometry args={[0.2]} />
             <meshStandardMaterial map={props.isGrab ? grabTexture : handTexture}/>

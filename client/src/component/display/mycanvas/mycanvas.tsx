@@ -52,6 +52,7 @@ export function MyCanvas(props: ICanvasProps) {
 
   return (
     <Physics>
+      <color attach="background" args={['#bbdefb']} />
       <ambientLight intensity={0.1} />
       <pointLight position={[1, 40, 10]} />
       <Plane />
