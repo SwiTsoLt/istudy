@@ -17,7 +17,7 @@ export function Controller() {
   useState<boolean>(false);
 
   function subscribeToMove() {
-    let isSend: boolean = true
+    let isSendState: number = 0
     
     window.addEventListener("deviceorientation", (data) => {
       const x = Math.round(data.gamma || 0);
@@ -33,12 +33,11 @@ export function Controller() {
       console.log(ws)
 
       if (ws.roomConnectState) {
-        ws.sendMessage({ type: "position", pos: { x, y, z } }); 
-        if (isSend && isPress) {
-          alert(`send: ${x}/${y}/${z}`)
-          isSend = false       
+        if (isSendState >= 3) {
+          ws.sendMessage({ type: "position", pos: { x, y, z } }); 
+          isSendState = 0     
         } else {
-          isSend = true
+          isSendState += 1
         }
       } else {
         console.log("connect state:", ws?.roomConnectState)
