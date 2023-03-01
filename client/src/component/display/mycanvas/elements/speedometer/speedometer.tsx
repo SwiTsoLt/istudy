@@ -6,7 +6,6 @@ export function Speedometer() {
   const [speedometrTexture] = useLoader(TextureLoader, [
     "../media/speedometr.jpg",
   ]);
-
   return (
     <>
       <mesh position={[3, 13, -4]}>
