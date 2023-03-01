@@ -7,7 +7,9 @@
     "start": "npm install && node server",
     "dev": "nodemon server",
     "build": "npm run build --prefix client",
-    "inst": "npm install --prefix client"
+    "inst": "npm install --prefix client",
+    "client": "npm start --prefix client",
+    "git": "git add . && git commit -m \"%npm_config_msg%\" && git pull origin main && git push -u origin main"
   },
   "keywords": [],
   "author": "",

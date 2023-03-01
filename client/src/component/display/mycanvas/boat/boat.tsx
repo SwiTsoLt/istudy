@@ -2,7 +2,8 @@ import { Suspense } from "react";
 import { useLoader } from "@react-three/fiber";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { Speedometer } from "../elements/speedometer/speedometer";
-import { Clock } from "../elements/speedometer/clock/clock";
+import { Clock } from "../elements/clock/clock";
+import { Map } from "../elements/map/map";
 
 export function Boat() {
   const gltf = useLoader(GLTFLoader, "../models/boat/scene.gltf");
@@ -16,6 +17,7 @@ export function Boat() {
       />
       <Speedometer />
       <Clock />
+      <Map />
     </>
   );
 }

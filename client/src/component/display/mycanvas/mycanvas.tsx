@@ -24,9 +24,9 @@ export function MyCanvas(props: ICanvasProps) {
   const { camera } = useThree();
 
   function moveCamera(pos: IPosition) {
-    camera.rotation.x = pos.x;
-    camera.rotation.y = pos.y;
-    camera.rotation.z = pos.z;
+    camera.rotation.x = pos.y - 45;
+    camera.rotation.y = pos.x * 4;
+    camera.rotation.z = 0;
   }
 
   function subscribeController() {
@@ -47,6 +47,9 @@ export function MyCanvas(props: ICanvasProps) {
 
   useEffect(() => {
     camera.position.y = 18;
+    // camera.rotation.x = 0.5;
+    // camera.rotation.y = 3;
+    // camera.rotation.z = 0;
     subscribeController();
   }, [props.webSocket]);
 
