@@ -153,7 +153,7 @@ export class RoomComponent implements OnInit {
           const parserMessage: IMessage = JSON.parse(newMessage)
 
           this.messageList.subscribe((currentMessageList: IMessage[]) => {
-            this.messageList = of([parserMessage, ...currentMessageList])
+            this.messageList = of([...currentMessageList, parserMessage])
           })
         })
 
@@ -181,7 +181,7 @@ export class RoomComponent implements OnInit {
             const parserMessage: IMessage = JSON.parse(newMessage)
 
             this.messageList.subscribe((currentMessageList: IMessage[]) => {
-              this.messageList = of([parserMessage, ...currentMessageList])
+              this.messageList = of([...currentMessageList, parserMessage])
             })
           })
 
@@ -205,7 +205,7 @@ export class RoomComponent implements OnInit {
 
     this.messageList.subscribe((currentMessageList: IMessage[]) => {
       if (response.newMessage) {
-        this.messageList = of([response.newMessage, ...currentMessageList])
+        this.messageList = of([...currentMessageList, response.newMessage])
       }
     })
 
