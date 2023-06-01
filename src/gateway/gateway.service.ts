@@ -53,30 +53,13 @@ export class GatewayService {
   public disconnect(socket: Socket) {
     const client = this.clients[socket.id];
 
-    if (!!client.ownerOf.length) {
-      const joinClientSocket = this.server.sockets.sockets.get(
-        this.rooms[client.ownerOf]?.clientId,
-      );
-
-      this.clients[this.rooms[client.ownerOf].clientId].joinTo = '';
-      delete this.rooms[client.ownerOf];
-
-      joinClientSocket.send({ msg: 'success leave' });
-      joinClientSocket.emit('successLeave');
+    if (client.joinTo) {
+      return this.leaveRoom(socket)
     }
 
-    if (!!client.joinTo.length) {
-      const ownerSocket = this.server.sockets.sockets.get(
-        this.rooms[client.joinTo].ownerId,
-      );
-
-      this.rooms[client.joinTo].clientId = '';
-
-      ownerSocket.send({ msg: 'success leave' });
-      ownerSocket.emit('successLeave');
+    if (client.ownerOf) {
+      return this.removeRoom(socket)
     }
-
-    delete this.clients[socket.id];
   }
 
   public createRoom(socket: Socket): IMessage {
