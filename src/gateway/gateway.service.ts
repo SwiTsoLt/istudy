@@ -36,13 +36,16 @@ export class GatewayService {
   private clients: IClientList = {};
 
   public init() {
-    this.server.on('connection', (socket) => {
-      console.log(`connected ${socket.id}`);
+    this.server.on('connection', (socket: Socket) => {
       this.connect(socket);
 
       socket.on('disconnect', () => {
         this.disconnect(socket);
       });
+
+      socket.on('error', () => {
+        this.disconnect(socket)
+      })
     });
   }
 
