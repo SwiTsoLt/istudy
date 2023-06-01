@@ -1,0 +1,46 @@
+<div class="room">
+  <div class="container">
+    <div class="interface">
+      <p class="status"><strong>ws status:</strong>{{ connectWsStatus }}</p>
+      <p class="status"><strong>webrtc status:</strong>{{ connectWebRtcStatus }}</p>
+      <p class="status"><strong>room code:</strong>{{ roomCode || 'no code' }}</p>
+      <p class="messageLabel"><strong>messages:</strong>{{ messageLabel || 'no messages'}}</p>
+    </div>
+
+    <div class="buttons">
+      <button (click)="showPopup(true)">create</button>
+      <button (click)="showPopup(false)">join</button>
+      <button class="leaveBtn" *ngIf="isOwner" (click)="removeRoom()">remove room</button>
+      <button class="leaveBtn" *ngIf="connectWsStatus && !isOwner" (click)="leaveRoom()">leave</button>
+    </div>
+
+    <div class="messageListContainer">
+      <div class="messageList">
+        <div class="message" *ngFor="let message of messageList | async">
+          <strong>{{ message.name }}:</strong>
+          <p>{{ message.text }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="messageForm">
+      <input #messageInput type="text" (keydown.enter)="sendMessage(messageInput.value); messageInput.value = '';" placeholder="enter message here...">
+      <button (click)="sendMessage(messageInput.value); messageInput.value = '';" [disabled]="!connectWsStatus || !connectWebRtcStatus">send</button>
+    </div>
+  </div>
+
+  <div *ngIf="showPopupState" class="popup">
+    <div class="form">
+      <div *ngIf="isOwner; then createForm else joinForm"></div>
+      <ng-template #createForm>
+        <div class="roomCode">{{ roomCode }}</div>
+        <p>Wait a connection...</p>
+      </ng-template>
+      <ng-template #joinForm>
+        <input #roomCodeInput (keydown.enter)="joinRoom(roomCodeInput.value)" type="text" placeholder="Enter room code here" maxlength="5">
+        <button (click)="joinRoom(roomCodeInput.value)">join</button>
+      </ng-template>
+      <button (click)="closePopup()">close</button>
+    </div>
+  </div>
+</div>
