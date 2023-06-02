@@ -115,6 +115,7 @@ export class RoomComponent implements OnInit {
     if (this.isOwner) {
       return this.webSocketService.emit("removeRoom", {})
     }
+    this.connectWsStatus && this.webSocketService.emit("leaveRoom", {})
     return this.showPopupState = false
   }
 
