@@ -137,8 +137,10 @@ export class GatewayService {
       this.rooms[joinDto.roomCode]?.ownerId,
     );
 
-    ownerSocket.emit('successJoin', { roomCode: joinDto.roomCode });
-    ownerSocket.send({ msg: 'success connected' });
+    if (ownerSocket) {
+      ownerSocket.emit('successJoin', { roomCode: joinDto.roomCode });
+      ownerSocket.send({ msg: 'success connected' });
+    }
 
     return { msg: 'success join' };
   }
@@ -159,12 +161,13 @@ export class GatewayService {
     );
 
     this.rooms[this.clients[socket.id].joinTo].clientId = '';
-
     this.clients[socket.id].joinTo = '';
-
-    ownerSocket.emit('successLeave');
-    ownerSocket.send({ msg: 'success leave' });
     socket.emit('successLeave');
+
+    if (ownerSocket) {
+      ownerSocket.emit('successLeave');
+      ownerSocket.send({ msg: 'success leave' });
+    }
 
     return { msg: 'success leave' };
   }
