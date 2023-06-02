@@ -18,6 +18,7 @@ export class RoomComponent implements OnInit {
   public isOwner: boolean = false
   public connectWsStatus: boolean = false
   public connectWebRtcStatus: boolean = false
+  public startConnectingState: boolean = false
 
   // Popup
   public showPopupState: boolean = false;
@@ -42,7 +43,7 @@ export class RoomComponent implements OnInit {
 
     this.webSocketService.listen('successCreate').subscribe(({ roomCode }: { roomCode: string }) => {
       [this.isOwner, this.roomCode, this.showPopupState] = [true, roomCode, true]
-      
+
       this.inviteQrCode = `${window.location.href}?roomCode=${roomCode}`
     });
     this.webSocketService.listen('successRemoveRoom').subscribe(() => {
@@ -57,7 +58,7 @@ export class RoomComponent implements OnInit {
       this.startRtcConnection()
     });
     this.webSocketService.listen('successLeave').subscribe(() => {
-      [this.connectWsStatus, this.connectWebRtcStatus] = [false, false]
+      [this.connectWsStatus, this.connectWebRtcStatus, this.startConnectingState] = [false, false, false]
 
       !this.isOwner && (this.roomCode = '')
       this.isOwner && (this.showPopupState = true)
@@ -77,6 +78,7 @@ export class RoomComponent implements OnInit {
 
   public joinRoom(roomCode: string) {
     this.webSocketService.emit('joinRoom', { roomCode })
+    this.startConnectingState = true
   }
 
   public leaveRoom() {
@@ -158,9 +160,7 @@ export class RoomComponent implements OnInit {
     if (this.isOwner) {
       this.webRtcService.subscribeToDataChannelOpen()
         .subscribe(() => {
-          this.connectWebRtcStatus = true
-          this.showPopupState = false
-          this.messageLabel = 'success connect webrtc channel'
+          [this.connectWebRtcStatus, this.showPopupState, this.startConnectingState, this.messageLabel] = [true, false, false, 'success connect webrtc channel']
         })
 
       this.webRtcService.subscribeToDataChannelMessage()
@@ -187,9 +187,7 @@ export class RoomComponent implements OnInit {
       if (dataChannel) {
         this.webRtcService.subscribeToDataChannelOpen(dataChannel)
           .subscribe(() => {
-            this.connectWebRtcStatus = true
-            this.showPopupState = false
-            this.messageLabel = 'success connect webrtc channel'
+            [this.connectWebRtcStatus, this.showPopupState, this.startConnectingState, this.messageLabel] = [true, false, false, 'success connect webrtc channel']
           })
 
         this.webRtcService.subscribeToDataChannelMessage(dataChannel)

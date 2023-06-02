@@ -43,6 +43,8 @@
         <input #roomCodeInput (keydown.enter)="joinRoom(roomCodeInput.value)" type="text"
           placeholder="Enter room code here" maxlength="5">
         <button (click)="joinRoom(roomCodeInput.value)">join</button>
+        <p>{{ messageLabel }}</p>
+        <p *ngIf="startConnectingState">Wait a connection...</p>
       </ng-template>
       <button (click)="closePopup()">close</button>
     </div>
