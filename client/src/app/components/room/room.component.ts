@@ -70,6 +70,7 @@ export class RoomComponent implements OnInit {
       .subscribe((params: any) => {
         if (params.roomCode) {
           this.joinRoom(params.roomCode)
+          this.showPopupState = true
         }
       })
   }
