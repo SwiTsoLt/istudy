@@ -157,6 +157,12 @@
       height: 60px;
       text-align: left;
       border: none;
+
+      &:disabled {
+        background-color: #ebebeb;
+        color: #303030aa;
+        cursor: default;
+      }
     }
 
     button {

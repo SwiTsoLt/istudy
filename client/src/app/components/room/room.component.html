@@ -24,8 +24,10 @@
     </div>
 
     <div class="messageForm">
-      <input #messageInput type="text" (keydown.enter)="sendMessage(messageInput.value); messageInput.value = '';" placeholder="enter message here...">
-      <button (click)="sendMessage(messageInput.value); messageInput.value = '';" [disabled]="!connectWsStatus || !connectWebRtcStatus">send</button>
+      <input #messageInput type="text" (keydown.enter)="sendMessage(messageInput.value); messageInput.value = '';"
+        placeholder="enter message here..." [disabled]="!connectWsStatus || !connectWebRtcStatus">
+      <button (click)="sendMessage(messageInput.value); messageInput.value = '';"
+        [disabled]="!connectWsStatus || !connectWebRtcStatus">send</button>
     </div>
   </div>
 
@@ -38,7 +40,8 @@
         <p>Wait a connection...</p>
       </ng-template>
       <ng-template #joinForm>
-        <input #roomCodeInput (keydown.enter)="joinRoom(roomCodeInput.value)" type="text" placeholder="Enter room code here" maxlength="5">
+        <input #roomCodeInput (keydown.enter)="joinRoom(roomCodeInput.value)" type="text"
+          placeholder="Enter room code here" maxlength="5">
         <button (click)="joinRoom(roomCodeInput.value)">join</button>
       </ng-template>
       <button (click)="closePopup()">close</button>
