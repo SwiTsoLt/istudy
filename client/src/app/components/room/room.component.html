@@ -4,7 +4,6 @@
       <p class="status"><strong>ws status:</strong>{{ connectWsStatus }}</p>
       <p class="status"><strong>webrtc status:</strong>{{ connectWebRtcStatus }}</p>
       <p class="status"><strong>room code:</strong>{{ roomCode || 'no code' }}</p>
-      <p class="messageLabel"><strong>messages:</strong>{{ messageLabel || 'no messages'}}</p>
     </div>
 
     <div class="buttons">
@@ -37,6 +36,7 @@
       <ng-template #createForm>
         <qrcode [qrdata]="inviteQrCode" [width]="256" errorCorrectionLevel="Q" elementType="url"></qrcode>
         <div class="roomCode">{{ roomCode }}</div>
+        <p>{{ messageLabel }}</p>
         <p>Wait a connection...</p>
       </ng-template>
       <ng-template #joinForm>

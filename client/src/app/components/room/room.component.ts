@@ -52,7 +52,7 @@ export class RoomComponent implements OnInit {
       this.webRtcService.init()
     });
     this.webSocketService.listen('successJoin').subscribe(({ roomCode }: { roomCode: string }) => {
-      [this.roomCode, this.showPopupState, this.connectWsStatus] = [roomCode, false, true]
+      [this.roomCode, this.connectWsStatus] = [roomCode, true]
 
       this.startRtcConnection()
     });
@@ -158,6 +158,7 @@ export class RoomComponent implements OnInit {
       this.webRtcService.subscribeToDataChannelOpen()
         .subscribe(() => {
           this.connectWebRtcStatus = true
+          this.showPopupState = false
           this.messageLabel = 'success connect webrtc channel'
         })
 
@@ -186,6 +187,7 @@ export class RoomComponent implements OnInit {
         this.webRtcService.subscribeToDataChannelOpen(dataChannel)
           .subscribe(() => {
             this.connectWebRtcStatus = true
+            this.showPopupState = false
             this.messageLabel = 'success connect webrtc channel'
           })
 
