@@ -60,6 +60,7 @@ export class RoomComponent implements OnInit {
       [this.connectWsStatus, this.connectWebRtcStatus] = [false, false]
 
       !this.isOwner && (this.roomCode = '')
+      this.isOwner && (this.showPopupState = true)
 
       this.clearMessageList()
       this.webRtcService.init()
