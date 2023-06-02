@@ -44,8 +44,8 @@ export class GatewayService {
       });
 
       socket.on('error', () => {
-        this.disconnect(socket)
-      })
+        this.disconnect(socket);
+      });
     });
   }
 
@@ -57,11 +57,11 @@ export class GatewayService {
     const client = this.clients[socket.id];
 
     if (client.joinTo) {
-      return this.leaveRoom(socket)
+      return this.leaveRoom(socket);
     }
 
     if (client.ownerOf) {
-      return this.removeRoom(socket)
+      return this.removeRoom(socket);
     }
   }
 

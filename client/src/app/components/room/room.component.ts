@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { WebSocketService } from '../../ws.service';
 import { WebRtcService } from '../../webrtc.service';
-import { ISocketMessage, IRtcData, RtcDataTypeEnum, IMessage } from '../../interfaces';
-import { Observable, Subscriber, map, of } from 'rxjs';
+import { ISocketMessage, IRtcData, RtcDataTypeEnum, IMessage, IQueryParams } from '../../interfaces';
+import { Observable, of } from 'rxjs';
+import { ActivatedRoute, Params } from '@angular/router';
 
 @Component({
   selector: 'app-room',
@@ -24,10 +25,12 @@ export class RoomComponent implements OnInit {
   // Interface
   public messageLabel: string = "";
   public roomCode: string = ""
+  public inviteQrCode: string = ""
 
   constructor(
     private webSocketService: WebSocketService,
-    private webRtcService: WebRtcService
+    private webRtcService: WebRtcService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
@@ -39,6 +42,8 @@ export class RoomComponent implements OnInit {
 
     this.webSocketService.listen('successCreate').subscribe(({ roomCode }: { roomCode: string }) => {
       [this.isOwner, this.roomCode, this.showPopupState] = [true, roomCode, true]
+      
+      this.inviteQrCode = `${window.location.href}?roomCode=${roomCode}`
     });
     this.webSocketService.listen('successRemoveRoom').subscribe(() => {
       [this.isOwner, this.roomCode, this.showPopupState, this.connectWsStatus, this.connectWebRtcStatus] = [false, '', false, false, false]
@@ -59,6 +64,13 @@ export class RoomComponent implements OnInit {
       this.clearMessageList()
       this.webRtcService.init()
     });
+
+    this.route.queryParams
+      .subscribe((params: any) => {
+        if (params.roomCode) {
+          this.joinRoom(params.roomCode)
+        }
+      })
   }
 
   public joinRoom(roomCode: string) {

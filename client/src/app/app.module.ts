@@ -7,6 +7,7 @@ import { RoomComponent } from './components/room/room.component';
 import { HomeComponent } from './components/home/home.component';
 import { WebSocketService } from './ws.service';
 import { WebRtcService } from './webrtc.service';
+import { QRCodeModule } from 'angularx-qrcode'
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { WebRtcService } from './webrtc.service';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    QRCodeModule
   ],
   providers: [
     WebSocketService,

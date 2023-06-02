@@ -33,6 +33,7 @@
     <div class="form">
       <div *ngIf="isOwner; then createForm else joinForm"></div>
       <ng-template #createForm>
+        <qrcode [qrdata]="inviteQrCode" [width]="256" errorCorrectionLevel="Q" elementType="url"></qrcode>
         <div class="roomCode">{{ roomCode }}</div>
         <p>Wait a connection...</p>
       </ng-template>

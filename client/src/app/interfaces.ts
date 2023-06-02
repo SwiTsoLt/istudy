@@ -24,3 +24,7 @@ export interface IMessage {
     name: string,
     text: string
 }
+
+export interface IQueryParams {
+    roomCode: string
+}
