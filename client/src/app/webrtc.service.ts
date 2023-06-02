@@ -12,7 +12,20 @@ export class WebRtcService {
     private dataChannel: RTCDataChannel | null = null;
 
     public init() {
-        this.pc = new RTCPeerConnection()
+        console.log(window.location.origin.replace('http://', 'stun:').replace('https://', 'stun:').split(':')[0]);
+
+        this.pc = new RTCPeerConnection({
+            iceServers: [
+                {
+                    urls: `${window.location.origin.replace('http://', 'stun:').replace('https://', 'stun:').split(':')[0]}`
+                },
+                {
+                    urls:`${window.location.origin.replace('http://', 'turn:').replace('https://', 'turn:').split(':')[0]}`,
+                    username: 'webrtc',
+                    credential: 'turnpassword'
+                }
+            ]
+        })
     }
 
     public sendMessage(socketId: string, text: string): { newMessage?: IMessage, msg?: string } {
