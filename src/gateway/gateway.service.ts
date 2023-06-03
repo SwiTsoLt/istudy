@@ -2,28 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 import { JoinDto, RtcDataDto } from './gateway.dto';
 import { WebSocketServer, WebSocketGateway } from '@nestjs/websockets';
-
-interface IRoom {
-  ownerId: string;
-  clientId: string;
-}
-
-interface IRoomList {
-  [key: string]: IRoom;
-}
-
-export interface IMessage {
-  msg: string;
-}
-
-interface IClient {
-  ownerOf: string;
-  joinTo: string;
-}
-
-interface IClientList {
-  [key: string]: IClient;
-}
+import * as interfaces from '../interfaces';
 
 @Injectable()
 @WebSocketGateway()
@@ -31,9 +10,9 @@ export class GatewayService {
   @WebSocketServer()
   private server: Server;
 
-  private rooms: IRoomList = {};
+  private rooms: interfaces.IRoomList = {};
 
-  private clients: IClientList = {};
+  private clients: interfaces.IClientList = {};
 
   public init() {
     this.server.on('connection', (socket: Socket) => {
@@ -65,8 +44,8 @@ export class GatewayService {
     }
   }
 
-  public createRoom(socket: Socket): IMessage {
-    const client: IClient = this.clients[socket.id];
+  public createRoom(socket: Socket): interfaces.IMessage {
+    const client: interfaces.IClient = this.clients[socket.id];
 
     if (!!client.ownerOf.length) {
       return { msg: 'you are the author of a room' };
@@ -85,7 +64,7 @@ export class GatewayService {
     return { msg: 'room successful created' };
   }
 
-  public removeRoom(socket: Socket): IMessage {
+  public removeRoom(socket: Socket): interfaces.IMessage {
     const client = this.clients[socket.id];
 
     if (!client.ownerOf.length) {
@@ -106,32 +85,33 @@ export class GatewayService {
       clientSocket.send({ msg: 'success leave' });
     }
 
-    this.clients[socket.id].ownerOf = '';
     delete this.rooms[client.ownerOf];
+    this.clients[socket.id].ownerOf = '';
 
     socket.emit('successRemoveRoom');
     return { msg: 'room success removed' };
   }
 
-  public joinRoom(socket: Socket, joinDto: JoinDto): IMessage {
-    const client: IClient = this.clients[socket.id];
+  public joinRoom(socket: Socket, joinDto: JoinDto): interfaces.IMessage {
+    const client: interfaces.IClient = this.clients[socket.id];
 
     if (this.rooms[client.ownerOf]) {
+      socket.emit('errorJoin');
       return { msg: 'you are the author of room' };
     }
 
     if (!!client.joinTo.length) {
+      socket.emit('errorJoin');
       return { msg: 'you already join to a room' };
     }
 
     if (!this.rooms[joinDto.roomCode]) {
+      socket.emit('errorJoin');
       return { msg: `room '${joinDto.roomCode}' not found` };
     }
 
     this.rooms[joinDto.roomCode].clientId = socket.id;
     this.clients[socket.id].joinTo = joinDto.roomCode;
-
-    socket.emit('successJoin', { roomCode: joinDto.roomCode });
 
     const ownerSocket: Socket = this.server.sockets.sockets.get(
       this.rooms[joinDto.roomCode]?.ownerId,
@@ -142,11 +122,12 @@ export class GatewayService {
       ownerSocket.send({ msg: 'success connected' });
     }
 
+    socket.emit('successJoin', { roomCode: joinDto.roomCode });
     return { msg: 'success join' };
   }
 
-  public leaveRoom(socket: Socket): IMessage {
-    const client: IClient = this.clients[socket.id];
+  public leaveRoom(socket: Socket): interfaces.IMessage {
+    const client: interfaces.IClient = this.clients[socket.id];
 
     if (client.ownerOf.length) {
       return { msg: 'you are the author of a room' };
@@ -180,12 +161,16 @@ export class GatewayService {
       roomCode += rand.toString();
     }
 
+    if (this.rooms[roomCode]) {
+      return this.generateRoomCode();
+    }
+
     return roomCode;
   }
 
   // RTC
 
-  public rtcData(socket: Socket, rtcData: RtcDataDto): IMessage {
+  public rtcData(socket: Socket, rtcData: RtcDataDto): interfaces.IMessage {
     const client = this.clients[socket.id];
 
     const clientSocket = !!client.ownerOf.length

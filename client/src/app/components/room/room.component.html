@@ -3,7 +3,8 @@
     <div class="interface">
       <p class="status"><strong>ws status:</strong>{{ connectWsStatus }}</p>
       <p class="status"><strong>webrtc status:</strong>{{ connectWebRtcStatus }}</p>
-      <p class="status"><strong>room code:</strong>{{ roomCode || 'no code' }}</p>
+      <p class="status"><strong>room code:</strong>{{ roomCode || '-' }}</p>
+      <p class="status"><strong>messages:</strong> {{ messageLabel || '-' }}</p>
     </div>
 
     <div class="buttons">
@@ -40,11 +41,11 @@
         <p>Wait a connection...</p>
       </ng-template>
       <ng-template #joinForm>
+        <strong *ngIf="startConnectingState">Wait a connection...</strong>
+        <p>{{ messageLabel }}</p>
         <input #roomCodeInput (keydown.enter)="joinRoom(roomCodeInput.value)" type="text"
           placeholder="Enter room code here" maxlength="5">
         <button (click)="joinRoom(roomCodeInput.value)">join</button>
-        <p>{{ messageLabel }}</p>
-        <p *ngIf="startConnectingState">Wait a connection...</p>
       </ng-template>
       <button (click)="closePopup()">close</button>
     </div>

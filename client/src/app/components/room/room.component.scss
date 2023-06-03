@@ -16,7 +16,7 @@
 
   input {
     width: 100%;
-    height: fit-content;
+    height: 60px;
     padding: $p-s;
     text-align: center;
     border: 2px solid $text-clr;
@@ -91,7 +91,7 @@
       height: fit-content;
     }
 
-    p {
+    p, strong {
       text-align: center;
     }
 
@@ -109,7 +109,7 @@
         background-color: #fff;
         background-image: url('../../../logo.png');
         background-repeat: no-repeat;
-        background-size: 70%;
+        background-size: 75%;
         background-position: center;
         border-radius: 50%;
       }

@@ -41,6 +41,8 @@ export class RoomComponent implements OnInit {
         this.messageLabel = message.msg
       })
 
+    // success
+
     this.webSocketService.listen('successCreate').subscribe(({ roomCode }: { roomCode: string }) => {
       [this.isOwner, this.roomCode, this.showPopupState] = [true, roomCode, true]
 
@@ -65,6 +67,12 @@ export class RoomComponent implements OnInit {
 
       this.clearMessageList()
       this.webRtcService.init()
+    });
+
+    // errors
+
+    this.webSocketService.listen('errorJoin').subscribe(() => {
+      this.startConnectingState = false
     });
 
     this.route.queryParams
@@ -108,6 +116,7 @@ export class RoomComponent implements OnInit {
       return this.messageLabel = 'you are already join to someone’s room'
     }
 
+    this.messageLabel = ''
     this.showPopupState = true
   }
 
