@@ -11,9 +11,6 @@ import { ActivatedRoute, Params } from '@angular/router';
   styleUrls: ['./room.component.scss'],
 })
 export class RoomComponent implements OnInit {
-  // Message
-  public messageList: Observable<IMessage[]> = of([])
-
   // Status
   public isOwner: boolean = false
   public connectWsStatus: boolean = false
@@ -51,7 +48,6 @@ export class RoomComponent implements OnInit {
     this.webSocketService.listen('successRemoveRoom').subscribe(() => {
       [this.isOwner, this.roomCode, this.showPopupState, this.connectWsStatus, this.connectWebRtcStatus] = [false, '', false, false, false]
 
-      this.clearMessageList()
       this.webRtcService.init()
     });
     this.webSocketService.listen('successJoin').subscribe(({ roomCode }: { roomCode: string }) => {
@@ -65,7 +61,6 @@ export class RoomComponent implements OnInit {
       !this.isOwner && (this.roomCode = '')
       this.isOwner && (this.showPopupState = true)
 
-      this.clearMessageList()
       this.webRtcService.init()
     });
 
@@ -97,10 +92,6 @@ export class RoomComponent implements OnInit {
     if (this.isOwner) {
       return this.webSocketService.emit("removeRoom", {})
     }
-  }
-
-  public clearMessageList() {
-    this.messageList = of([])
   }
 
   public showPopup(createRoomState: boolean) {
@@ -177,9 +168,7 @@ export class RoomComponent implements OnInit {
         .subscribe((newMessage: string) => {
           const parserMessage: IMessage = JSON.parse(newMessage)
 
-          this.messageList.subscribe((currentMessageList: IMessage[]) => {
-            this.messageList = of([...currentMessageList, parserMessage])
-          })
+          console.log(parserMessage);
         })
 
       this.webRtcService.subscribeToDataChannelClose()
@@ -204,9 +193,7 @@ export class RoomComponent implements OnInit {
           .subscribe((newMessage: string) => {
             const parserMessage: IMessage = JSON.parse(newMessage)
 
-            this.messageList.subscribe((currentMessageList: IMessage[]) => {
-              this.messageList = of([...currentMessageList, parserMessage])
-            })
+            console.log(parserMessage);
           })
 
         this.webRtcService.subscribeToDataChannelClose(dataChannel)
@@ -223,20 +210,9 @@ export class RoomComponent implements OnInit {
     }
   }
 
-  public sendMessage(text: string) {
-    const socketId: string = this.webSocketService.getSocketId()
-    const response: { newMessage?: IMessage, msg?: string } = this.webRtcService.sendMessage(socketId, text)
+  // Choose level
 
-    this.messageList.subscribe((currentMessageList: IMessage[]) => {
-      if (response.newMessage) {
-        this.messageList = of([...currentMessageList, response.newMessage])
-      }
-    })
+  public chooseLevel() {
 
-    if (response.msg) {
-      return this.messageLabel = response.msg
-    }
-
-    return;
   }
 }

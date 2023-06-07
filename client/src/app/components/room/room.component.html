@@ -1,35 +1,27 @@
-<div class="room">
+<div class="room bgimage">
   <div class="container">
     <div class="interface">
-      <p class="status"><strong>ws status:</strong>{{ connectWsStatus }}</p>
-      <p class="status"><strong>webrtc status:</strong>{{ connectWebRtcStatus }}</p>
-      <p class="status"><strong>room code:</strong>{{ roomCode || '-' }}</p>
-      <p class="status"><strong>messages:</strong> {{ messageLabel || '-' }}</p>
+      <!-- <p class="status"><strong>ws status:</strong><span>{{ connectWsStatus }}</span></p> -->
+      <!-- <p class="status"><strong>webrtc status:</strong><span{{ connectWebRtcStatus }}></span></p> -->
+      <p class="status"><strong>Статус подключения:</strong><span>{{ connectWebRtcStatus ? 'подключено успешно': 'не подключено' }}</span></p>
+      <!-- <p class="status"><strong>room code:</strong><span>{{ roomCode || '-' }}</span></p> -->
+      <p class="status"><strong>Код комнаты:</strong><span>{{ roomCode || '-' }}</span></p>
+      <!-- <p class="status"><strong>messages:</strong><span>{{ messageLabel || '-' }}</span></p> -->
+      <p class="status"><strong>Сообщения:</strong><span>{{ messageLabel || '-' }}</span></p>
     </div>
 
     <div class="buttons">
-      <button (click)="showPopup(true)">create</button>
-      <button (click)="showPopup(false)">join</button>
-      <button class="leaveBtn" *ngIf="isOwner" (click)="removeRoom()">remove room</button>
-      <button class="leaveBtn" *ngIf="connectWsStatus && !isOwner" (click)="leaveRoom()">leave</button>
+      <!-- <button *ngIf="!connectWsStatus" (click)="showPopup(true)">create</button> -->
+      <button *ngIf="!connectWsStatus" (click)="showPopup(true)">Создать</button>
+      <!-- <button *ngIf="connectWsStatus && isOwner" (click)="chooseLevel()">choose level</button> -->
+      <button *ngIf="connectWsStatus && isOwner" (click)="chooseLevel()">Выбрать уровень</button>
+      <!-- <button *ngIf="!connectWsStatus" (click)="showPopup(false)">join</button> -->
+      <button *ngIf="!connectWsStatus" (click)="showPopup(false)">Присоединиться</button>
+      <!-- <button class="leaveBtn" *ngIf="isOwner" (click)="removeRoom()">remove room</button> -->
+      <button class="leaveBtn" *ngIf="isOwner" (click)="removeRoom()">Удалить комнату</button>
+      <!-- <button class="leaveBtn" *ngIf="connectWsStatus && !isOwner" (click)="leaveRoom()">leave</button> -->
+      <button class="leaveBtn" *ngIf="connectWsStatus && !isOwner" (click)="leaveRoom()">Выйти</button>
     </div>
-
-    <div class="messageListContainer">
-      <div class="messageList">
-        <div class="message" *ngFor="let message of messageList | async">
-          <strong>{{ message.name }}:</strong>
-          <p>{{ message.text }}</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="messageForm">
-      <input #messageInput type="text" (keydown.enter)="sendMessage(messageInput.value); messageInput.value = '';"
-        placeholder="enter message here..." [disabled]="!connectWsStatus || !connectWebRtcStatus">
-      <button (click)="sendMessage(messageInput.value); messageInput.value = '';"
-        [disabled]="!connectWsStatus || !connectWebRtcStatus">send</button>
-    </div>
-  </div>
 
   <div *ngIf="showPopupState" class="popup">
     <div class="form">
@@ -43,11 +35,15 @@
       <ng-template #joinForm>
         <strong *ngIf="startConnectingState">Wait a connection...</strong>
         <p>{{ messageLabel }}</p>
+        <!-- <input #roomCodeInput (keydown.enter)="joinRoom(roomCodeInput.value)" type="text"
+          placeholder="Room code" (input)="roomCodeInput.value.length > 5 && (roomCodeInput.value = roomCodeInput.value.slice(0, 5))" type="number"> -->
         <input #roomCodeInput (keydown.enter)="joinRoom(roomCodeInput.value)" type="text"
-          placeholder="Enter room code here" maxlength="5">
-        <button (click)="joinRoom(roomCodeInput.value)">join</button>
+          placeholder="Код комнаты" (input)="roomCodeInput.value.length > 5 && (roomCodeInput.value = roomCodeInput.value.slice(0, 5))" type="number">
+        <!-- <button (click)="joinRoom(roomCodeInput.value)">join</button> -->
+        <button (click)="joinRoom(roomCodeInput.value)">Присоединиться</button>
       </ng-template>
-      <button (click)="closePopup()">close</button>
+      <!-- <button (click)="closePopup()">close</button> -->
+      <button (click)="closePopup()">Закрыть</button>
     </div>
   </div>
 </div>
