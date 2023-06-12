@@ -3,7 +3,7 @@ import { WebSocketService } from '../../ws.service';
 import { WebRtcService } from '../../webrtc.service';
 import { ISocketMessage, IRtcData, RtcDataTypeEnum, IMessage, IQueryParams } from '../../interfaces';
 import { Observable, of } from 'rxjs';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 
 @Component({
   selector: 'app-room',
@@ -28,7 +28,8 @@ export class RoomComponent implements OnInit {
   constructor(
     private webSocketService: WebSocketService,
     private webRtcService: WebRtcService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -213,6 +214,6 @@ export class RoomComponent implements OnInit {
   // Choose level
 
   public chooseLevel() {
-
+    this.router.navigate(['/room/choose-level'])
   }
 }
