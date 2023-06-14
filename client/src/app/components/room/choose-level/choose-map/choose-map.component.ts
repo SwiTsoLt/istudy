@@ -27,6 +27,7 @@ export class ChooseMapComponent implements OnInit {
   
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
+      console.log(params.get('id'));
       const subjectId: number = Number(params.get('id'))
       this.mapName = this.mapList[subjectId].title
     })

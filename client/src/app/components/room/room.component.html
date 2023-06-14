@@ -32,7 +32,7 @@
       <button (click)="closePopup()">Закрыть</button>
     </div>
   </div>
-  <div class="subjects">
-    <app-choose-level></app-choose-level>
+  <div *ngIf="connectWebRtcStatus && isOwner" class="subjects">
+    <router-outlet></router-outlet>
   </div>
 </div>
