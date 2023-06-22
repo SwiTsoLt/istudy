@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { WebSocketService } from '../../ws.service';
 import { WebRtcService } from '../../webrtc.service';
 import { ISocketMessage, IRtcData, RtcDataTypeEnum, IMessage, IQueryParams } from '../../interfaces';
-import { Observable, of } from 'rxjs';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 
 @Component({
@@ -158,11 +157,13 @@ export class RoomComponent implements OnInit {
 
 
     // subscribe channel
+    // owner
 
     if (this.isOwner) {
       this.webRtcService.subscribeToDataChannelOpen()
         .subscribe(() => {
           [this.connectWebRtcStatus, this.showPopupState, this.startConnectingState, this.messageLabel] = [true, false, false, 'success connect webrtc channel']
+          this.router.navigate(['/room/subject'])
         })
 
       this.webRtcService.subscribeToDataChannelMessage()
@@ -176,18 +177,16 @@ export class RoomComponent implements OnInit {
         .subscribe(() => {
           this.connectWebRtcStatus = false
         })
-    }
+    } else {
+      // joiner
 
-    // owner
-
-    if (!this.isOwner) {
       const dataChannel: RTCDataChannel | null = this.webRtcService.addChannel('dataChannel')
       dataChannel && this.webRtcService.setDataChannel(dataChannel)
 
       if (dataChannel) {
         this.webRtcService.subscribeToDataChannelOpen(dataChannel)
           .subscribe(() => {
-            [this.connectWebRtcStatus, this.showPopupState, this.startConnectingState, this.messageLabel] = [true, false, false, 'success connect webrtc channel']
+            [this.connectWebRtcStatus, this.showPopupState, this.startConnectingState, this.messageLabel] = [true, false, false, 'success connect webrtc channel'];
           })
 
         this.webRtcService.subscribeToDataChannelMessage(dataChannel)
@@ -208,12 +207,7 @@ export class RoomComponent implements OnInit {
           this.webRtcService.setLocalDescription(description)
           this.webSocketService.emit('rtcData', { type: RtcDataTypeEnum.description, data: description })
         })
+
     }
-  }
-
-  // Choose level
-
-  public chooseLevel() {
-    this.router.navigate(['/room/choose-level'])
   }
 }

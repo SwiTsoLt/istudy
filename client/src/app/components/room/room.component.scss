@@ -12,7 +12,7 @@
   button,
   input {
     width: 100%;
-    height: 60px;
+    height: $button-h;
     background-color: transparent;
     border: 2px solid #303030;
     outline: none;
@@ -32,7 +32,7 @@
     &:is(input),
     &:is(input)::placeholder {
       text-align: center;
-      line-height: 60px;
+      line-height: $button-h;
       font-weight: bold;
       padding: $p;
     }
@@ -40,7 +40,6 @@
     &:is(input):focus {
       color: $text-clr;
       border-color: $m-c-v;
-      box-shadow: 0 0 4px $m-c-v;
     }
 
     &:is(input)::-webkit-outer-spin-button,
@@ -52,7 +51,6 @@
     &:hover {
       border-color: $m-c-y-2;
       color: $m-c-y-2;
-      box-shadow: 0 0 4px $m-c-y-2;
     }
   }
 
@@ -63,7 +61,6 @@
     height: 100%;
     max-width: $c-w;
     background-color: $m-c-w;
-    box-shadow: 0 0 10px $m-c-w;
     margin: 0 auto;
 
     .interface {
@@ -143,8 +140,8 @@
         left: 50%;
         top: 50%;
         transform: translate(-50%, -50%);
-        width: 60px;
-        height: 60px;
+        width: $button-h;
+        height: $button-h;
         background-color: #fff;
         background-image: url('../../../logo.png');
         background-repeat: no-repeat;
@@ -162,7 +159,7 @@
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: $p $p calc(60px + $p) $p;
+    padding: $p $p calc($button-h + $p) $p;
 
     .messageList {
       display: flex;
@@ -193,7 +190,7 @@
     z-index: 1;
 
     input {
-      height: 60px;
+      height: $button-h;
       text-align: left;
       border: none;
 
@@ -206,7 +203,7 @@
 
     button {
       width: 100px;
-      height: 60px;
+      height: $button-h;
       border-top: none;
       border-bottom: none;
       border-right: none;
@@ -221,8 +218,7 @@
 
   .subjects {
     width: 100%;
-    height: fit-content;
-    max-height: 100%;
-    overflow-y: auto;
+    height: 100%;
+    overflow: hidden;
   }
 }

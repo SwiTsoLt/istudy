@@ -8,21 +8,27 @@ import { HomeComponent } from './components/home/home.component';
 import { WebSocketService } from './ws.service';
 import { WebRtcService } from './webrtc.service';
 import { QRCodeModule } from 'angularx-qrcode';
-import { ChooseLevelComponent } from './components/room/choose-level/choose-level.component';
-import { ChooseMapComponent } from './components/room/choose-level/choose-map/choose-map.component'
+import { SubjectComponent } from './components/room/subject/subject.component';
+import { MapComponent } from './components/room/subject/map/map.component';
+import { StoreModule } from '@ngrx/store';
+import { reducers, metaReducers } from './reducers'
 
 @NgModule({
   declarations: [
     AppComponent,
     RoomComponent,
     HomeComponent,
-    ChooseLevelComponent,
-    ChooseMapComponent,
+    SubjectComponent,
+    MapComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    QRCodeModule
+    QRCodeModule,
+    StoreModule.forRoot({}, {}),
+    StoreModule.forRoot(reducers, {
+      metaReducers
+    })
   ],
   providers: [
     WebSocketService,

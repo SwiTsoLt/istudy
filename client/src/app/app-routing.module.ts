@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { RoomComponent } from './components/room/room.component';
 import { HomeComponent } from './components/home/home.component';
-import { ChooseLevelComponent } from './components/room/choose-level/choose-level.component';
-import { ChooseMapComponent } from './components/room/choose-level/choose-map/choose-map.component';
+import { SubjectComponent } from './components/room/subject/subject.component';
+import { MapComponent } from './components/room/subject/map/map.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: "full" },
@@ -11,9 +11,13 @@ const routes: Routes = [
   {
     path: 'room', component: RoomComponent, children: [
       {
-        path: 'choose-level', component: ChooseLevelComponent, children: [
-          { path: 'choose-map/:id', component: ChooseMapComponent }
-        ]
+        path: 'subject/:subjectId/:mapId', component: MapComponent
+      },
+      {
+        path: 'subject/:subjectId', component: MapComponent
+      },
+      {
+        path: 'subject', component: SubjectComponent
       },
     ]
   },

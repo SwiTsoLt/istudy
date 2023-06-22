@@ -1,0 +1,15 @@
+<div class="listContainer">
+    <div class="title">
+        <h2>Выберите учебный предмет</h2>
+    </div>
+    <ul>
+        <li *ngFor="let subject of subjectList" [ngClass]="{ 'disabled': subject.disabled }">
+            <a [routerLink]="subject.src">
+                <img [src]="subject.imageUrl" [alt]="subject.title">
+                <div *ngIf="subject.disabled" class="wall"></div>
+                <p *ngIf="subject.disabled">Находится в разработке</p>
+                <h2 class="title">{{ subject.title }}</h2>
+            </a>
+        </li>
+    </ul>
+</div>

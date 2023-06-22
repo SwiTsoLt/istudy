@@ -21,9 +21,12 @@
     "@angular/platform-browser": "^16.0.0",
     "@angular/platform-browser-dynamic": "^16.0.0",
     "@angular/router": "^16.0.0",
+    "@ngrx/store": "^16.0.1",
+    "@types/three": "^0.152.1",
     "angularx-qrcode": "^16.0.0",
     "rxjs": "~7.8.0",
     "socket.io-client": "^4.6.1",
+    "three": "^0.153.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.13.0"
   },
