@@ -113,9 +113,14 @@ export class GatewayService {
     this.rooms[joinDto.roomCode].clientId = socket.id;
     this.clients[socket.id].joinTo = joinDto.roomCode;
 
+    if (!this.rooms[joinDto.roomCode]?.ownerId) {
+      socket.emit('joinRoomError');
+      return { msg: `room '${joinDto.roomCode}' not found` };
+    }
+
     const ownerSocket: Socket = this.server.sockets.sockets.get(
-      this.rooms[joinDto.roomCode]?.ownerId,
-    );
+      this.rooms[joinDto.roomCode].ownerId,
+    ); 
 
     if (ownerSocket) {
       ownerSocket.emit('joinRoomSuccess', { roomCode: joinDto.roomCode });
