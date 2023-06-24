@@ -60,8 +60,8 @@ export class GatewayService {
     this.rooms[roomCode] = { ownerId: socket.id, clientId: '' };
     this.clients[socket.id].ownerOf = roomCode;
 
-    socket.emit('successCreate', { roomCode });
-    return { msg: 'room successful created' };
+    socket.emit('createRoomSuccess', { roomCode });
+    return { msg: 'room created success' };
   }
 
   public removeRoom(socket: Socket): interfaces.IMessage {
@@ -81,32 +81,32 @@ export class GatewayService {
 
     if (clientSocket) {
       this.clients[clientSocket.id].joinTo = '';
-      clientSocket.emit('successLeave');
-      clientSocket.send({ msg: 'success leave' });
+      clientSocket.emit('leaveRoomSuccess');
+      clientSocket.send({ msg: 'leave room success' });
     }
 
     delete this.rooms[client.ownerOf];
     this.clients[socket.id].ownerOf = '';
 
-    socket.emit('successRemoveRoom');
-    return { msg: 'room success removed' };
+    socket.emit('removeRoomSuccess');
+    return { msg: 'room removed success' };
   }
 
   public joinRoom(socket: Socket, joinDto: JoinDto): interfaces.IMessage {
     const client: interfaces.IClient = this.clients[socket.id];
 
     if (this.rooms[client.ownerOf]) {
-      socket.emit('errorJoin');
+      socket.emit('joinRoomError');
       return { msg: 'you are the author of room' };
     }
 
     if (!!client.joinTo.length) {
-      socket.emit('errorJoin');
+      socket.emit('joinRoomError');
       return { msg: 'you already join to a room' };
     }
 
     if (!this.rooms[joinDto.roomCode]) {
-      socket.emit('errorJoin');
+      socket.emit('joinRoomError');
       return { msg: `room '${joinDto.roomCode}' not found` };
     }
 
@@ -118,12 +118,13 @@ export class GatewayService {
     );
 
     if (ownerSocket) {
-      ownerSocket.emit('successJoin', { roomCode: joinDto.roomCode });
-      ownerSocket.send({ msg: 'success connected' });
+      ownerSocket.emit('joinRoomSuccess', { roomCode: joinDto.roomCode });
+      ownerSocket.send({ msg: 'join room success' });
     }
 
-    socket.emit('successJoin', { roomCode: joinDto.roomCode });
-    return { msg: 'success join' };
+    socket.emit('joinRoomSuccess', { roomCode: joinDto.roomCode });
+    socket.emit('startWebRtcConnection', { roomCode: joinDto.roomCode });
+    return { msg: 'join room success' };
   }
 
   public leaveRoom(socket: Socket): interfaces.IMessage {
@@ -143,14 +144,14 @@ export class GatewayService {
 
     this.rooms[this.clients[socket.id].joinTo].clientId = '';
     this.clients[socket.id].joinTo = '';
-    socket.emit('successLeave');
+    socket.emit('leaveRoomSuccess');
 
     if (ownerSocket) {
-      ownerSocket.emit('successLeave');
-      ownerSocket.send({ msg: 'success leave' });
+      ownerSocket.emit('leaveRoomSuccess');
+      ownerSocket.send({ msg: 'leave room success' });
     }
 
-    return { msg: 'success leave' };
+    return { msg: 'leave room success' };
   }
 
   private generateRoomCode(): string {
@@ -172,6 +173,8 @@ export class GatewayService {
 
   public rtcData(socket: Socket, rtcData: RtcDataDto): interfaces.IMessage {
     const client = this.clients[socket.id];
+
+    console.log(rtcData);
 
     const clientSocket = !!client.ownerOf.length
       ? this.server.sockets.sockets.get(this.rooms[client.ownerOf]?.clientId)

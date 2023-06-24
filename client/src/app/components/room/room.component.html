@@ -1,38 +1,41 @@
 <div class="room bgimage">
   <div class="container">
     <div class="interface">
-      <p class="status"><strong>Статус подключения:</strong><span>{{ connectWebRtcStatus ? 'подключено успешно': 'не подключено' }}</span></p>
-      <p class="status"><strong>Код комнаты:</strong><span>{{ roomCode || '-' }}</span></p>
-      <p class="status"><strong>Сообщения:</strong><span>{{ messageLabel || '-' }}</span></p>
+      <!-- <p class="status"><strong>Статус подключения:</strong><span>{{ connectWebRtcStatus ? 'подключено успешно': 'не подключено' }}</span></p> -->
+      <p class="status"><strong>Код комнаты:</strong><span>{{ roomCode$ | async }}</span></p>
+      <p class="status"><strong>Сообщения:</strong><span>{{ messageLabel$ | async }}</span></p>
     </div>
 
     <div class="buttons">
-      <button *ngIf="!connectWsStatus" (click)="showPopup(true)">Создать</button>
-      <button *ngIf="!connectWsStatus" (click)="showPopup(false)">Присоединиться</button>
-      <button class="leaveBtn" *ngIf="isOwner" (click)="removeRoom()">Удалить комнату</button>
-      <button class="leaveBtn" *ngIf="connectWsStatus && !isOwner" (click)="leaveRoom()">Выйти</button>
+      <button *ngIf="!(isReady$ | async) && !(isOwner$ | async)" (click)="create()">Создать</button>
+      <button *ngIf="!(isReady$ | async) && !(isOwner$ | async)" (click)="showJoinerPopup()">Присоединиться</button>
+      <button class="leaveBtn" *ngIf="(isOwner$ | async) && (isReady$ | async)" (click)="removeRoom()">Удалить
+        комнату</button>
+      <button class="leaveBtn" *ngIf="!(isOwner$ | async) && (isReady$ | async)" (click)="leaveRoom()">Выйти</button>
     </div>
 
-  <div *ngIf="showPopupState" class="popup">
-    <div class="form">
-      <div *ngIf="isOwner; then createForm else joinForm"></div>
-      <ng-template #createForm>
-        <qrcode [qrdata]="inviteQrCode" [width]="256" errorCorrectionLevel="Q" elementType="url"></qrcode>
-        <div class="roomCode">{{ roomCode }}</div>
-        <p>{{ messageLabel }}</p>
+    <div *ngIf="(showOwnerPopupState$ | async) && !(isReady$ | async)" class="popup">
+      <div class="form">
+        <qrcode [qrdata]="(inviteQrCodeUrl$ | async) || '' " [width]="256" errorCorrectionLevel="Q" elementType="url">
+        </qrcode>
+        <div class="roomCode">{{ roomCode$ | async }}</div>
+        <p>{{ messageLabel$ | async }}</p>
         <p>Wait a connection...</p>
-      </ng-template>
-      <ng-template #joinForm>
-        <strong *ngIf="startConnectingState">Wait a connection...</strong>
-        <p>{{ messageLabel }}</p>
-        <input #roomCodeInput (keydown.enter)="joinRoom(roomCodeInput.value)" type="text"
-          placeholder="Код комнаты" (input)="roomCodeInput.value.length > 5 && (roomCodeInput.value = roomCodeInput.value.slice(0, 5))" type="number">
+        <button (click)="removeRoom()">Выйти</button>
+      </div>
+    </div>
+
+    <div *ngIf="(showJoinerPopupState$ | async) && !(isReady$ | async)" class="popup">
+      <div class="form">
+        <p>{{ messageLabel$ | async }}</p>
+        <input #roomCodeInput (keydown.enter)="joinRoom(roomCodeInput.value)" type="text" placeholder="Код комнаты"
+          (input)="roomCodeInput.value.length > 5 && (roomCodeInput.value = roomCodeInput.value.slice(0, 5))"
+          type="number">
         <button (click)="joinRoom(roomCodeInput.value)">Присоединиться</button>
-      </ng-template>
-      <button (click)="closePopup()">Закрыть</button>
+        <button (click)="closeJoinerPopup()">Закрыть</button>
+      </div>
+    </div>
+    <div *ngIf="(isReady$ | async) && (isOwner$ | async)" class="subjects">
+      <router-outlet></router-outlet>
     </div>
   </div>
-  <div *ngIf="connectWebRtcStatus && isOwner" class="subjects">
-    <router-outlet></router-outlet>
-  </div>
-</div>

@@ -1,8 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Query } from '@angular/core';
 import { WebSocketService } from '../../ws.service';
-import { WebRtcService } from '../../webrtc.service';
-import { ISocketMessage, IRtcData, RtcDataTypeEnum, IMessage, IQueryParams } from '../../interfaces';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { EMPTY, Observable, catchError, take } from 'rxjs';
+import { Store, select } from '@ngrx/store';
+import * as WSActions from '../../store/ws-store/ws.actions'
+import * as webRtcActions from '../../store/webrtc-store/webrtc.actions'
+import * as wsSelectors from '../../store/ws-store/ws.selectors';
+import { wsEventsEnum, wsListenerEventEnum } from '../../store/ws-store/ws.interface';
+import { webRtcDataTypeEnum } from '../../store/webrtc-store/webrtc.interface';
+import * as webRtcSelectors from '../../store/webrtc-store/webrtc.selectors';
+import { WSReducerState } from '../../store/ws-store/ws.reducer';
+import { WebRtcReducerState } from '../../store/webrtc-store/webrtc.reducer';
 
 @Component({
   selector: 'app-room',
@@ -10,204 +18,159 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
   styleUrls: ['./room.component.scss'],
 })
 export class RoomComponent implements OnInit {
-  // Status
-  public isOwner: boolean = false
-  public connectWsStatus: boolean = false
-  public connectWebRtcStatus: boolean = false
-  public startConnectingState: boolean = false
 
-  // Popup
-  public showPopupState: boolean = false;
+  public messageLabel$: Observable<string> = this.wsStore$.pipe(select(wsSelectors.selectMessageLabel));
+  public roomCode$: Observable<string> = this.wsStore$.pipe(select(wsSelectors.selectRoomCode));
+  public showOwnerPopupState$: Observable<boolean> = this.wsStore$.pipe(select(wsSelectors.selectShowOwnerPopupState))
+  public showJoinerPopupState$: Observable<boolean> = this.wsStore$.pipe(select(wsSelectors.selectShowJoinerPopupState))
+  public inviteQrCodeUrl$: Observable<string> = this.wsStore$.pipe(select(wsSelectors.selectInviteQrCodeUrl));
+  public isOwner$: Observable<boolean> = this.wsStore$.pipe(select(wsSelectors.selectIsOwner));
 
-  // Interface
-  public messageLabel: string = "";
-  public roomCode: string = ""
-  public inviteQrCode: string = ""
+  private pc$: Observable<RTCPeerConnection | null> = this.webRtcStore$.pipe(select(webRtcSelectors.selectRTCPeerConnection))
+  public isReady$: Observable<boolean> = this.wsStore$.pipe(select(webRtcSelectors.selectIsReady));
 
   constructor(
+    private wsStore$: Store<WSReducerState>,
+    private webRtcStore$: Store<WebRtcReducerState>,
     private webSocketService: WebSocketService,
-    private webRtcService: WebRtcService,
     private route: ActivatedRoute,
     private router: Router
   ) { }
 
   ngOnInit(): void {
+    this.subscribeAll()
     this.webSocketService
       .listenMessage()
-      .subscribe((message: ISocketMessage) => {
-        this.messageLabel = message.msg
-      })
-
-    // success
-
-    this.webSocketService.listen('successCreate').subscribe(({ roomCode }: { roomCode: string }) => {
-      [this.isOwner, this.roomCode, this.showPopupState] = [true, roomCode, true]
-
-      this.inviteQrCode = `${window.location.href}?roomCode=${roomCode}`
-    });
-    this.webSocketService.listen('successRemoveRoom').subscribe(() => {
-      [this.isOwner, this.roomCode, this.showPopupState, this.connectWsStatus, this.connectWebRtcStatus] = [false, '', false, false, false]
-
-      this.webRtcService.init()
-    });
-    this.webSocketService.listen('successJoin').subscribe(({ roomCode }: { roomCode: string }) => {
-      [this.roomCode, this.connectWsStatus] = [roomCode, true]
-
-      this.startRtcConnection()
-    });
-    this.webSocketService.listen('successLeave').subscribe(() => {
-      [this.connectWsStatus, this.connectWebRtcStatus, this.startConnectingState] = [false, false, false]
-
-      !this.isOwner && (this.roomCode = '')
-      this.isOwner && (this.showPopupState = true)
-
-      this.webRtcService.init()
-    });
-
-    // errors
-
-    this.webSocketService.listen('errorJoin').subscribe(() => {
-      this.startConnectingState = false
-    });
+      .subscribe(({ msg }) => this.wsStore$.dispatch(WSActions.newMessage({ msg })))
 
     this.route.queryParams
-      .subscribe((params: any) => {
-        if (params.roomCode) {
-          this.joinRoom(params.roomCode)
-          this.showPopupState = true
-        }
+      .subscribe((query) => {
+        console.log(query);
+      })
+
+    this.isReady$
+      .subscribe(isReady => {
+        this.isOwner$
+          .pipe(take(1))
+          .subscribe(isOwner => {
+            if (isReady && isOwner) {
+              this.router.navigate(['/room/subject'])
+            } else if (!isReady && isOwner) {
+              this.wsStore$.dispatch(WSActions.openOwnerPopup())
+            }
+          })
       })
   }
 
-  public joinRoom(roomCode: string) {
-    this.webSocketService.emit('joinRoom', { roomCode })
-    this.startConnectingState = true
-  }
-
-  public leaveRoom() {
-    this.webSocketService.emit('leaveRoom', {})
+  public create() {
+    this.wsStore$.dispatch(WSActions.createRoom())
   }
 
   public removeRoom() {
-    if (this.isOwner) {
-      return this.webSocketService.emit("removeRoom", {})
-    }
+    this.wsStore$.dispatch(WSActions.removeRoom())
   }
 
-  public showPopup(createRoomState: boolean) {
-    if (createRoomState) {
-      return this.webSocketService.emit('createRoom', {})
-    }
-
-    if (this.isOwner) {
-      return this.messageLabel = 'you are the author of a room'
-    }
-
-    if (this.connectWsStatus) {
-      return this.messageLabel = 'you are already join to someone’s room'
-    }
-
-    this.messageLabel = ''
-    this.showPopupState = true
+  public showJoinerPopup() {
+    this.wsStore$.dispatch(WSActions.openJoinerPopup())
   }
 
-  public closePopup() {
-    if (this.isOwner) {
-      return this.webSocketService.emit("removeRoom", {})
-    }
-    this.connectWsStatus && this.webSocketService.emit("leaveRoom", {})
-    return this.showPopupState = false
+  public joinRoom(code: string) {
+    this.wsStore$.dispatch(WSActions.joinRoom({ roomCode: code }))
   }
 
-  // Rtc
+  public leaveRoom() {
+    this.wsStore$.dispatch(WSActions.leaveRoom())
+  }
 
-  private startRtcConnection() {
-    this.webRtcService.init()
+  public closeJoinerPopup() {
+    this.wsStore$.dispatch(WSActions.closeJoinerPopup())
+  }
 
-    // subscribe
+  // Subscribe
 
-    // subscribe main
-
-    this.webRtcService.subscribeToIceCandidate()
-      .subscribe((candidate: RTCIceCandidate | undefined) => {
-        this.webSocketService.emit('rtcData', { type: RtcDataTypeEnum.icecandidate, data: candidate })
-      })
-
-    this.webSocketService.listen(RtcDataTypeEnum.description)
-      .subscribe((rtcData: IRtcData) => {
-        if (rtcData.type === RtcDataTypeEnum.description && (rtcData?.data?.type === 'offer' || rtcData?.data?.type === 'answer')) {
-          this.webRtcService.setRemoteDescription(rtcData.data)
-
-          if (!this.webRtcService.getLocalDescription()) {
-            this.webRtcService.createAnswer()
-              .subscribe((description: RTCSessionDescriptionInit) => {
-                this.webRtcService.setLocalDescription(description)
-                this.webSocketService.emit('rtcData', { type: RtcDataTypeEnum.description, data: description })
-              })
+  private subscribeHandler(
+    listenerName: string,
+    successFunction: Function,
+    errorFunction: Function,
+    withRoomCode: boolean
+  ) {
+    this.webSocketService.listen(listenerName)
+      .pipe(
+        catchError(() => {
+          this.wsStore$.dispatch(errorFunction())
+          return EMPTY
+        })
+      ).subscribe((data) => {
+        if (withRoomCode) {
+          if (!data?.roomCode) {
+            return this.wsStore$.dispatch(errorFunction())
           }
+
+          return this.wsStore$.dispatch(successFunction({ roomCode: data.roomCode }))
+        }
+        return this.wsStore$.dispatch(successFunction())
+      })
+  }
+
+  private subscribeAll() {
+    // ws
+
+    this.subscribeHandler(wsListenerEventEnum.createRoomSuccess, WSActions.createRoomSuccess, WSActions.createRoomError, true)
+    this.subscribeHandler(wsListenerEventEnum.createRoomError, WSActions.createRoomError, WSActions.createRoomError, false)
+    this.subscribeHandler(wsListenerEventEnum.removeRoomSuccess, WSActions.removeRoomSuccess, WSActions.removeRoomError, false)
+    this.subscribeHandler(wsListenerEventEnum.removeRoomError, WSActions.removeRoomError, WSActions.removeRoomError, false)
+    this.subscribeHandler(wsListenerEventEnum.joinRoomSuccess, WSActions.joinRoomSuccess, WSActions.joinRoomError, true)
+    this.subscribeHandler(wsListenerEventEnum.joinRoomError, WSActions.joinRoomError, WSActions.joinRoomError, false)
+    this.subscribeHandler(wsListenerEventEnum.leaveRoomSuccess, WSActions.leaveRoomSuccess, WSActions.leaveRoomError, false)
+    this.subscribeHandler(wsListenerEventEnum.leaveRoomError, WSActions.leaveRoomError, WSActions.leaveRoomError, false)
+
+    // rtc
+
+    this.webSocketService.listen(wsListenerEventEnum.startWebRtcConnection)
+      .subscribe(({ roomCode }) => {
+        if (roomCode) {
+          this.webRtcStore$.dispatch(webRtcActions.initWebRtcPeerConnection())
+          this.webRtcStore$.dispatch(webRtcActions.createDataChannel({ label: 'controllerPositionDataChannel' }))
+          this.webRtcStore$.dispatch(webRtcActions.createOffer())
         }
       })
 
-    this.webSocketService.listen(RtcDataTypeEnum.icecandidate)
-      .subscribe((rtcData: IRtcData) => {
-        if (rtcData.type === RtcDataTypeEnum.icecandidate) {
-          this.webRtcService.addIceCandidate(rtcData.data as undefined)
-        }
+    this.webSocketService.listen(wsListenerEventEnum.offer)
+      .subscribe(({ description }) => {
+        this.webRtcStore$.dispatch(webRtcActions.initWebRtcPeerConnection())
+        this.webRtcStore$.dispatch(webRtcActions.setRemoteDescription({ description }))
+        this.webRtcStore$.dispatch(webRtcActions.createAnswer())
       })
 
+    this.webSocketService.listen(wsListenerEventEnum.answer)
+      .subscribe(({ description }) => {
+        this.webRtcStore$.dispatch(webRtcActions.setRemoteDescription({ description }))
+      })
 
-    // subscribe channel
-    // owner
+    this.webSocketService.listen(wsListenerEventEnum.icecandidate)
+      .subscribe(({ candidate }) => {
+        return this.webRtcStore$.dispatch(webRtcActions.addIceCandidate({ candidate }))
+      })
 
-    if (this.isOwner) {
-      this.webRtcService.subscribeToDataChannelOpen()
-        .subscribe(() => {
-          [this.connectWebRtcStatus, this.showPopupState, this.startConnectingState, this.messageLabel] = [true, false, false, 'success connect webrtc channel']
-          this.router.navigate(['/room/subject'])
+    this.pc$.subscribe((pc: RTCPeerConnection | null) => {
+      if (pc) {
+        pc.addEventListener('icecandidate', (event: RTCPeerConnectionIceEvent) => {
+          if (event.candidate) {
+            this.webSocketService.emit(wsEventsEnum.rtcData, { type: webRtcDataTypeEnum.icecandidate, candidate: event.candidate })
+          }
         })
 
-      this.webRtcService.subscribeToDataChannelMessage()
-        .subscribe((newMessage: string) => {
-          const parserMessage: IMessage = JSON.parse(newMessage)
+        pc.addEventListener('datachannel', (event: RTCDataChannelEvent) => {
+          event.channel.addEventListener('open', (event: Event) => {
+            console.log('connect');
+            this.webRtcStore$.dispatch(webRtcActions.connectSuccess())
+          })
 
-          console.log(parserMessage);
+          event.channel.addEventListener("message", (event: MessageEvent) => {
+            console.log(event.data);
+          })
         })
-
-      this.webRtcService.subscribeToDataChannelClose()
-        .subscribe(() => {
-          this.connectWebRtcStatus = false
-        })
-    } else {
-      // joiner
-
-      const dataChannel: RTCDataChannel | null = this.webRtcService.addChannel('dataChannel')
-      dataChannel && this.webRtcService.setDataChannel(dataChannel)
-
-      if (dataChannel) {
-        this.webRtcService.subscribeToDataChannelOpen(dataChannel)
-          .subscribe(() => {
-            [this.connectWebRtcStatus, this.showPopupState, this.startConnectingState, this.messageLabel] = [true, false, false, 'success connect webrtc channel'];
-          })
-
-        this.webRtcService.subscribeToDataChannelMessage(dataChannel)
-          .subscribe((newMessage: string) => {
-            const parserMessage: IMessage = JSON.parse(newMessage)
-
-            console.log(parserMessage);
-          })
-
-        this.webRtcService.subscribeToDataChannelClose(dataChannel)
-          .subscribe(() => {
-            this.connectWebRtcStatus = false
-          })
       }
-
-      this.webRtcService.createOffer()
-        .subscribe((description: RTCSessionDescriptionInit) => {
-          this.webRtcService.setLocalDescription(description)
-          this.webSocketService.emit('rtcData', { type: RtcDataTypeEnum.description, data: description })
-        })
-
-    }
+    })
   }
 }

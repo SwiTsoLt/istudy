@@ -11,7 +11,11 @@ import { QRCodeModule } from 'angularx-qrcode';
 import { SubjectComponent } from './components/room/subject/subject.component';
 import { MapComponent } from './components/room/subject/map/map.component';
 import { StoreModule } from '@ngrx/store';
-import { reducers, metaReducers } from './reducers'
+import { reducers, metaReducers } from './store/index'
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { EffectsModule } from '@ngrx/effects'
+import { WSEffects } from './store/ws-store/ws.effects'
+import { WebRtcEffects } from './store/webrtc-store/webrtc.effects';
 
 @NgModule({
   declarations: [
@@ -25,10 +29,20 @@ import { reducers, metaReducers } from './reducers'
     BrowserModule,
     AppRoutingModule,
     QRCodeModule,
-    StoreModule.forRoot({}, {}),
     StoreModule.forRoot(reducers, {
       metaReducers
-    })
+    }),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25,
+      logOnly: false,
+      autoPause: true,
+      features: {
+        pause: false,
+        lock: true,
+        persist: true
+      }
+    }),
+    EffectsModule.forRoot([WSEffects, WebRtcEffects]),
   ],
   providers: [
     WebSocketService,
