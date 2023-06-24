@@ -48,7 +48,7 @@ export class RoomComponent implements OnInit {
         this.isOwner$
           .pipe(take(1))
           .subscribe(isOwner => {
-            if (isReady && isOwner) {
+            if (isReady && !isOwner) {
               this.router.navigate(['/room/subject'])
             } else if (!isReady && isOwner) {
               this.wsStore$.dispatch(WSActions.openOwnerPopup())

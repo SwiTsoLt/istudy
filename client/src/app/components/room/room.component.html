@@ -35,7 +35,7 @@
         <button (click)="closeJoinerPopup()">Закрыть</button>
       </div>
     </div>
-    <div *ngIf="(isReady$ | async) && (isOwner$ | async)" class="subjects">
+    <div *ngIf="(isReady$ | async) && !(isOwner$ | async)" class="subjects">
       <router-outlet></router-outlet>
     </div>
   </div>
