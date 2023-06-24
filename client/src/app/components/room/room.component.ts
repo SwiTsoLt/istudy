@@ -43,11 +43,6 @@ export class RoomComponent implements OnInit {
       .listenMessage()
       .subscribe(({ msg }) => this.wsStore$.dispatch(WSActions.newMessage({ msg })))
 
-    this.route.queryParams
-      .subscribe((query) => {
-        console.log(query);
-      })
-
     this.isReady$
       .subscribe(isReady => {
         this.isOwner$
@@ -59,6 +54,13 @@ export class RoomComponent implements OnInit {
               this.wsStore$.dispatch(WSActions.openOwnerPopup())
             }
           })
+      })
+
+      this.route.queryParams
+      .subscribe((query) => {
+        if (query['roomCode'].length) {
+          this.joinRoom(query['roomCode'])
+        }
       })
   }
 
