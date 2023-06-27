@@ -1,7 +1,7 @@
 import { createReducer, on } from '@ngrx/store';
 import * as WebRtcActions from './webrtc.actions';
 
-export const webRtcNode = "webRtc"
+export const webRtcNode = 'webRtc'
 
 export interface WebRtcReducerState {
     pc: RTCPeerConnection | null,

@@ -1,9 +1,10 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { WebSocketService } from "../../ws.service";
-import { wsActionsEnum, wsErrorActionsEnum, wsEventsEnum, wsListenerEventEnum, wsSuccessActionsEnum } from "./ws.interface"
+import { wsActionsEnum, wsErrorActionsEnum, wsEventsEnum, wsSuccessActionsEnum } from "./ws.interface"
 import { EMPTY, of } from "rxjs";
-import { catchError, exhaustMap, map, switchMap, take } from "rxjs/operators";
+import { catchError, exhaustMap } from "rxjs/operators";
+import { Router } from "@angular/router";
 
 @Injectable()
 export class WSEffects {
@@ -22,7 +23,18 @@ export class WSEffects {
         this.actions$.pipe(
             ofType(wsActionsEnum.removeRoom),
             exhaustMap(() => {
+                this.router.navigate(['/room'])
                 this.webSocketService.emit(wsEventsEnum.removeRoom, {})
+                return EMPTY
+            }),
+            catchError(() => of({ type: wsErrorActionsEnum.removeRoomError }))
+        ))
+
+    public removeRoomSuccess$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(wsSuccessActionsEnum.removeRoomSuccess),
+            exhaustMap(() => {
+                this.router.navigate(['/room'])
                 return EMPTY
             }),
             catchError(() => of({ type: wsErrorActionsEnum.removeRoomError }))
@@ -38,18 +50,29 @@ export class WSEffects {
             catchError(() => of({ type: wsErrorActionsEnum.joinRoomError }))
         ))
 
-    public leaveRoom$ = createEffect(() => 
-    this.actions$.pipe(
-        ofType(wsActionsEnum.leaveRoom),
-        exhaustMap(() => {
-            this.webSocketService.emit(wsEventsEnum.leaveRoom, {})
-            return EMPTY
-        }),
-        catchError(() => of({ type: wsErrorActionsEnum.leaveRoomError }))
-    ))
+    public leaveRoom$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(wsActionsEnum.leaveRoom),
+            exhaustMap(() => {
+                this.webSocketService.emit(wsEventsEnum.leaveRoom, {})
+                return EMPTY
+            }),
+            catchError(() => of({ type: wsErrorActionsEnum.leaveRoomError }))
+        ))
+
+    public leaveRoomSuccess$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(wsSuccessActionsEnum.leaveRoomSuccess),
+            exhaustMap(() => {
+                this.router.navigate(['/room'])
+                return EMPTY
+            }),
+            catchError(() => of({ type: wsErrorActionsEnum.leaveRoomError }))
+        ))
 
     constructor(
         private actions$: Actions,
-        private webSocketService: WebSocketService
+        private webSocketService: WebSocketService,
+        private router: Router,
     ) { }
 }

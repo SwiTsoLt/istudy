@@ -1,0 +1,31 @@
+@import '../../../../variables.scss';
+
+.interface {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: fit-content;
+    background-color: $m-c-w;
+
+    .container {
+        display: flex;
+        gap: $p;
+        width: 100%;
+        height: fit-content;
+        padding: $p;
+
+        .backLink {
+            width: 200px;
+            height: $button-h;
+            line-height: $button-h;
+            text-align: center;
+            text-decoration: none;
+            color: $text-clr;
+            font-size: $fs;
+            border: 2px solid $text-clr;
+            background-color: $m-c-w;
+            cursor: pointer;
+        }
+    }
+}

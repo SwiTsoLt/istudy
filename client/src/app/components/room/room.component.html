@@ -1,9 +1,12 @@
 <div class="room bgimage">
   <div class="container">
+    <div class="title">
+      <h1>Комната</h1>
+    </div>
     <div class="interface">
-      <!-- <p class="status"><strong>Статус подключения:</strong><span>{{ connectWebRtcStatus ? 'подключено успешно': 'не подключено' }}</span></p> -->
+      <p class="status"><strong>Статус подключения:</strong><span>{{ (isReady$ | async) ? 'подключено успешно': 'не подключено' }}</span></p>
       <p class="status"><strong>Код комнаты:</strong><span>{{ roomCode$ | async }}</span></p>
-      <p class="status"><strong>Сообщения:</strong><span>{{ messageLabel$ | async }}</span></p>
+      <!-- <p class="status"><strong>Сообщения:</strong><span>{{ messageLabel$ | async }}</span></p> -->
     </div>
 
     <div class="buttons">
@@ -19,15 +22,16 @@
         <qrcode [qrdata]="(inviteQrCodeUrl$ | async) || '' " [width]="256" errorCorrectionLevel="Q" elementType="url">
         </qrcode>
         <div class="roomCode">{{ roomCode$ | async }}</div>
-        <p>{{ messageLabel$ | async }}</p>
-        <p>Wait a connection...</p>
+        <!-- <p>{{ messageLabel$ | async }}</p> -->
+        <p>Ожидание подключения...</p>
         <button (click)="removeRoom()">Выйти</button>
       </div>
     </div>
 
     <div *ngIf="(showJoinerPopupState$ | async) && !(isReady$ | async)" class="popup">
       <div class="form">
-        <p>{{ messageLabel$ | async }}</p>
+        <!-- <p>{{ messageLabel$ | async }}</p> -->
+        <h2>Введите код комнаты</h2>
         <input #roomCodeInput (keydown.enter)="joinRoom(roomCodeInput.value)" type="text" placeholder="Код комнаты"
           (input)="roomCodeInput.value.length > 5 && (roomCodeInput.value = roomCodeInput.value.slice(0, 5))"
           type="number">
@@ -35,7 +39,7 @@
         <button (click)="closeJoinerPopup()">Закрыть</button>
       </div>
     </div>
-    <div *ngIf="(isReady$ | async) && !(isOwner$ | async)" class="subjects">
+    <div class="selectorContainer">
       <router-outlet></router-outlet>
     </div>
   </div>

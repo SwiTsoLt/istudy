@@ -2,28 +2,32 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { RoomComponent } from './components/room/room.component';
 import { HomeComponent } from './components/home/home.component';
-import { SubjectComponent } from './components/room/subject/subject.component';
-import { MapComponent } from './components/room/subject/map/map.component';
+import { SelectorComponent } from './components/room/selector/selector.component';
+import { CanvasComponent } from './components/canvas/canvas.component';
+import { ConnectionGuardService } from './guards/connection-guard/connection-guard.service';
+import { NotfoundComponent } from './components/notfound/notfound.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: "full" },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
+  {
+    path: 'room/selector/:subjectId/:mapId', component: CanvasComponent,
+    canActivate: [ConnectionGuardService]
+  },
   {
     path: 'room', component: RoomComponent, children: [
       {
-        path: 'subject/:subjectId/:mapId', component: MapComponent
+        path: 'selector/:subjectId', component: SelectorComponent, canActivate: [ConnectionGuardService]
       },
       {
-        path: 'subject/:subjectId', component: MapComponent
-      },
-      {
-        path: 'subject', component: SubjectComponent
+        path: 'selector', component: SelectorComponent, canActivate: [ConnectionGuardService]
       },
     ]
   },
-  // {path: "/room/:id", component: DisplayComponent},
-  // {path: "/controller", component: ControllerComponent},
-  // {path: "/display", component: DisplayComponent},
+  {
+    path: '**',
+    component: NotfoundComponent
+  }
 ];
 
 @NgModule({

@@ -12,7 +12,7 @@ import * as interfaces from '../interfaces';
 
 @WebSocketGateway()
 export class GatewayController implements OnModuleInit {
-  constructor(private gatewayService: GatewayService) {}
+  constructor(private gatewayService: GatewayService) { }
 
   onModuleInit() {
     this.gatewayService.init();
@@ -22,14 +22,20 @@ export class GatewayController implements OnModuleInit {
   handleCreateRoomEvent(@ConnectedSocket() socket: Socket) {
     const response: interfaces.IMessage =
       this.gatewayService.createRoom(socket);
-    socket.send(response);
+
+    if (response?.type) {
+      socket.send(response);
+    }
   }
 
   @SubscribeMessage('removeRoom')
   handleRemoveRoomEvent(@ConnectedSocket() socket: Socket) {
     const response: interfaces.IMessage =
       this.gatewayService.removeRoom(socket);
-    socket.send(response);
+
+    if (response?.type) {
+      socket.send(response);
+    }
   }
 
   @SubscribeMessage('joinRoom')
@@ -41,13 +47,19 @@ export class GatewayController implements OnModuleInit {
       socket,
       joinDto,
     );
-    socket.send(response);
+
+    if (response?.type) {
+      socket.send(response);
+    }
   }
 
   @SubscribeMessage('leaveRoom')
   handleLeaveRoomEvent(@ConnectedSocket() socket: Socket) {
     const response: interfaces.IMessage = this.gatewayService.leaveRoom(socket);
-    socket.send(response);
+
+    if (response?.type) {
+      socket.send(response);
+    }
   }
 
   // RTC
@@ -61,6 +73,10 @@ export class GatewayController implements OnModuleInit {
       socket,
       rtcDataDto,
     );
-    socket.send(response);
+
+    if (response?.type) {
+      socket.send(response);
+
+    }
   }
 }

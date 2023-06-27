@@ -1,0 +1,81 @@
+@import '../../../../variables.scss';
+
+.toast {
+    display: grid;
+    grid-template-columns: calc($button-h - $p * 2) 1fr;
+    gap: $p;
+    position: relative;
+    width: 400px;
+    height: fit-content;
+    border-radius: $bor-r;
+    background-color: $m-c-w;
+    animation: toastShowAndHide 5s ease forwards;
+    padding: $p;
+
+    &.success > .icon {
+        background-image: url('../../../media/toast/accept.svg');
+    }
+
+    &.error > .icon {
+        background-image: url('../../../media/toast/error.svg');
+    }
+
+    &.warning > .icon {
+        background-image: url('../../../media/toast/warning.svg');
+    }
+
+    &.notify > .icon {
+        background-image: url('../../../media/toast/notify.svg');
+    }
+
+    .icon {
+        width: auto;
+        height: 100%;
+        aspect-ratio: 1/1;
+    }
+
+    .text {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+
+        p {
+            width: 100%;
+        }
+    }
+
+    .cross {
+        position: absolute;
+        right: $p;
+        top: $p;
+        background-image: url('../../../media/toast/cross.svg');
+        width: 30px;
+        height: 30px;
+        border: none;
+        background-color: transparent;
+        cursor: pointer;
+    }
+}
+
+@keyframes toastShowAndHide {
+    0% {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+
+    20% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    80% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+}

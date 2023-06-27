@@ -1,11 +1,6 @@
 import { createFeatureSelector, createSelector } from "@ngrx/store"
 import { WebRtcReducerState, webRtcNode } from "./webrtc.reducer";
 
-export interface AppState {
-    selectedRTCPerrConnection: RTCPeerConnection,
-}
-
-
 export const selectFeature = createFeatureSelector<WebRtcReducerState>(webRtcNode)
 
 export const selectRTCPeerConnection = createSelector(

@@ -1,0 +1,4 @@
+<div class="toastContainer">
+    <app-toast-item *ngFor="let toast of toastList$ | async; let index = index" [toast]="toast"
+        [index]="index"></app-toast-item>
+</div>

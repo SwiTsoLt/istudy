@@ -1,3 +1,5 @@
+import { messageType } from "./gateway/gateway.dto";
+
 export interface IRoom {
   ownerId: string;
   clientId: string;
@@ -8,6 +10,7 @@ export interface IRoomList {
 }
 
 export interface IMessage {
+  type: messageType
   msg: string;
 }
 

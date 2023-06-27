@@ -1,14 +1,6 @@
 import { createFeatureSelector, createSelector } from "@ngrx/store"
 import { WSReducerState, wsNode } from "./ws.reducer";
 
-export interface AppState {
-    selectedMessageLabel: string,
-    selectedRoomCode: string,
-    selectShowOwnerPopupState: boolean,
-    selectJoinerPopupState: boolean,
-    inviteQrCodeUrl: string,
-}
-
 
 export const selectFeature = createFeatureSelector<WSReducerState>(wsNode)
 

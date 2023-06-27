@@ -1,3 +1,5 @@
+import { ToastType } from "./store/toast-store/toast.interfece";
+
 export interface IRoom {
     id: string;
     name: string;
@@ -17,6 +19,7 @@ export interface IRtcData {
 }
 
 export interface ISocketMessage {
+    type: ToastType,
     msg: string
 }
 

@@ -1,7 +1,7 @@
 import { Component, OnInit, Query } from '@angular/core';
 import { WebSocketService } from '../../ws.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EMPTY, Observable, catchError, take } from 'rxjs';
+import { EMPTY, Observable, catchError, forkJoin, take } from 'rxjs';
 import { Store, select } from '@ngrx/store';
 import * as WSActions from '../../store/ws-store/ws.actions'
 import * as webRtcActions from '../../store/webrtc-store/webrtc.actions'
@@ -11,6 +11,9 @@ import { webRtcDataTypeEnum } from '../../store/webrtc-store/webrtc.interface';
 import * as webRtcSelectors from '../../store/webrtc-store/webrtc.selectors';
 import { WSReducerState } from '../../store/ws-store/ws.reducer';
 import { WebRtcReducerState } from '../../store/webrtc-store/webrtc.reducer';
+import { Title } from '@angular/platform-browser';
+import { ToastState } from '../../store/toast-store/toast.reducer';
+import { createToast } from '../../store/toast-store/toast.actions';
 
 @Component({
   selector: 'app-room',
@@ -32,16 +35,23 @@ export class RoomComponent implements OnInit {
   constructor(
     private wsStore$: Store<WSReducerState>,
     private webRtcStore$: Store<WebRtcReducerState>,
+    private toastStore$: Store<ToastState>,
     private webSocketService: WebSocketService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private titleService: Title
   ) { }
 
   ngOnInit(): void {
+    this.titleService.setTitle('IStudy - Комната')
+
     this.subscribeAll()
     this.webSocketService
       .listenMessage()
-      .subscribe(({ msg }) => this.wsStore$.dispatch(WSActions.newMessage({ msg })))
+      .subscribe(({ type, msg }) => {
+        this.wsStore$.dispatch(WSActions.newMessage({ msg }))
+        this.toastStore$.dispatch(createToast({ toast: { type, text: msg } }))
+      })
 
     this.isReady$
       .subscribe(isReady => {
@@ -49,16 +59,16 @@ export class RoomComponent implements OnInit {
           .pipe(take(1))
           .subscribe(isOwner => {
             if (isReady && !isOwner) {
-              this.router.navigate(['/room/subject'])
+              this.router.navigate(['/room/selector'])
             } else if (!isReady && isOwner) {
               this.wsStore$.dispatch(WSActions.openOwnerPopup())
             }
           })
       })
 
-      this.route.queryParams
+    this.route.queryParams
       .subscribe((query) => {
-        if (query['roomCode'].length) {
+        if (query['roomCode']?.length) {
           this.joinRoom(query['roomCode'])
         }
       })
@@ -78,6 +88,23 @@ export class RoomComponent implements OnInit {
 
   public joinRoom(code: string) {
     this.wsStore$.dispatch(WSActions.joinRoom({ roomCode: code }))
+
+    setTimeout(() => {
+      forkJoin(
+        this.isReady$.pipe(take(1)),
+        this.showJoinerPopupState$.pipe(take(1))
+      )
+        .subscribe(([isReady, showJoinerPopupState]) => {
+          if (!isReady && showJoinerPopupState) {
+            this.toastStore$.dispatch(createToast({ toast: { type: 'error', text: 'Ошибка подключения' } }))
+
+            setTimeout(() => {
+              this.toastStore$.dispatch(createToast({ toast: { type: 'notify', text: 'Переподключение' } }))
+              this.joinRoom(code)
+            }, 1000)
+          }
+        })
+    }, 5000)
   }
 
   public leaveRoom() {

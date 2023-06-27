@@ -1,0 +1,53 @@
+@import '../../../variables.scss';
+
+.notfound {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+    background-image: url('../../media/notfound/bg.jpg');
+    background-size: 35%;
+    padding: calc($p * 2);
+
+    h2 {
+        font-size: calc($fs * 2);
+        text-align: center;
+    }
+
+    a {
+        position: relative;
+        width: 400px;
+        height: $button-h;
+        background-color: $m-c-b;
+        border-radius: $bor-r-c;
+        overflow: hidden;
+        cursor: pointer;
+        transition: background-color $tr-l ease;
+
+        p {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            color: $m-c-w;
+            font-weight: bold;
+            font-size: $fs;
+            line-height: $button-h;
+            text-decoration: none;
+            text-align: center;
+            transition: color $tr-l ease;
+            z-index: 1;
+        }
+
+        &:hover {
+            background-color: $m-c-y;
+        }
+
+        &:hover>p {
+            color: $text-clr;
+        }
+    }
+}

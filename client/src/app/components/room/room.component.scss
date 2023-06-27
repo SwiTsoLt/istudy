@@ -14,7 +14,8 @@
     width: 100%;
     height: $button-h;
     background-color: transparent;
-    border: 2px solid #303030;
+    border: 2px solid $m-c-y;
+    border-radius: $bor-r-c;
     outline: none;
     text-align: center;
     user-select: none;
@@ -22,7 +23,14 @@
     padding: 0 $p;
 
     &:is(button) {
+      background-color: $m-c-y;
+      border: none;
       cursor: pointer;
+    }
+
+    &:is(button):hover {
+      background-color: $m-c-v;
+      color: $m-c-w;
     }
 
     &:is(button):active {
@@ -37,9 +45,13 @@
       padding: $p;
     }
 
+    &:is(input):hover {
+      border-color: $m-c-v;
+    } 
+
     &:is(input):focus {
       color: $text-clr;
-      border-color: $m-c-v;
+      border-color: $m-c-v-2;
     }
 
     &:is(input)::-webkit-outer-spin-button,
@@ -47,21 +59,23 @@
       -webkit-appearance: none;
       margin: 0;
     }
-
-    &:hover {
-      border-color: $m-c-y-2;
-      color: $m-c-y-2;
-    }
   }
 
   .container {
     display: grid;
-    grid-template-rows: auto auto 1fr auto;
+    grid-template-rows: auto auto auto 1fr auto;
     width: 100%;
     height: 100%;
     max-width: $c-w;
     background-color: $m-c-w;
     margin: 0 auto;
+
+    .title {
+      width: 100%;
+      line-height: calc($fs * 4);
+      text-align: center;
+      border-bottom: 2px solid $text-clr;
+    }
 
     .interface {
       display: flex;
@@ -84,13 +98,17 @@
     }
 
     .buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      justify-content: center;
       grid-gap: $p;
       width: 100%;
       height: fit-content;
       border-bottom: 2px solid $text-clr;
       padding: calc($p * 2);
+
+      button {
+        width: 50%;
+      }
     }
   }
 
@@ -125,6 +143,7 @@
     }
 
     p,
+    h2,
     strong {
       text-align: center;
     }
@@ -152,72 +171,7 @@
     }
   }
 
-  .messageListContainer {
-    display: flex;
-    align-items: flex-start;
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: $p $p calc($button-h + $p) $p;
-
-    .messageList {
-      display: flex;
-      flex-direction: column;
-      grid-gap: $p;
-      width: 100%;
-      height: fit-content;
-
-      .message {
-        display: flex;
-        grid-gap: $p;
-        width: 100%;
-        height: fit-content;
-      }
-    }
-  }
-
-  .messageForm {
-    display: flex;
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    transform: translateX(-50%);
-    width: 100%;
-    height: fit-content;
-    max-width: $c-w;
-    border-top: 2px solid $text-clr;
-    z-index: 1;
-
-    input {
-      height: $button-h;
-      text-align: left;
-      border: none;
-
-      &:disabled {
-        background-color: #ebebeb;
-        color: #303030aa;
-        cursor: default;
-      }
-    }
-
-    button {
-      width: 100px;
-      height: $button-h;
-      border-top: none;
-      border-bottom: none;
-      border-right: none;
-
-      &:disabled {
-        background-color: #ebebeb;
-        color: #303030aa;
-        cursor: default;
-      }
-    }
-  }
-
-  .subjects {
-    width: 100%;
+  .selectorContainer {
     height: 100%;
     overflow: hidden;
   }

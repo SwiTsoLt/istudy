@@ -1,0 +1,13 @@
+@import '../../../variables.scss';
+
+.toastContainer {
+    display: flex;
+    flex-direction: column;
+    gap: $p;
+    position: fixed;
+    right: $p;
+    top: $p;
+    width: fit-content;
+    height: fit-content;
+    z-index: 20;
+}

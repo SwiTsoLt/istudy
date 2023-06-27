@@ -1,0 +1,7 @@
+<div [ngClass]="toast.type" class="toast">
+    <div class="icon bgimage"></div>
+    <div class="text">
+        <p>{{ toast.text }}</p>
+    </div>
+    <button (click)="removeToast()" class="cross bgimage"></button>
+</div>
