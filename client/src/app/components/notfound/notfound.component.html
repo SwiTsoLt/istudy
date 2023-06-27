@@ -1,8 +1,14 @@
-<div class="notfound bgimage">
-    <h2>Упс... страница '<strong>{{ url }}</strong>' не найдена</h2>
-    <a (click)="goHome()">
+<div class="notfound">
+    <div class="container bgimage">
         <p>
-            Вернуться на главную
+            <strong>Упс...</strong>
+            <br>
+            <span>Страница '<b>{{ url }}</b>' не найдена</span>
         </p>
-    </a>
+        <a (click)="goHome()">
+            <p>
+                Вернуться на главную
+            </p>
+        </a>
+    </div>
 </div>

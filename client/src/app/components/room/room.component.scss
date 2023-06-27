@@ -99,6 +99,7 @@
 
     .buttons {
       display: flex;
+      flex-wrap: wrap;
       justify-content: center;
       grid-gap: $p;
       width: 100%;
@@ -107,7 +108,9 @@
       padding: calc($p * 2);
 
       button {
+        flex: 0 48%;
         width: 50%;
+        min-width: 250px;
       }
     }
   }
