@@ -10,6 +10,7 @@
     background-color: $m-c-w;
     border-radius: $bor-r;
     animation: toastShowAndHide 5s ease forwards;
+    overflow: hidden;
     padding: $p;
     
     &::after {
@@ -129,5 +130,6 @@
 @media screen and (max-width: 600px) {
     .toast {
         width: 100vw;
+        border-radius: 0;
     }
 }
