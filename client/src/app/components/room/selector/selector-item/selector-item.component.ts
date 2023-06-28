@@ -9,5 +9,7 @@ export class SelectorItemComponent {
   @Input() title: string = ''
   @Input() linkUrl: string = ''
   @Input() imageSrc: string = ''
-  @Input() disabled: boolean = false  
+  @Input() disabled: boolean = false
+  @Input() isOpenMap: boolean = false
+  @Input() callback: Function = () => {}
 }

@@ -7,7 +7,7 @@ import * as WSActions from '../../store/ws-store/ws.actions'
 import * as webRtcActions from '../../store/webrtc-store/webrtc.actions'
 import * as wsSelectors from '../../store/ws-store/ws.selectors';
 import { wsEventsEnum, wsListenerEventEnum } from '../../store/ws-store/ws.interface';
-import { webRtcDataTypeEnum } from '../../store/webrtc-store/webrtc.interface';
+import { DataChannelDataTypeEnum, DataChannelLabelEnum, webRtcDataTypeEnum } from '../../store/webrtc-store/webrtc.interface';
 import * as webRtcSelectors from '../../store/webrtc-store/webrtc.selectors';
 import { WSReducerState } from '../../store/ws-store/ws.reducer';
 import { WebRtcReducerState } from '../../store/webrtc-store/webrtc.reducer';
@@ -30,7 +30,10 @@ export class RoomComponent implements OnInit {
   public isOwner$: Observable<boolean> = this.wsStore$.pipe(select(wsSelectors.selectIsOwner));
 
   private pc$: Observable<RTCPeerConnection | null> = this.webRtcStore$.pipe(select(webRtcSelectors.selectRTCPeerConnection))
-  public isReady$: Observable<boolean> = this.wsStore$.pipe(select(webRtcSelectors.selectIsReady));
+  public isConnected$: Observable<boolean> = this.wsStore$.pipe(select(webRtcSelectors.selectIsConnected));
+  public isReady$: Observable<boolean> = this.wsStore$.pipe(select(wsSelectors.selectIsReady));
+
+  private reconnectCounter: number = 0
 
   constructor(
     private wsStore$: Store<WSReducerState>,
@@ -44,6 +47,7 @@ export class RoomComponent implements OnInit {
 
   ngOnInit(): void {
     this.titleService.setTitle('IStudy - Комната')
+    this.toastStore$.dispatch(createToast({ toast: { type: 'notify', text: 'Test notify text' } }))
 
     this.subscribeAll()
     this.webSocketService
@@ -53,14 +57,14 @@ export class RoomComponent implements OnInit {
         this.toastStore$.dispatch(createToast({ toast: { type, text: msg } }))
       })
 
-    this.isReady$
-      .subscribe(isReady => {
+    this.isConnected$
+      .subscribe(isConnected => {
         this.isOwner$
           .pipe(take(1))
           .subscribe(isOwner => {
-            if (isReady && !isOwner) {
+            if (isConnected && !isOwner) {
               this.router.navigate(['/room/selector'])
-            } else if (!isReady && isOwner) {
+            } else if (!isConnected && isOwner) {
               this.wsStore$.dispatch(WSActions.openOwnerPopup())
             }
           })
@@ -91,18 +95,28 @@ export class RoomComponent implements OnInit {
 
     setTimeout(() => {
       forkJoin(
-        this.isReady$.pipe(take(1)),
-        this.showJoinerPopupState$.pipe(take(1))
+        this.isConnected$.pipe(take(1)),
+        this.showJoinerPopupState$.pipe(take(1)),
+        this.isReady$.pipe(take(1))
       )
-        .subscribe(([isReady, showJoinerPopupState]) => {
-          if (!isReady && showJoinerPopupState) {
-            this.toastStore$.dispatch(createToast({ toast: { type: 'error', text: 'Ошибка подключения' } }))
-
-            setTimeout(() => {
-              this.toastStore$.dispatch(createToast({ toast: { type: 'notify', text: 'Переподключение' } }))
-              this.joinRoom(code)
-            }, 1000)
+        .subscribe(([isConnected, showJoinerPopupState, isReady]) => {
+          if (isConnected) return;
+          if (isReady) return;
+          if (!showJoinerPopupState) return;
+          if (this.reconnectCounter >= 3) {
+            this.toastStore$.dispatch(createToast({ toast: { type: 'error', text: 'Переподключение не удалось' } }))
+            this.wsStore$.dispatch(WSActions.joinRoomError())
+            return;
           }
+
+          this.toastStore$.dispatch(createToast({ toast: { type: 'error', text: 'Ошибка подключения' } }))
+
+          setTimeout(() => {
+            this.toastStore$.dispatch(createToast({ toast: { type: 'notify', text: 'Переподключение' } }))
+            this.joinRoom(code)
+          }, 1000)
+
+          this.reconnectCounter += 1
         })
     }, 5000)
   }
@@ -159,7 +173,8 @@ export class RoomComponent implements OnInit {
       .subscribe(({ roomCode }) => {
         if (roomCode) {
           this.webRtcStore$.dispatch(webRtcActions.initWebRtcPeerConnection())
-          this.webRtcStore$.dispatch(webRtcActions.createDataChannel({ label: 'controllerPositionDataChannel' }))
+          this.webRtcStore$.dispatch(webRtcActions.createDataChannel({ label: 'dataChannel' }))
+          this.webRtcStore$.dispatch(webRtcActions.createDataChannel({ label: 'positionChannel' }))
           this.webRtcStore$.dispatch(webRtcActions.createOffer())
         }
       })
@@ -195,8 +210,13 @@ export class RoomComponent implements OnInit {
             this.webRtcStore$.dispatch(webRtcActions.connectSuccess())
           })
 
-          event.channel.addEventListener("message", (event: MessageEvent) => {
-            console.log(event.data);
+          event.channel.addEventListener("message", (event) => {
+            const data = JSON.parse(event.data)
+            if (data.label === DataChannelLabelEnum.dataChannel) {
+              if (data.messageType === DataChannelDataTypeEnum.openMap) {
+                this.router.navigate([data.data])
+              }
+            }
           })
         })
       }

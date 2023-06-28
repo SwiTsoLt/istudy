@@ -17,11 +17,14 @@ import { EffectsModule } from '@ngrx/effects'
 import { WSEffects } from './store/ws-store/ws.effects'
 import { WebRtcEffects } from './store/webrtc-store/webrtc.effects';
 import { CanvasComponent } from './components/canvas/canvas.component';
-import { ConnectionGuardService } from './guards/connection-guard/connection-guard.service';
+import { ConnectionGuardService } from './guards/connection-guard.service';
 import { InterfaceComponent } from './components/canvas/interface/interface.component';
 import { NotfoundComponent } from './components/notfound/notfound.component';
 import { ToastComponent } from './components/toast/toast.component';
 import { ToastItemComponent } from './components/toast/toast-item/toast-item.component';
+import { LoaderComponent } from './components/loader/loader.component';
+import { JoinerGuardService } from './guards/joiner-guard.service';
+import { OwnerGuardService } from './guards/owner-guard.service';
 
 @NgModule({
   declarations: [
@@ -34,7 +37,8 @@ import { ToastItemComponent } from './components/toast/toast-item/toast-item.com
     InterfaceComponent,
     NotfoundComponent,
     ToastComponent,
-    ToastItemComponent
+    ToastItemComponent,
+    LoaderComponent
   ],
   imports: [
     BrowserModule,
@@ -58,7 +62,9 @@ import { ToastItemComponent } from './components/toast/toast-item/toast-item.com
   providers: [
     WebSocketService,
     WebRtcService,
-    ConnectionGuardService
+    ConnectionGuardService,
+    OwnerGuardService,
+    JoinerGuardService,
   ],
   bootstrap: [AppComponent]
 })

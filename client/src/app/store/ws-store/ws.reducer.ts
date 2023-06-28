@@ -10,6 +10,7 @@ export interface WSReducerState {
     showJoinerPopupState: boolean,
     inviteQrCodeUrl: string,
     isOwner: boolean,
+    isReady: boolean,
 }
 
 export const initialState: WSReducerState = {
@@ -19,31 +20,46 @@ export const initialState: WSReducerState = {
     showJoinerPopupState: false,
     inviteQrCodeUrl: '',
     isOwner: false,
+    isReady: true,
 }
 
 export const WSReducer = createReducer(
     initialState,
-    on(WSActions.createRoom, state => state),
+    on(WSActions.createRoom, state => ({ ...state, isReady: false })),
     on(WSActions.createRoomSuccess, (state, { roomCode }) => ({
         ...state,
         roomCode,
         inviteQrCodeUrl: `${window.location.href}?roomCode=${roomCode}`,
         showOwnerPopupState: true,
-        isOwner: true
+        isOwner: true,
+        isReady: true
     })),
-    on(WSActions.createRoomError, state => state),
+    on(WSActions.createRoomError, state => ({ ...state, isReady: true })),
 
-    on(WSActions.removeRoom, state => state),
-    on(WSActions.removeRoomSuccess, state => ({ ...state, roomCode: '-', inviteQrCodeUrl: '', showOwnerPopupState: false, isOwner: false })),
-    on(WSActions.removeRoomError, state => state),
+    on(WSActions.removeRoom, state => ({ ...state, isReady: false })),
+    on(WSActions.removeRoomSuccess, state => ({
+        ...state,
+        roomCode: '-',
+        inviteQrCodeUrl: '',
+        showOwnerPopupState: false,
+        isOwner: false,
+        isReady: true
+    })),
+    on(WSActions.removeRoomError, state => ({ ...state, isReady: true })),
 
-    on(WSActions.joinRoom, state => state),
-    on(WSActions.joinRoomSuccess, (state, { roomCode }) => ({ ...state, roomCode })),
-    on(WSActions.joinRoomError, state => state),
+    on(WSActions.joinRoom, state => ({ ...state, isReady: false })),
+    on(WSActions.joinRoomSuccess, (state, { roomCode }) => ({ ...state, roomCode, isReady: true })),
+    on(WSActions.joinRoomError, state => ({ ...state, isReady: true })),
 
-    on(WSActions.leaveRoom, state => state),
-    on(WSActions.leaveRoomSuccess, state => ({ ...state, roomCode: state.isOwner ? state.roomCode : '-', showOwnerPopupState: false, showJoinerPopupState: false })),
-    on(WSActions.leaveRoomError, state => state),
+    on(WSActions.leaveRoom, state => ({ ...state, isReady: false })),
+    on(WSActions.leaveRoomSuccess, state => ({
+        ...state,
+        roomCode: state.isOwner ? state.roomCode : '-',
+        showOwnerPopupState: false,
+        showJoinerPopupState: false,
+        isReady: true
+    })),
+    on(WSActions.leaveRoomError, state => ({ ...state, isReady: true })),
 
     on(WSActions.openJoinerPopup, state => ({ ...state, showJoinerPopupState: true })),
     on(WSActions.openOwnerPopup, state => ({ ...state, showOwnerPopupState: true })),

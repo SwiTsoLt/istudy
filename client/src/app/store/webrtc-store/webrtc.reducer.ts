@@ -5,12 +5,12 @@ export const webRtcNode = 'webRtc'
 
 export interface WebRtcReducerState {
     pc: RTCPeerConnection | null,
-    isReady: boolean
+    isConnected: boolean
 }
 
 export const initialState: WebRtcReducerState = {
     pc: null,
-    isReady: false
+    isConnected: false
 }
 
 export const WebRtcReducer = createReducer(
@@ -30,6 +30,7 @@ export const WebRtcReducer = createReducer(
         state.pc?.addIceCandidate(candidate)
         return state
     }),
-    on(WebRtcActions.connectSuccess, state => ({ ...state, isReady: true })),
-    on(WebRtcActions.disconnectSuccess, () => ({ pc: null, isReady: false })),
+    on(WebRtcActions.sendMessage, state => state),
+    on(WebRtcActions.connectSuccess, state => ({ ...state, isConnected: true })),
+    on(WebRtcActions.disconnectSuccess, () => ({ pc: null, isConnected: false })),
 )

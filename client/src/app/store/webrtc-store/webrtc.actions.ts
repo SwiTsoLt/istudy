@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { webRtcActionsEnum } from './webrtc.interface';
+import { DataChannelLabelType, DataChannelMessageType, webRtcActionsEnum } from './webrtc.interface';
 
 export const initWebRtcPeerConnection = createAction(webRtcActionsEnum.initWebRtcPeerConnection);
 export const createDataChannel = createAction(webRtcActionsEnum.createDataChannel, props<{ label: string }>());
@@ -10,3 +10,4 @@ export const setRemoteDescription = createAction(webRtcActionsEnum.setRemoteDesc
 export const addIceCandidate = createAction(webRtcActionsEnum.addIceCandidate, props<{ candidate: RTCIceCandidate }>());
 export const connectSuccess = createAction(webRtcActionsEnum.connectSuccess)
 export const disconnectSuccess = createAction(webRtcActionsEnum.disconnectSuccess)
+export const sendMessage = createAction(webRtcActionsEnum.sendMessage, props<{ label: DataChannelLabelType, messageType: DataChannelMessageType, data: any }>())

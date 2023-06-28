@@ -8,7 +8,7 @@ export const selectRTCPeerConnection = createSelector(
     (state: WebRtcReducerState): RTCPeerConnection | null => state.pc
 )
 
-export const selectIsReady = createSelector(
+export const selectIsConnected = createSelector(
     selectFeature,
-    (state: WebRtcReducerState): boolean => state.isReady
+    (state: WebRtcReducerState): boolean => state.isConnected
 )

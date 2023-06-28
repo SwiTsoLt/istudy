@@ -1,8 +1,19 @@
-<li class="selector-item" [ngClass]="{'disabled': disabled}">
-    <a [routerLink]="linkUrl">
+<li *ngIf="isOpenMap; else openMap" class="selector-item" [ngClass]="{'disabled': disabled}">
+    <button (click)="callback(linkUrl)">
         <img [src]="imageSrc" [alt]="title">
         <div *ngIf="disabled" class="wall"></div>
         <p *ngIf="disabled">Находится в разработке</p>
         <h2 class="title">{{ title }}</h2>
-    </a>
+    </button>
 </li>
+
+<ng-template #openMap>
+    <li class="selector-item" [ngClass]="{'disabled': disabled}">
+        <a [routerLink]="linkUrl">
+            <img [src]="imageSrc" [alt]="title">
+            <div *ngIf="disabled" class="wall"></div>
+            <p *ngIf="disabled">Находится в разработке</p>
+            <h2 class="title">{{ title }}</h2>
+        </a>
+    </li>
+</ng-template>

@@ -33,3 +33,8 @@ export const selectIsOwner = createSelector(
     selectFeature,
     (state: WSReducerState): boolean => state.isOwner
 )
+
+export const selectIsReady = createSelector(
+    selectFeature,
+    (state: WSReducerState): boolean => state.isReady
+)

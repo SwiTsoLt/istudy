@@ -29,7 +29,7 @@ li {
         display: block;
     }
 
-    a {
+    a, button {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -38,7 +38,10 @@ li {
         position: relative;
         width: 100%;
         height: 100%;
+        border: none;
+        background-color: $m-c-w;
         text-decoration: none;
+        cursor: pointer;
 
         &:hover>img {
             transform: scale(1.2);

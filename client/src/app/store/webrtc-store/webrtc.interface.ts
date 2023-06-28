@@ -9,6 +9,7 @@ export enum webRtcActionsEnum {
     sendOffer = '[WebRtc] Send offer',
     connectSuccess = '[WebRtc] Connect success',
     disconnectSuccess = '[WebRtc] Disconnect success',
+    sendMessage = '[WebRtc] Send message',
     empty = '[WebRtc] Empty',
 }
 
@@ -17,3 +18,15 @@ export enum webRtcDataTypeEnum {
     answer = 'answer',
     icecandidate = 'icecandidate'
 }
+
+export enum DataChannelLabelEnum {
+    dataChannel = 'dataChannel',
+    positionChannel = 'positionChannel'
+}
+
+export enum DataChannelDataTypeEnum {
+    openMap = 'openMap'
+}
+
+export type DataChannelLabelType = DataChannelLabelEnum
+export type DataChannelMessageType = DataChannelDataTypeEnum.openMap

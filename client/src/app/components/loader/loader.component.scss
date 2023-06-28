@@ -1,0 +1,44 @@
+@import '../../../variables.scss';
+
+.loader {
+    display: flex;
+    flex-direction: column;
+    gap: calc($p * 3);
+    width: 100%;
+    height: 100%;
+
+    p {
+        width: 100%;
+        text-align: center;
+    }
+
+    .circle {
+        position: relative;
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        border: 20px solid $m-c-v;
+        background-color: transparent;
+        animation: loader 1.5s linear infinite;
+
+        &::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%, -80%);
+            width: 30px;
+            height: 30px;
+            background-color: $m-c-w;
+        }
+    }
+}
+
+@keyframes loader {
+    from {
+        transform: rotate(0);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}

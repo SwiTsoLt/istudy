@@ -4,21 +4,21 @@
       <h1>Комната</h1>
     </div>
     <div class="interface">
-      <p class="status"><strong>Статус подключения:</strong><span>{{ (isReady$ | async) ? 'подключено успешно': 'не подключено' }}</span></p>
+      <p class="status"><strong>Статус подключения:</strong><span>{{ (isConnected$ | async) ? 'подключено успешно': 'не подключено' }}</span></p>
       <p class="status"><strong>Код комнаты:</strong><span>{{ roomCode$ | async }}</span></p>
       <!-- <p class="status"><strong>Сообщения:</strong><span>{{ messageLabel$ | async }}</span></p> -->
     </div>
 
     <div class="buttons">
-      <button *ngIf="!(isReady$ | async) && !(isOwner$ | async)" (click)="create()">Создать</button>
-      <button *ngIf="!(isReady$ | async) && !(isOwner$ | async)" (click)="showJoinerPopup()">Присоединиться</button>
-      <button class="leaveBtn" *ngIf="(isOwner$ | async) && (isReady$ | async)" (click)="removeRoom()">Удалить
+      <button *ngIf="!(isConnected$ | async) && !(isOwner$ | async)" (click)="create()">Создать</button>
+      <button *ngIf="!(isConnected$ | async) && !(isOwner$ | async)" (click)="showJoinerPopup()">Присоединиться</button>
+      <button class="leaveBtn" *ngIf="(isOwner$ | async) && (isConnected$ | async)" (click)="removeRoom()">Удалить
         комнату</button>
-      <button class="leaveBtn" *ngIf="!(isOwner$ | async) && (isReady$ | async)" (click)="leaveRoom()">Выйти</button>
+      <button class="leaveBtn" *ngIf="!(isOwner$ | async) && (isConnected$ | async)" (click)="leaveRoom()">Выйти</button>
     </div>
 
-    <div *ngIf="(showOwnerPopupState$ | async) && !(isReady$ | async)" class="popup">
-      <div class="form">
+    <div *ngIf="(showOwnerPopupState$ | async) && !(isConnected$ | async)" class="popup">
+      <div *ngIf="isReady$ | async; else notReady" class="form">
         <qrcode [qrdata]="(inviteQrCodeUrl$ | async) || '' " [width]="256" errorCorrectionLevel="Q" elementType="url">
         </qrcode>
         <div class="roomCode">{{ roomCode$ | async }}</div>
@@ -28,8 +28,8 @@
       </div>
     </div>
 
-    <div *ngIf="(showJoinerPopupState$ | async) && !(isReady$ | async)" class="popup">
-      <div class="form">
+    <div *ngIf="(showJoinerPopupState$ | async) && !(isConnected$ | async)" class="popup">
+      <div *ngIf="isReady$ | async; else notReady" class="form">
         <!-- <p>{{ messageLabel$ | async }}</p> -->
         <h2>Введите код комнаты</h2>
         <input #roomCodeInput (keydown.enter)="joinRoom(roomCodeInput.value)" type="text" placeholder="Код комнаты"
@@ -39,6 +39,11 @@
         <button (click)="closeJoinerPopup()">Закрыть</button>
       </div>
     </div>
+    
+    <ng-template #notReady>
+      <app-loader></app-loader>
+    </ng-template>
+
     <div class="selectorContainer">
       <router-outlet></router-outlet>
     </div>
