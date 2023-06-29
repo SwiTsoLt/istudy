@@ -4,17 +4,31 @@
       <h1>Комната</h1>
     </div>
     <div class="interface">
-      <p class="status"><strong>Статус подключения:</strong><span>{{ (isConnected$ | async) ? 'подключено успешно': 'не подключено' }}</span></p>
-      <p class="status"><strong>Код комнаты:</strong><span>{{ roomCode$ | async }}</span></p>
-      <!-- <p class="status"><strong>Сообщения:</strong><span>{{ messageLabel$ | async }}</span></p> -->
+      <p class="status">
+        <strong>Статус подключения:</strong>
+        <span>
+          {{
+          (isConnected$ | async)
+          ? 'подключено успешно'
+          : 'не подключено'
+          }}
+        </span>
+      </p>
+      <p class="status">
+        <strong>Код комнаты:</strong>
+        <span>{{ roomCode$ | async }}</span>
+      </p>
     </div>
 
     <div class="buttons">
-      <button *ngIf="!(isConnected$ | async) && !(isOwner$ | async)" (click)="create()">Создать</button>
-      <button *ngIf="!(isConnected$ | async) && !(isOwner$ | async)" (click)="showJoinerPopup()">Присоединиться</button>
-      <button class="leaveBtn" *ngIf="(isOwner$ | async) && (isConnected$ | async)" (click)="removeRoom()">Удалить
-        комнату</button>
-      <button class="leaveBtn" *ngIf="!(isOwner$ | async) && (isConnected$ | async)" (click)="leaveRoom()">Выйти</button>
+      <app-my-button *ngIf="!(isConnected$ | async) && !(isOwner$ | async)" title="Создать"
+        [callback]="create.bind(this)" />
+      <app-my-button *ngIf="!(isConnected$ | async) && !(isOwner$ | async)" title="Присоединиться"
+        [callback]="showJoinerPopup.bind(this)" />
+      <app-my-button *ngIf="(isOwner$ | async) && (isConnected$ | async)" title="Удалить комнату"
+        [callback]="removeRoom.bind(this)" />
+      <app-my-button *ngIf="!(isOwner$ | async) && (isConnected$ | async)" title="Выйти"
+        [callback]="leaveRoom.bind(this)" />
     </div>
 
     <div *ngIf="(showOwnerPopupState$ | async) && !(isConnected$ | async)" class="popup">
@@ -24,7 +38,7 @@
         <div class="roomCode">{{ roomCode$ | async }}</div>
         <!-- <p>{{ messageLabel$ | async }}</p> -->
         <p>Ожидание подключения...</p>
-        <button (click)="removeRoom()">Выйти</button>
+        <app-my-button title="Выйти" [callback]="removeRoom.bind(this)" />
       </div>
     </div>
 
@@ -32,14 +46,13 @@
       <div *ngIf="isReady$ | async; else notReady" class="form">
         <!-- <p>{{ messageLabel$ | async }}</p> -->
         <h2>Введите код комнаты</h2>
-        <input #roomCodeInput (keydown.enter)="joinRoom(roomCodeInput.value)" type="text" placeholder="Код комнаты"
-          (input)="roomCodeInput.value.length > 5 && (roomCodeInput.value = roomCodeInput.value.slice(0, 5))"
-          type="number">
-        <button (click)="joinRoom(roomCodeInput.value)">Присоединиться</button>
-        <button (click)="closeJoinerPopup()">Закрыть</button>
+        <app-my-input type="number" placeholder="Код комнаты" [inputCallback]="setRoomCode.bind(this)"
+          [enterCallback]="joinRoom.bind(this)" [maxLength]="5" />
+        <app-my-button title="Присоединиться" [callback]="joinRoom.bind(this)" />
+        <app-my-button title="Закрыть" [callback]="closeJoinerPopup.bind(this)" />
       </div>
     </div>
-    
+
     <ng-template #notReady>
       <app-loader></app-loader>
     </ng-template>

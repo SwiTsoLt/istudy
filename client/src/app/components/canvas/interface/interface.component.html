@@ -1,5 +1,5 @@
 <div class="interface">
     <div class="container">
-        <a (click)="back()" class="backLink">Назад</a>
+        <app-my-button title="Назад" [callback]="back.bind(this)" />
     </div>
 </div>

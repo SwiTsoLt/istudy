@@ -14,28 +14,8 @@
         max-height: 100%;
         padding: $p;
     
-        .backLink {
-            display: block;
-            width: calc(50% - $p);
-            min-width: 300px;
-            height: $button-h;
-            line-height: $button-h;
-            text-align: center;
-            text-decoration: none;
-            border-radius: $bor-r-c;
-            background-color: $m-c-y;
-            color: $text-clr;
-            font-size: $fs;
-            outline: none;
-            user-select: none;
-            padding: 0 $p;
-            cursor: pointer;
-            transition: all $tr ease;
-    
-            &:hover {
-                background-color: $m-c-v;
-                color: $m-c-v-2;
-            }
+        app-my-button {
+            width: 100%;
         }
     
         .title {

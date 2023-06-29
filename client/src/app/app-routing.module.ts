@@ -9,12 +9,14 @@ import { ConnectionGuardService } from './guards/connection-guard.service';
 import { NotfoundComponent } from './components/notfound/notfound.component';
 import { JoinerGuardService } from './guards/joiner-guard.service';
 
+// ConnectionGuardService, OwnerGuardService
+
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
   {
     path: 'room/selector/:subjectId/:mapId', component: CanvasComponent,
-    canActivate: [ConnectionGuardService, OwnerGuardService]
+    canActivate: []
   },
   {
     path: 'room', component: RoomComponent, children: [

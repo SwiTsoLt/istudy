@@ -33,6 +33,8 @@ export class RoomComponent implements OnInit {
   public isConnected$: Observable<boolean> = this.wsStore$.pipe(select(webRtcSelectors.selectIsConnected));
   public isReady$: Observable<boolean> = this.wsStore$.pipe(select(wsSelectors.selectIsReady));
 
+  public roomCode: string = ''
+
   private reconnectCounter: number = 0
 
   constructor(
@@ -47,7 +49,6 @@ export class RoomComponent implements OnInit {
 
   ngOnInit(): void {
     this.titleService.setTitle('IStudy - Комната')
-    this.toastStore$.dispatch(createToast({ toast: { type: 'notify', text: 'Test notify text' } }))
 
     this.subscribeAll()
     this.webSocketService
@@ -73,9 +74,14 @@ export class RoomComponent implements OnInit {
     this.route.queryParams
       .subscribe((query) => {
         if (query['roomCode']?.length) {
-          this.joinRoom(query['roomCode'])
+          this.roomCode = query['roomCode']
+          this.joinRoom()
         }
       })
+  }
+
+  public setRoomCode(code: any) {
+    this.roomCode = code
   }
 
   public create() {
@@ -90,8 +96,8 @@ export class RoomComponent implements OnInit {
     this.wsStore$.dispatch(WSActions.openJoinerPopup())
   }
 
-  public joinRoom(code: string) {
-    this.wsStore$.dispatch(WSActions.joinRoom({ roomCode: code }))
+  public joinRoom() {
+    this.wsStore$.dispatch(WSActions.joinRoom({ roomCode: this.roomCode }))
 
     setTimeout(() => {
       forkJoin(
@@ -113,7 +119,7 @@ export class RoomComponent implements OnInit {
 
           setTimeout(() => {
             this.toastStore$.dispatch(createToast({ toast: { type: 'notify', text: 'Переподключение' } }))
-            this.joinRoom(code)
+            this.joinRoom()
           }, 1000)
 
           this.reconnectCounter += 1

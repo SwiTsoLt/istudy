@@ -1,6 +1,6 @@
 <div class="selector">
     <div class="listContainer">
-        <a *ngIf="backButtonShow" (click)="back()" class="backLink">Назад</a>
+        <app-my-button *ngIf="backButtonShow" title="Назад" [callback]="back.bind(this)" />
         <div class="title">
             <h2>{{ title }}</h2>
         </div>

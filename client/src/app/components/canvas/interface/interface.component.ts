@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-interface',
@@ -6,7 +7,12 @@ import { Component } from '@angular/core';
   styleUrls: ['./interface.component.scss']
 })
 export class InterfaceComponent {
+
+  constructor(
+    private router: Router
+  ) { }
+
   public back(): void {
-    window.history.go(-1)
+    this.router.navigate(['/room'])
   }
 }

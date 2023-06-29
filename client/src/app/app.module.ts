@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -16,15 +17,16 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { EffectsModule } from '@ngrx/effects'
 import { WSEffects } from './store/ws-store/ws.effects'
 import { WebRtcEffects } from './store/webrtc-store/webrtc.effects';
-import { CanvasComponent } from './components/canvas/canvas.component';
 import { ConnectionGuardService } from './guards/connection-guard.service';
-import { InterfaceComponent } from './components/canvas/interface/interface.component';
 import { NotfoundComponent } from './components/notfound/notfound.component';
 import { ToastComponent } from './components/toast/toast.component';
 import { ToastItemComponent } from './components/toast/toast-item/toast-item.component';
 import { LoaderComponent } from './components/loader/loader.component';
 import { JoinerGuardService } from './guards/joiner-guard.service';
 import { OwnerGuardService } from './guards/owner-guard.service';
+import { MyButtonComponent } from './components/my-button/my-button.component';
+import { MyInputComponent } from './components/my-input/my-input.component';
+import { CanvasModule } from './components/canvas/canvas.module';
 
 @NgModule({
   declarations: [
@@ -33,17 +35,18 @@ import { OwnerGuardService } from './guards/owner-guard.service';
     HomeComponent,
     SelectorComponent,
     SelectorItemComponent,
-    CanvasComponent,
-    InterfaceComponent,
     NotfoundComponent,
     ToastComponent,
     ToastItemComponent,
-    LoaderComponent
+    LoaderComponent,
+    MyInputComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     QRCodeModule,
+    FormsModule,
+    CanvasModule,
     StoreModule.forRoot(reducers, {
       metaReducers
     }),
@@ -66,6 +69,7 @@ import { OwnerGuardService } from './guards/owner-guard.service';
     OwnerGuardService,
     JoinerGuardService,
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  exports: []
 })
 export class AppModule { }
