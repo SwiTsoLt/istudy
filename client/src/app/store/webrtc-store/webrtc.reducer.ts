@@ -13,16 +13,33 @@ export const initialState: WebRtcReducerState = {
     isConnected: false
 }
 
+const webRtcOptions = {
+    iceServers: [
+        {
+            username: undefined,
+            credential: undefined,
+            url: 'stun:stun.voiparound.com',
+            urls: ['stun:stun.voiparound.com']
+        },
+        {
+            username: undefined,
+            credential: undefined,
+            url: 'stun:stun.voxgratia.org',
+            urls: ['stun:stun.voxgratia.org']
+        }
+    ]
+}
+
 export const WebRtcReducer = createReducer(
     initialState,
-    on(WebRtcActions.initWebRtcPeerConnection, state => ({ ...state, pc: new RTCPeerConnection() })),
+    on(WebRtcActions.initWebRtcPeerConnection, state => ({ ...state, pc: new RTCPeerConnection(webRtcOptions) })),
     on(WebRtcActions.createDataChannel, (state) => state),
     on(WebRtcActions.createOffer, state => state),
-    on(WebRtcActions.setLocalDescription, (state, {description}) => {
+    on(WebRtcActions.setLocalDescription, (state, { description }) => {
         state.pc?.setLocalDescription(description)
         return state
     }),
-    on(WebRtcActions.setRemoteDescription, (state, {description}) => {
+    on(WebRtcActions.setRemoteDescription, (state, { description }) => {
         state.pc?.setRemoteDescription(description)
         return state
     }),
