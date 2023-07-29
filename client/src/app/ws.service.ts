@@ -11,7 +11,9 @@ export class WebSocketService {
   private socket: io.Socket;
 
   constructor() {
-    this.socket = io.connect(this.uri);
+    this.socket = io.connect(this.uri, {
+      reconnectionAttempts: Infinity,
+    });
     this.uri = this.getUri();
   }
 
