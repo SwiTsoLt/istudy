@@ -1,6 +1,9 @@
 import { createReducer, on } from '@ngrx/store';
 import * as WebRtcActions from './webrtc.actions';
 
+// @ts-ignore freeice
+import freeice from "freeice"
+
 export const webRtcNode = 'webRtc'
 
 export interface WebRtcReducerState {
@@ -13,26 +16,11 @@ export const initialState: WebRtcReducerState = {
     isConnected: false
 }
 
-const webRtcOptions = {
-    iceServers: [
-        {
-            username: undefined,
-            credential: undefined,
-            url: 'stun:stun.voiparound.com',
-            urls: ['stun:stun.voiparound.com']
-        },
-        {
-            username: undefined,
-            credential: undefined,
-            url: 'stun:stun.voxgratia.org',
-            urls: ['stun:stun.voxgratia.org']
-        }
-    ]
-}
-
 export const WebRtcReducer = createReducer(
     initialState,
-    on(WebRtcActions.initWebRtcPeerConnection, state => ({ ...state, pc: new RTCPeerConnection(webRtcOptions) })),
+    on(WebRtcActions.initWebRtcPeerConnection, state => ({ ...state, pc: new RTCPeerConnection({
+        iceServers: freeice()
+    }) })),
     on(WebRtcActions.createDataChannel, (state) => state),
     on(WebRtcActions.createOffer, state => state),
     on(WebRtcActions.setLocalDescription, (state, { description }) => {

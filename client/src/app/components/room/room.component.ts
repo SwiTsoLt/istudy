@@ -51,6 +51,7 @@ export class RoomComponent implements OnInit {
     this.titleService.setTitle('IStudy - Комната')
 
     this.subscribeAll()
+    
     this.webSocketService
       .listenMessage()
       .subscribe(({ type, msg }) => {
