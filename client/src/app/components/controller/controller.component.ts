@@ -12,7 +12,12 @@ interface IPosition {
 })
 export class ControllerComponent implements OnInit {
 
-  public position: IPosition = { x: "0", y: "0" }
+  private sensitivity: number = 3
+
+  public position: IPosition = {
+    x: "0",
+    y: "0"
+  }
 
   ngOnInit(): void {
     this.subscribeToDeviceOrientation()
@@ -22,9 +27,16 @@ export class ControllerComponent implements OnInit {
     window.addEventListener("deviceorientation", event => {
 
       if (event.alpha !== null && event.beta !== null) {
-        this.position.x = `calc(${event.alpha / 360 * 50}% - 25px)`
-        this.position.y = `calc(${event.beta / 360 * 50}% - 25px)`
+        this.position.x = `calc(${this.calculatePosition(event.alpha)}% - 25px)`
+        this.position.y = `calc(${this.calculatePosition(event.beta)}% - 25px)`
       }
     })
+  }
+
+  private calculatePosition(value: number): number {
+    let result = value / 360 * 50
+    result *= this.sensitivity
+
+    return result > 100 ? 100 : result
   }
 }
