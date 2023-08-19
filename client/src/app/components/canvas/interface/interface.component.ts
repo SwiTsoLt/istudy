@@ -8,11 +8,4 @@ import { Router } from '@angular/router';
 })
 export class InterfaceComponent {
 
-  constructor(
-    private router: Router
-  ) { }
-
-  public back(): void {
-    this.router.navigate(['/room'])
-  }
 }

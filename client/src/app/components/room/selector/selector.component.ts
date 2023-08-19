@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { DataChannelDataTypeEnum, DataChannelLabelEnum } from '../../../store/webrtc-store/webrtc.interface';
 import { WebRtcReducerState } from '../../../store/webrtc-store/webrtc.reducer';
@@ -25,6 +25,7 @@ export interface ISelector {
 })
 export class SelectorComponent implements OnInit {
   constructor(
+    private router: Router,
     private route: ActivatedRoute,
     private webRtcStore: Store<WebRtcReducerState>
   ) { }
@@ -104,5 +105,6 @@ export class SelectorComponent implements OnInit {
 
   public openMap(url: string) {
     this.webRtcStore.dispatch(webRtcActions.sendMessage({ label: DataChannelLabelEnum.dataChannel, messageType: DataChannelDataTypeEnum.openMap, data: window.location.pathname + '/' + url }))
+    this.router.navigate(["/controller"])
   }
 }

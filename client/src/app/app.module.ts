@@ -27,6 +27,7 @@ import { OwnerGuardService } from './guards/owner-guard.service';
 import { MyButtonComponent } from './components/my-button/my-button.component';
 import { MyInputComponent } from './components/my-input/my-input.component';
 import { CanvasModule } from './components/canvas/canvas.module';
+import { ControllerComponent } from './components/controller/controller.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { CanvasModule } from './components/canvas/canvas.module';
     ToastComponent,
     ToastItemComponent,
     LoaderComponent,
-    MyInputComponent
+    MyInputComponent,
+    ControllerComponent
   ],
   imports: [
     BrowserModule,
