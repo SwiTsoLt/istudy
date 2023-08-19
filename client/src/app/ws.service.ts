@@ -12,7 +12,7 @@ export class WebSocketService {
 
   constructor() {
     this.socket = io.connect(this.uri, {
-      reconnectionAttempts: Infinity,
+      reconnectionAttempts: 0, // Infinity
     });
     this.uri = this.getUri();
   }

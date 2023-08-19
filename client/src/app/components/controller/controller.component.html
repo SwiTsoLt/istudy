@@ -1,12 +1,12 @@
 <div class="controller">
     <div class="mapContainer">
         <div class="map">
-            <div class="ball" [ngStyle]="{ 'marginLeft': position.x, 'marginTop': position.y}">
+            <div class="ball" [ngStyle]="{ 'marginLeft': position.gamma, 'marginTop': position.beta}">
             </div>
         </div>
     </div>
     <div class="interface">
-        <p>{{ position.x }}</p>
-        <p>{{ position.y }}</p>
+        <p>{{ position.beta }}</p>
+        <p>{{ position.gamma }}</p>
     </div>
 </div>
