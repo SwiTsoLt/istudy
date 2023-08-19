@@ -35,9 +35,13 @@ export class ControllerComponent implements OnInit {
   private calculateAlpha(beta: number, gamma: number): IPosition {
     const radius = 50
     const maxRotation = 180
-    const defaultBetaRotation = 70
+    const defaultBetaRotation = 40
+    const defaultBettaMaxRotationCorrection = 1 + defaultBetaRotation / maxRotation
 
-    let [normalizeBeta, normalizeGamma] = [(beta - defaultBetaRotation) * this.sensitivity / maxRotation * radius, gamma * this.sensitivity / maxRotation * radius];
+    let [normalizeBeta, normalizeGamma] = [
+      (beta - defaultBetaRotation) * this.sensitivity / maxRotation * radius * defaultBettaMaxRotationCorrection,
+      gamma * this.sensitivity / maxRotation * radius
+    ];
     console.log(beta, gamma, normalizeBeta, normalizeGamma);
     [normalizeBeta, normalizeGamma] = [
       normalizeBeta >= 0
