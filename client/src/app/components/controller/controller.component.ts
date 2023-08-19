@@ -12,7 +12,7 @@ interface IPosition {
 })
 export class ControllerComponent implements OnInit {
 
-  private sensitivity: number = 3
+  private sensitivity: number = 6
 
   public position: IPosition = {
     x: "0",
@@ -25,18 +25,36 @@ export class ControllerComponent implements OnInit {
 
   private subscribeToDeviceOrientation(): void {
     window.addEventListener("deviceorientation", event => {
-
       if (event.alpha !== null && event.beta !== null) {
-        this.position.x = `calc(${this.calculatePosition(event.alpha)}% - 25px)`
-        this.position.y = `calc(${this.calculatePosition(event.beta)}% - 25px)`
+        this.position.x = this.calculateAlpha(event.alpha, event.beta)
+        this.position.y = this.calculateBetta(event.alpha, event.beta)
       }
     })
   }
 
-  private calculatePosition(value: number): number {
-    let result = value / 360 * 50
-    result *= this.sensitivity
+  private calculateAlpha(alpha: number, betta: number): string {
+    const normalizePos1 = alpha / 180 * 50 // like a radius
+    const normalizePos2 = betta / 180 * 50
 
-    return result > 100 ? 100 : result
+    const diametr = normalizePos2 * 2
+
+    const result = Math.sqrt(Math.abs(diametr - normalizePos1**2))
+
+    console.log(result);
+
+    return `calc(${result}%)`
+  }
+
+  private calculateBetta(alpha: number, betta: number): string {
+    const normalizePos1 = alpha / 180 * 50
+    const normalizePos2 = betta / 180 * 50
+
+    const diametr = normalizePos1 * 2
+
+    const result = Math.sqrt(Math.abs(diametr - normalizePos2**2))
+
+    console.log(result);
+
+    return `calc(${result}%)`
   }
 }
