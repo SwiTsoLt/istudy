@@ -9,8 +9,7 @@
         </div>
     </div>
     <div class="interface">
-        <button class="enableMoveButton" (pointerdown)="enableMove(true)" (pointerup)="enableMove(false)"
-            (pointerleave)="enableMove(false)" (pointerout)="enableMove(false)">
+        <button class="enableMoveButton" (click)="toggleEnableMove()" [ngClass]="{'active': isMoveEnabled}">
             <span class="moveIcon bgimage"></span>
         </button>
     </div>

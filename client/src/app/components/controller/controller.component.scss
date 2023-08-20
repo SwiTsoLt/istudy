@@ -75,8 +75,12 @@
             transition: background-color $tr ease-in;
             padding: $p;
 
-            &:active {
-                background-color: $m-c-y-2;
+            &.active {
+                background-color: #ff5252;
+
+                .moveIcon {
+                    background-image: url('../../media/controller/deny.svg');
+                }
             }
 
             .moveIcon {
@@ -84,6 +88,11 @@
                 width: 100%;
                 height: 100%;
                 background-image: url('../../media/controller/move-alt.svg');
+                transition: background-image $tr ease-in;
+              
+                &.active {
+                    background-image: url('../../media/controller/deny.svg');
+                }
             }
         }
     }

@@ -16,7 +16,7 @@ export class ControllerComponent implements OnInit {
 
   constructor(private controllerService: ControllerService) { }
 
-  private isMoveEnabled: boolean = false
+  public isMoveEnabled: boolean = false
 
   public position: IPosition = {
     beta: 0,
@@ -32,7 +32,7 @@ export class ControllerComponent implements OnInit {
       })
   }
 
-  public enableMove(state: boolean): void {
-    this.isMoveEnabled = state
+  public toggleEnableMove(): void {
+    this.isMoveEnabled = !this.isMoveEnabled 
   }
 }
