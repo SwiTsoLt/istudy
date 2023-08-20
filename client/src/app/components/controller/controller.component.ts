@@ -32,7 +32,7 @@ export class ControllerComponent implements OnInit {
       })
   }
 
-  public enableMove(): void {
-    this.isMoveEnabled = true
+  public enableMove(state: boolean): void {
+    this.isMoveEnabled = state
   }
 }

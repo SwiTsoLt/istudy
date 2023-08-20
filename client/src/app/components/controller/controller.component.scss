@@ -73,9 +73,17 @@
             border: none;
             user-select: none;
             transition: background-color $tr ease-in;
+            padding: $p;
 
             &:active {
                 background-color: $m-c-y-2;
+            }
+
+            .moveIcon {
+                display: block;
+                width: 100%;
+                height: 100%;
+                background-image: url('../../media/controller/move-alt.svg');
             }
         }
     }
