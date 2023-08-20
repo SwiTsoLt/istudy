@@ -6,7 +6,7 @@ input {
     border: 2px solid $m-c-y;
     border-radius: $bor-r;
     font-size: $fs;
-    line-height: calc($fs * 2);
+    line-height: $fs;
     text-align: center;
     outline: none;
     padding: $p;
