@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { ControllerService } from './controller.service';
 
 interface IPosition {
   beta: number,
@@ -12,7 +14,9 @@ interface IPosition {
 })
 export class ControllerComponent implements OnInit {
 
-  private sensitivity: number = 5
+  constructor(private controllerService: ControllerService) { }
+
+  private isMoveEnabled: boolean = false
 
   public position: IPosition = {
     beta: 0,
@@ -20,41 +24,15 @@ export class ControllerComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.subscribeToDeviceOrientation()
+    this.controllerService.subscribeToDeviceOrientation()
+      .subscribe(({ beta, gamma }) => {
+        if (this.isMoveEnabled) {
+          [this.position.beta, this.position.gamma] = [beta, gamma]
+        }
+      })
   }
 
-  private subscribeToDeviceOrientation(): void {
-    window.addEventListener("deviceorientation", event => {
-      if (event.beta !== null && event.gamma !== null) {
-        const { beta, gamma } = this.normalizePosition(event.beta, event.gamma);
-        [this.position.beta, this.position.gamma] = [beta, gamma]
-      }
-    })
-  }
-
-  private normalizePosition(beta: number, gamma: number): IPosition {
-    const radius = 50
-    const maxRotation = 180
-    const defaultBetaRotation = 40
-    const defaultBettaMaxRotationCorrection = 1 + defaultBetaRotation / maxRotation
-
-    let [normalizeBeta, normalizeGamma] = [
-      (beta - defaultBetaRotation) * this.sensitivity / maxRotation * radius * defaultBettaMaxRotationCorrection,
-      gamma * this.sensitivity / maxRotation * radius
-    ];
-
-    [normalizeBeta, normalizeGamma] = [
-      normalizeBeta >= 0
-        ? normalizeBeta > radius ? radius : normalizeBeta
-        : normalizeBeta < -radius ? -radius : normalizeBeta,
-      normalizeGamma > 0
-        ? normalizeGamma > radius ? radius : normalizeGamma
-        : normalizeGamma < -radius ? -radius : normalizeGamma
-    ];
-
-    return {
-      beta: normalizeBeta,
-      gamma: normalizeGamma
-    }
+  public enableMove(): void {
+    this.isMoveEnabled = true
   }
 }
