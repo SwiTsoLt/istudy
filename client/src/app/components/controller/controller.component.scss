@@ -5,6 +5,7 @@
     flex-direction: column;
     width: 100%;
     height: 100vh;
+    background-color: $m-c-b;
     overflow: hidden;
     
     .mapContainer {
@@ -13,25 +14,48 @@
         align-items: center;
         width: 100%;
         height: 100%;
-        padding: 0 $p;
+        padding: 0 calc($p * 2);
 
         .map {
-            position: relative;
             width: 100%;
             height: auto;
             aspect-ratio: 1/1;
-            border-radius: 50%;
-            border: 4px solid $m-c-v;
+            border-radius: calc($bor-r + 25px);
+            border: 2px solid $text-clr;
+            background-color: $m-c-y;
+            padding: 25px;
 
-            .ball {
-                position: absolute;
-                left: 50%;
-                top: 50%;
-                transform: translate(-50%, -50%);
-                width: 50px;
-                height: 50px;
-                border-radius: 50%;
+            .mapInner {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                border: 2px solid $text-clr;
                 background-color: $m-c-b;
+                border-radius: $bor-r;
+
+                .ball {
+                    position: absolute;
+                    left: 50%;
+                    top: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 50px;
+                    height: 50px;
+                    border: 1px solid $text-clr;
+                    border-radius: 50%;
+                    box-shadow: 0 0 2px $text-clr;
+                    background: radial-gradient($m-c-v, $m-c-v-2);
+                }
+
+                .dotCenter {
+                    position: absolute;
+                    left: 50%;
+                    top: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 10px;
+                    height: 10px;
+                    background-color: $text-clr;
+                    border-radius: 50%;
+                }
             }
         }
     }   

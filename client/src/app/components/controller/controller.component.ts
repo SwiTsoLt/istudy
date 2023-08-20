@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
 interface IPosition {
-  beta: string,
-  gamma: string
+  beta: number,
+  gamma: number
 }
 
 @Component({
@@ -15,8 +15,8 @@ export class ControllerComponent implements OnInit {
   private sensitivity: number = 5
 
   public position: IPosition = {
-    beta: "0",
-    gamma: "0"
+    beta: 0,
+    gamma: 0
   }
 
   ngOnInit(): void {
@@ -26,13 +26,13 @@ export class ControllerComponent implements OnInit {
   private subscribeToDeviceOrientation(): void {
     window.addEventListener("deviceorientation", event => {
       if (event.beta !== null && event.gamma !== null) {
-        const { beta, gamma } = this.calculateAlpha(event.beta, event.gamma);
+        const { beta, gamma } = this.normalizePosition(event.beta, event.gamma);
         [this.position.beta, this.position.gamma] = [beta, gamma]
       }
     })
   }
 
-  private calculateAlpha(beta: number, gamma: number): IPosition {
+  private normalizePosition(beta: number, gamma: number): IPosition {
     const radius = 50
     const maxRotation = 180
     const defaultBetaRotation = 40
@@ -42,7 +42,7 @@ export class ControllerComponent implements OnInit {
       (beta - defaultBetaRotation) * this.sensitivity / maxRotation * radius * defaultBettaMaxRotationCorrection,
       gamma * this.sensitivity / maxRotation * radius
     ];
-    console.log(beta, gamma, normalizeBeta, normalizeGamma);
+
     [normalizeBeta, normalizeGamma] = [
       normalizeBeta >= 0
         ? normalizeBeta > radius ? radius : normalizeBeta
@@ -50,11 +50,11 @@ export class ControllerComponent implements OnInit {
       normalizeGamma > 0
         ? normalizeGamma > radius ? radius : normalizeGamma
         : normalizeGamma < -radius ? -radius : normalizeGamma
-    ]
+    ];
 
     return {
-      beta: normalizeBeta + "%",
-      gamma: normalizeGamma + "%"
+      beta: normalizeBeta,
+      gamma: normalizeGamma
     }
   }
 }

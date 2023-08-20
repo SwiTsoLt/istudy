@@ -1,7 +1,10 @@
 <div class="controller">
     <div class="mapContainer">
         <div class="map">
-            <div class="ball" [ngStyle]="{ 'marginLeft': position.gamma, 'marginTop': position.beta}">
+            <div class="mapInner">
+                <div class="dotCenter"></div>
+                <div class="ball" [ngStyle]="{ 'marginLeft': position.gamma + '%', 'marginTop': position.beta + '%'}">
+                </div>
             </div>
         </div>
     </div>
