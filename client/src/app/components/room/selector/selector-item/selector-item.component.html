@@ -3,7 +3,7 @@
         <img [src]="imageSrc" [alt]="title">
         <div *ngIf="disabled" class="wall"></div>
         <p *ngIf="disabled">Находится в разработке</p>
-        <h2 class="title">{{ title }}</h2>
+        <h2 class="title" [ngClass]="{ 'small': title === 'Астрономия' }">{{ title }}</h2>
     </button>
 </li>
 
@@ -13,7 +13,7 @@
             <img [src]="imageSrc" [alt]="title">
             <div *ngIf="disabled" class="wall"></div>
             <p *ngIf="disabled">Находится в разработке</p>
-            <h2 class="title">{{ title }}</h2>
+            <h2 class="title" [ngClass]="{ 'small': title === 'Астрономия' }">{{ title }}</h2>
         </a>
     </li>
 </ng-template>

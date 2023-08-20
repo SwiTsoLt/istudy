@@ -91,12 +91,10 @@ li {
         h2 {
             font-size: 4em;
             z-index: 1;
-        }
-    }
 
-    &:last-child {
-        h2 {
-            font-size: $fs;
+            &.small {
+                font-size: calc($fs * 2);
+            }
         }
-    }
+    }    
 }
