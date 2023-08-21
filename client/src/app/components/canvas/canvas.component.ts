@@ -18,7 +18,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
 
   public sensitivity: number = 0.02
   public inverseX: number = -1
-  public inverseY: number = 1
+  public inverseY: number = -1
 
   constructor(
     private canvasStore$: Store<CanvasState>
