@@ -17,7 +17,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
   private cameraPosition$: Observable<IPosition> = this.canvasStore$.pipe(select(canvasSelectors.selectCameraPosition))
 
   public sensitivity: number = 0.02
-  public inverseX: number = -1
+  public inverseX: number = 1
   public inverseY: number = 1
 
   constructor(
@@ -79,8 +79,6 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     this.cameraPosition$.subscribe((pos: IPosition) => {
       camera.rotation.x = pos.beta * this.sensitivity * this.inverseX
       camera.rotation.y = pos.gamma * this.sensitivity * this.inverseY
-      console.log(pos.gamma * this.sensitivity * this.inverseY);
-      console.log(pos.gamma * this.sensitivity * -this.inverseY);
     })
 
     if (!canvas) {
