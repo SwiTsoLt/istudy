@@ -17,7 +17,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
   private cameraPosition$: Observable<IPosition> = this.canvasStore$.pipe(select(canvasSelectors.selectCameraPosition))
 
   public sensitivity: number = 0.02
-  public inverseX: number = -1
+  public inverseX: number = 1
   public inverseY: number = -1
 
   constructor(
