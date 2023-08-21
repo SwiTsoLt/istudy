@@ -1,4 +1,4 @@
-import { ToastType } from "./store/toast-store/toast.interfece";
+import { ToastType } from "./store/toast-store/toast.interface";
 
 export interface IRoom {
     id: string;

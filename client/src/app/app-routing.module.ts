@@ -36,7 +36,7 @@ const routes: Routes = [
   {
     path: 'controller',
     component: ControllerComponent,
-    // canActivate: [ConnectionGuardService, JoinerGuardService]
+    canActivate: [ConnectionGuardService, JoinerGuardService]
   },
   {
     path: '**',

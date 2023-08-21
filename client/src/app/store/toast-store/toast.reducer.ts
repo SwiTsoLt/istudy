@@ -1,5 +1,5 @@
 import { createReducer, on } from "@ngrx/store"
-import { ToastType } from "./toast.interfece"
+import { ToastType } from "./toast.interface"
 import * as ToastActions from './toast.actions'
 
 export const toastNode = 'toast'

@@ -1,7 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { EMPTY, Observable, catchError, forkJoin, take } from 'rxjs';
 import * as io from 'socket.io-client';
 import { ISocketMessage } from './interfaces';
+import { WSReducerState } from './store/ws-store/ws.reducer';
+import { Store } from '@ngrx/store';
+import * as WSActions from './store/ws-store/ws.actions'
+import { ToastState } from './store/toast-store/toast.reducer';
+import { createToast } from './store/toast-store/toast.actions';
+import { wsListenerEventEnum } from './store/ws-store/ws.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +16,12 @@ export class WebSocketService {
   private readonly uri: string = '';
   private socket: io.Socket;
 
-  constructor() {
+  private reconnectCounter: number = 0
+
+  constructor(
+    private wsStore$: Store<WSReducerState>,
+    private toastStore$: Store<ToastState>,
+  ) {
     this.socket = io.connect(this.uri, {
       reconnectionAttempts: 0, // Infinity
     });
@@ -53,5 +64,76 @@ export class WebSocketService {
 
   public getSocketId(): string {
     return this.socket.id
+  }
+
+  public joinRoom(
+    roomCode: string,
+    isConnected$: Observable<boolean>,
+    showJoinerPopupState$: Observable<boolean>,
+    isReady$: Observable<boolean>
+  ) {
+    this.wsStore$.dispatch(WSActions.joinRoom({ roomCode }))
+
+    setTimeout(() => {
+      forkJoin(
+        isConnected$.pipe(take(1)),
+        showJoinerPopupState$.pipe(take(1)),
+        isReady$.pipe(take(1))
+      )
+        .subscribe(([isConnected, showJoinerPopupState, isReady]) => {
+          if (isConnected) return;
+          if (isReady) return;
+          if (!showJoinerPopupState) return;
+          if (this.reconnectCounter >= 3) {
+            this.toastStore$.dispatch(createToast({ toast: { type: 'error', text: 'Переподключение не удалось' } }))
+            this.wsStore$.dispatch(WSActions.joinRoomError())
+            return;
+          }
+
+          this.toastStore$.dispatch(createToast({ toast: { type: 'error', text: 'Ошибка подключения' } }))
+
+          setTimeout(() => {
+            this.toastStore$.dispatch(createToast({ toast: { type: 'notify', text: 'Переподключение' } }))
+            this.joinRoom(roomCode, isConnected$, showJoinerPopupState$, isReady$)
+          }, 1000)
+
+          this.reconnectCounter += 1
+        })
+    }, 5000)
+  }
+
+  private subscribeHandler(
+    listenerName: string,
+    successFunction: Function,
+    errorFunction: Function,
+    withRoomCode: boolean
+  ): void {
+    this.listen(listenerName)
+      .pipe(
+        catchError(() => {
+          this.wsStore$.dispatch(errorFunction())
+          return EMPTY
+        })
+      ).subscribe((data) => {
+        if (withRoomCode) {
+          if (!data?.roomCode) {
+            return this.wsStore$.dispatch(errorFunction())
+          }
+
+          return this.wsStore$.dispatch(successFunction({ roomCode: data.roomCode }))
+        }
+        return this.wsStore$.dispatch(successFunction())
+      })
+  }
+
+  public subscribeAll(): void {
+    this.subscribeHandler(wsListenerEventEnum.createRoomSuccess, WSActions.createRoomSuccess, WSActions.createRoomError, true)
+    this.subscribeHandler(wsListenerEventEnum.createRoomError, WSActions.createRoomError, WSActions.createRoomError, false)
+    this.subscribeHandler(wsListenerEventEnum.removeRoomSuccess, WSActions.removeRoomSuccess, WSActions.removeRoomError, false)
+    this.subscribeHandler(wsListenerEventEnum.removeRoomError, WSActions.removeRoomError, WSActions.removeRoomError, false)
+    this.subscribeHandler(wsListenerEventEnum.joinRoomSuccess, WSActions.joinRoomSuccess, WSActions.joinRoomError, true)
+    this.subscribeHandler(wsListenerEventEnum.joinRoomError, WSActions.joinRoomError, WSActions.joinRoomError, false)
+    this.subscribeHandler(wsListenerEventEnum.leaveRoomSuccess, WSActions.leaveRoomSuccess, WSActions.leaveRoomError, false)
+    this.subscribeHandler(wsListenerEventEnum.leaveRoomError, WSActions.leaveRoomError, WSActions.leaveRoomError, false)
   }
 }

@@ -28,5 +28,9 @@ export enum DataChannelDataTypeEnum {
     openMap = 'openMap'
 }
 
+export enum DataChannelPositionTypeEnum {
+    setCameraPosition = 'setCameraPosition'
+}
+
 export type DataChannelLabelType = DataChannelLabelEnum
-export type DataChannelMessageType = DataChannelDataTypeEnum.openMap
+export type DataChannelMessageType = DataChannelDataTypeEnum.openMap | DataChannelPositionTypeEnum.setCameraPosition

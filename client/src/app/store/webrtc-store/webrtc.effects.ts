@@ -4,7 +4,7 @@ import { WebSocketService } from "../../ws.service";
 import { DataChannelLabelEnum, DataChannelMessageType, webRtcActionsEnum, webRtcDataTypeEnum } from "./webrtc.interface";
 import { EMPTY, Observable, catchError, from, map, take } from "rxjs";
 import { Store, select } from "@ngrx/store";
-import { selectRTCPeerConnection } from "./webrtc.selectors";
+import { selectRTCPeerConnection } from "./webrtc.selector";
 import { setLocalDescription } from "./webrtc.actions";
 import { wsEventsEnum, wsSuccessActionsEnum } from "../ws-store/ws.interface";
 import * as webRtcActions from './webrtc.actions'
@@ -18,6 +18,12 @@ export class WebRtcEffects {
 
     private pc$: Observable<RTCPeerConnection | null> = this.store$.pipe(select(selectRTCPeerConnection))
     private dataChannelList: IDataChannelList = {}
+
+    constructor(
+        private actions$: Actions,
+        private store$: Store,
+        private webSocketService: WebSocketService,
+    ) { }
 
     public createOffer$ = createEffect(() =>
         this.actions$.pipe(
@@ -147,24 +153,9 @@ export class WebRtcEffects {
 
     private dataChannelHandler(event: any) {
         console.log(event);
-        // switch (event.data?.) {
-        //     case DataChannelDataTypeEnum.openMap:
-        //         this.router.navigate([event.data?.url])
-        //         break;
-
-        //     default:
-        //         break;
-        // }
     }
 
     private positionChannelHandler(event: any) {
         console.log(event.data);
     }
-
-    constructor(
-        private actions$: Actions,
-        private store$: Store,
-        private webSocketService: WebSocketService,
-        private router: Router
-    ) { }
 }

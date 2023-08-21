@@ -28,6 +28,7 @@ import { MyButtonComponent } from './components/my-button/my-button.component';
 import { MyInputComponent } from './components/my-input/my-input.component';
 import { CanvasModule } from './components/canvas/canvas.module';
 import { ControllerComponent } from './components/controller/controller.component';
+import { ControllerService } from './components/controller/controller.service';
 
 @NgModule({
   declarations: [
@@ -70,6 +71,7 @@ import { ControllerComponent } from './components/controller/controller.componen
     ConnectionGuardService,
     OwnerGuardService,
     JoinerGuardService,
+    ControllerService
   ],
   bootstrap: [AppComponent],
   exports: []

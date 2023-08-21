@@ -1,6 +1,10 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Store, select } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import * as THREE from 'three';
+import { IPosition } from '../controller/controller.service';
+import * as canvasSelectors from '../../store/canvas-store/canvas.selector';
 
 @Component({
   selector: 'app-canvas',
@@ -10,11 +14,17 @@ import * as THREE from 'three';
 export class CanvasComponent implements OnInit, AfterViewInit {
   @ViewChild('canvas') canvasRef: ElementRef<HTMLCanvasElement> | null = null;
 
+  private cameraPosition$: Observable<IPosition> = this.canvasStore$.pipe(select(canvasSelectors.selectCameraPosition))
+
+  public sensitivity: number = 0.02
+  public inverseY: number = -1
+
   constructor(
-    private router: Router
-  ) { }
+    private canvasStore$: Store<CanvasState>
+  ) { }  
 
   ngOnInit(): void {
+    
   }
 
   ngAfterViewInit(): void {
@@ -64,6 +74,11 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     );
     camera.position.z = 30;
     scene.add(camera);
+
+    this.cameraPosition$.subscribe((pos: IPosition) => {
+      camera.rotation.x = pos.beta * this.sensitivity * this.inverseY
+      camera.rotation.y = pos.gamma * this.sensitivity * this.inverseY
+    })
 
     if (!canvas) {
       return;

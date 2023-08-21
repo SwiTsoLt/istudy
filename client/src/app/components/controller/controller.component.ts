@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ControllerService } from './controller.service';
+import { WebRtcService } from '../../webrtc.service';
 
-interface IPosition {
+export interface IPosition {
   beta: number,
   gamma: number
 }
@@ -14,7 +15,10 @@ interface IPosition {
 })
 export class ControllerComponent implements OnInit {
 
-  constructor(private controllerService: ControllerService) { }
+  constructor(
+    private controllerService: ControllerService,
+    private webRtcService: WebRtcService
+    ) { }
 
   public isMoveEnabled: boolean = false
 
@@ -28,6 +32,7 @@ export class ControllerComponent implements OnInit {
       .subscribe(({ beta, gamma }) => {
         if (this.isMoveEnabled) {
           [this.position.beta, this.position.gamma] = [beta, gamma]
+          this.webRtcService.sendPosition({ beta, gamma })
         }
       })
   }
