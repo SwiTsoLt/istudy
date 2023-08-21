@@ -14,7 +14,7 @@ import * as canvasSelectors from '../../store/canvas-store/canvas.selector';
 export class CanvasComponent implements OnInit, AfterViewInit {
   @ViewChild('canvas') canvasRef: ElementRef<HTMLCanvasElement> | null = null;
 
-  private cameraPosition$: Observable<IPosition> = this.canvasStore$.pipe(select(canvasSelectors.selectCameraPosition))
+  public cameraPosition$: Observable<IPosition> = this.canvasStore$.pipe(select(canvasSelectors.selectCameraPosition))
 
   public sensitivity: number = 0.02
   public inverseX: number = 1
