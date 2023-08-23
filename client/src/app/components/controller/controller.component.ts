@@ -32,6 +32,7 @@ export class ControllerComponent implements OnInit {
       .subscribe(({ beta, gamma }) => {
         if (this.isMoveEnabled) {
           const convertToCircle = this.convertToCircle(beta, gamma);
+          console.log({ beta, gamma }, convertToCircle);
           [this.position.beta, this.position.gamma] = [convertToCircle.beta, convertToCircle.gamma]
           this.webRtcService.sendPosition({ beta: convertToCircle.beta, gamma: convertToCircle.gamma })
         }
@@ -43,8 +44,18 @@ export class ControllerComponent implements OnInit {
   }
 
   private convertToCircle(beta: number, gamma: number): IPosition {
-    const radius: number = Math.abs(beta) >= Math.abs(gamma) ? beta : gamma
-    const inverse: number = radius >= 0 ? 1 : -1
+    if (beta === 0 || gamma === 0) return { beta, gamma }
+   
+    let radius, inverse: number;
+
+    if (Math.abs(beta) >= Math.abs(gamma)) {
+      radius = Math.abs(beta)
+      inverse = beta > 0 ? 1 : -1
+    } else {
+      radius = Math.abs(gamma)
+      inverse = gamma > 0 ? 1 : -1
+    }
+    
     const alpha: number = Math.atan(gamma/beta)
     const resultGamma: number = radius * Math.sin(alpha)
     const resultBeta: number = inverse * Math.sqrt(radius**2 - resultGamma**2)
