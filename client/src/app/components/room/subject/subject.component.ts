@@ -103,7 +103,7 @@ export class SubjectComponent implements OnInit {
   }
 
   public openMap(url: string) {
-    this.webRtcStore.dispatch(webRtcActions.sendMessage({ label: DataChannelLabelEnum.dataChannel, messageType: DataChannelDataTypeEnum.openMap, data: window.location.pathname + '/' + url }))
+    this.webRtcStore.dispatch(webRtcActions.sendMessage({ label: DataChannelLabelEnum.dataChannel, dataType: DataChannelDataTypeEnum.openMap, data: window.location.pathname + '/' + url }))
     this.router.navigate(["/controller"])
   }
 }

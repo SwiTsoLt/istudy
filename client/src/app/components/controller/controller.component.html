@@ -3,14 +3,28 @@
         <div class="map">
             <div class="mapInner">
                 <div class="dotCenter"></div>
-                <div class="ball" [ngStyle]="{ 'marginLeft': position.gamma + '%', 'marginTop': position.beta + '%'}">
-                </div>
+            </div>
+            <div class="lines">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="ball" [ngStyle]="{ 'marginLeft': position.gamma + '%', 'marginTop': position.beta + '%'}"
+                [ngClass]="{ 'move': isMoveEnabled, 'grab': isGrabEnabled }">
             </div>
         </div>
     </div>
+ 
     <div class="interface">
-        <button class="enableMoveButton" (click)="toggleEnableMove()" [ngClass]="{'active': isMoveEnabled}">
-            <span class="moveIcon bgimage"></span>
+        <button class="exitButton" (click)="exit()">
+            <span class="icon bgimage"></span>
+        </button>
+        <button class="moveButton" (click)="toggleEnableMove()" [ngClass]="{'active': isMoveEnabled}">
+            <span class="icon bgimage"></span>
+        </button>
+        <button class="grabButton" (click)="toggleEnableGrab()" [ngClass]="{'active': isGrabEnabled}">
+            <span class="icon bgimage"></span>
         </button>
     </div>
 </div>

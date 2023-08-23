@@ -86,6 +86,9 @@ export class WebRtcService {
                                     case webRtcEnums.DataChannelDataTypeEnum.openMap:
                                         this.router.navigate([data.data])
                                         break;
+                                    case webRtcEnums.DataChannelDataTypeEnum.exitMap:
+                                        this.router.navigate(["/room"])
+                                        break;
 
                                     default:
                                         break;
@@ -104,7 +107,11 @@ export class WebRtcService {
         })
     }
 
-    public sendPosition(pos: IPosition): void {
-        this.webRtcStore$.dispatch(webRtcActions.sendMessage({ messageType: webRtcEnums.DataChannelPositionTypeEnum.setCameraPosition, label: webRtcEnums.DataChannelLabelEnum.positionChannel, data: pos }))
+    public sendData(
+        label: webRtcEnums.DataChannelLabelEnum,
+        dataType: webRtcEnums.DataChannelMessageType,
+        data: webRtcEnums.DataChannelMessageDataType
+    ): void {
+        this.webRtcStore$.dispatch(webRtcActions.sendMessage({ label, dataType, data }))
     }
 }

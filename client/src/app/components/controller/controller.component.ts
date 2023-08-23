@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
 import { ControllerService } from './controller.service';
 import { WebRtcService } from '../../webrtc.service';
+import { Router } from '@angular/router';
+import * as webRtcInterface from '../../store/webrtc-store/webrtc.interface';
 
 export interface IPosition {
   beta: number,
@@ -17,10 +18,12 @@ export class ControllerComponent implements OnInit {
 
   constructor(
     private controllerService: ControllerService,
-    private webRtcService: WebRtcService
+    private webRtcService: WebRtcService,
+    private router: Router
   ) { }
 
   public isMoveEnabled: boolean = false
+  public isGrabEnabled: boolean = false
 
   public position: IPosition = {
     beta: 0,
@@ -32,11 +35,19 @@ export class ControllerComponent implements OnInit {
       .subscribe(({ beta, gamma }) => {
         if (this.isMoveEnabled) {
           const convertToCircle = this.convertToCircle(beta, gamma);
-          console.log({ beta, gamma }, convertToCircle);
           [this.position.beta, this.position.gamma] = [convertToCircle.beta, convertToCircle.gamma]
-          this.webRtcService.sendPosition({ beta: convertToCircle.beta, gamma: convertToCircle.gamma })
+          this.webRtcService.sendData(
+            webRtcInterface.DataChannelLabelEnum.positionChannel,
+            webRtcInterface.DataChannelPositionTypeEnum.setCameraPosition,
+            { beta: convertToCircle.beta, gamma: convertToCircle.gamma }
+          )
         }
       })
+  }
+
+  public exit() {
+    this.router.navigate(["/room"])
+    this.webRtcService.sendData(webRtcInterface.DataChannelLabelEnum.dataChannel, webRtcInterface.DataChannelDataTypeEnum.exitMap, "")
   }
 
   public toggleEnableMove(): void {
@@ -49,13 +60,17 @@ export class ControllerComponent implements OnInit {
     const radius: number = Math.abs(beta) >= Math.abs(gamma) ? beta : gamma
 
     const alpha: number = Math.atan(gamma / beta)
-   
+
     const resultGamma: number = radius * Math.sin(alpha)
     const resultBeta: number = Math.sqrt(radius ** 2 - resultGamma ** 2)
-    
+
     return {
       beta: beta > 0 ? Math.abs(resultBeta) : -Math.abs(resultBeta),
       gamma: gamma > 0 ? Math.abs(resultGamma) : -Math.abs(resultGamma)
     }
+  }
+
+  public toggleEnableGrab() {
+    this.isGrabEnabled = !this.isGrabEnabled
   }
 }

@@ -1,3 +1,5 @@
+import { IPosition } from "../../components/controller/controller.service";
+
 export enum webRtcActionsEnum {
     initWebRtcPeerConnection = '[WebRtc] init peer connection',
     createDataChannel = '[WebRtc] Create data channel',
@@ -25,12 +27,13 @@ export enum DataChannelLabelEnum {
 }
 
 export enum DataChannelDataTypeEnum {
-    openMap = 'openMap'
+    openMap = 'openMap',
+    exitMap = 'exitMap'
 }
 
 export enum DataChannelPositionTypeEnum {
     setCameraPosition = 'setCameraPosition'
 }
 
-export type DataChannelLabelType = DataChannelLabelEnum
-export type DataChannelMessageType = DataChannelDataTypeEnum.openMap | DataChannelPositionTypeEnum.setCameraPosition
+export type DataChannelMessageType = DataChannelDataTypeEnum | DataChannelPositionTypeEnum
+export type DataChannelMessageDataType = IPosition | string

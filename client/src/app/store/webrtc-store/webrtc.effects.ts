@@ -122,7 +122,7 @@ export class WebRtcEffects {
     public sendMessage$ = createEffect(() =>
         this.actions$.pipe(
             ofType(webRtcActionsEnum.sendMessage),
-            map((message: { label: DataChannelLabelEnum, messageType: DataChannelMessageType, data: any }) => {
+            map((message: { label: DataChannelLabelEnum, data: DataChannelMessageType }) => {
                 this.pc$.pipe(take(1))
                     .subscribe((pc: RTCPeerConnection | null) => {                        
                         if (
