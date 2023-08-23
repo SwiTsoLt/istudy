@@ -54,10 +54,7 @@ export class ControllerComponent implements OnInit {
 
     inverse = radius > 0 ? 1 : -1
 
-    const alpha: number = beta > gamma
-      ? Math.atan(gamma / beta)
-      : Math.atan(beta / gamma)
-      
+    const alpha: number = Math.atan(gamma / beta)
     const resultGamma: number = radius * Math.sin(alpha)
     const resultBeta: number = inverse * Math.sqrt(radius ** 2 - resultGamma ** 2)
     return { beta: resultBeta, gamma: resultGamma }
