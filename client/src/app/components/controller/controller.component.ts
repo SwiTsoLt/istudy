@@ -52,11 +52,9 @@ export class ControllerComponent implements OnInit {
       radius = Math.abs(beta)
 
       inverseX = beta > 0 ? 1 : -1
-      inverseY = gamma > 0 ? -1 : 1
     } else {
       radius = Math.abs(gamma)
       
-      inverseX = beta > 0 ? -1 : 1
       inverseY = gamma > 0 ? 1 : -1
     }
     
