@@ -100,7 +100,8 @@ export class SubjectComponent implements OnInit {
     window.history.go(-1)
   }
 
-  public openMap(url: string) {
+  public openMap(mapId: string) {
+    const url = window.location.pathname + '/' + mapId
     this.webRtcService.sendData(webRtcInterface.DataChannelLabelEnum.dataChannel, webRtcInterface.DataChannelDataTypeEnum.openMap, url)
     this.router.navigate(["/controller"])
   }
