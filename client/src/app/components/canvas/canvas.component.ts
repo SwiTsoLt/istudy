@@ -24,7 +24,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
 
   constructor(
     private canvasStore$: Store<CanvasState>
-  ) { }  
+  ) { }
 
   ngOnInit(): void {
     // setInterval(() => {
@@ -34,11 +34,17 @@ export class CanvasComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     if (this.canvasRef) {
-      this.createThreeJsBox(this.canvasRef.nativeElement)
+      this.createThreeJsBox(this.canvasRef.nativeElement, window.innerWidth, window.innerHeight)
+
+      window.addEventListener("resize", () => {
+        if (this.canvasRef) {
+          this.createThreeJsBox(this.canvasRef.nativeElement, window.innerWidth, window.innerHeight)
+        }
+      })
     }
   }
 
-  createThreeJsBox(canvas: HTMLCanvasElement): void {
+  createThreeJsBox(canvas: HTMLCanvasElement, windowWidth: number, windowHeight: number): void {
     const scene = new THREE.Scene();
 
     const material = new THREE.MeshToonMaterial();
@@ -67,8 +73,8 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     const clock = new THREE.Clock();
 
     const canvasSizes = {
-      width: window.innerWidth,
-      height: window.innerHeight,
+      width: windowWidth,
+      height: windowHeight,
     };
 
     const camera = new THREE.PerspectiveCamera(
@@ -118,7 +124,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     if (Math.abs(pos.beta) <= 25 && Math.abs(pos.gamma) <= 25) {
       return;
     }
-    
+
     camera.rotation.x += this.sensitivity
     camera.rotation.y += this.sensitivity
   }

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { IPosition } from '../../controller/controller.service';
 import { Observable, of } from 'rxjs';
@@ -8,6 +8,16 @@ import { Observable, of } from 'rxjs';
   templateUrl: './interface.component.html',
   styleUrls: ['./interface.component.scss']
 })
-export class InterfaceComponent {
+export class InterfaceComponent implements OnInit {
   @Input() pos$: Observable<IPosition> = of({ beta: 0, gamma: 0 })
+
+  public windowWidth: number = window.innerWidth
+  public windowHeight: number = window.innerHeight
+
+  ngOnInit(): void {
+    window.addEventListener("resize", () => {
+      this.windowWidth = window.innerWidth + 200 // + 200 to fix paddings
+      this.windowHeight = window.innerHeight
+    })
+  }
 }
