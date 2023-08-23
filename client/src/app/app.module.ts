@@ -9,8 +9,8 @@ import { HomeComponent } from './components/home/home.component';
 import { WebSocketService } from './ws.service';
 import { WebRtcService } from './webrtc.service';
 import { QRCodeModule } from 'angularx-qrcode';
-import { SelectorComponent } from './components/room/selector/selector.component';
-import { SelectorItemComponent } from './components/room/selector/selector-item/selector-item.component';
+import { SubjectComponent } from './components/room/subject/subject.component';
+import { MapComponent } from './components/room/subject/map/map.component';
 import { StoreModule } from '@ngrx/store';
 import { reducers, metaReducers } from './store/index'
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
@@ -24,7 +24,6 @@ import { ToastItemComponent } from './components/toast/toast-item/toast-item.com
 import { LoaderComponent } from './components/loader/loader.component';
 import { JoinerGuardService } from './guards/joiner-guard.service';
 import { OwnerGuardService } from './guards/owner-guard.service';
-import { MyButtonComponent } from './components/my-button/my-button.component';
 import { MyInputComponent } from './components/my-input/my-input.component';
 import { CanvasModule } from './components/canvas/canvas.module';
 import { ControllerComponent } from './components/controller/controller.component';
@@ -35,8 +34,8 @@ import { ControllerService } from './components/controller/controller.service';
     AppComponent,
     RoomComponent,
     HomeComponent,
-    SelectorComponent,
-    SelectorItemComponent,
+    SubjectComponent,
+    MapComponent,
     NotfoundComponent,
     ToastComponent,
     ToastItemComponent,

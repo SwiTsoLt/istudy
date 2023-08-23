@@ -5,7 +5,7 @@
             <h2>{{ title }}</h2>
         </div>
         <ul>
-            <app-selector-item *ngFor="let selector of selectorList; let index = index" [title]="selector.title"
+            <app-map *ngFor="let selector of mapList; let index = index" [title]="selector.title"
                 [linkUrl]="'' + index" [imageSrc]="srcMedia + selector.imageName" [disabled]="selector.disabled"
                 [isOpenMap]="isOpenMap" [callback]="openMap.bind(this)" />
         </ul>

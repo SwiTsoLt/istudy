@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import * as THREE from 'three';
 import { IPosition } from '../controller/controller.service';
 import * as canvasSelectors from '../../store/canvas-store/canvas.selector';
+import { setCameraPosition } from '../../store/canvas-store/canvas.actions';
 
 @Component({
   selector: 'app-canvas',
@@ -16,16 +17,19 @@ export class CanvasComponent implements OnInit, AfterViewInit {
 
   public cameraPosition$: Observable<IPosition> = this.canvasStore$.pipe(select(canvasSelectors.selectCameraPosition))
 
-  public sensitivity: number = 0.02
-  public inverseX: number = 1
-  public inverseY: number = -1
+  private sensitivity: number = 0.005
+  private inverseX: number = 1
+  private inverseY: number = -1
+  private isOutOfBox: boolean = false
 
   constructor(
     private canvasStore$: Store<CanvasState>
   ) { }  
 
   ngOnInit(): void {
-    
+    setInterval(() => {
+      this.canvasStore$.dispatch(setCameraPosition({ pos: {beta: 26, gamma: 26} }))
+    }, 30)
   }
 
   ngAfterViewInit(): void {
@@ -76,10 +80,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     camera.position.z = 30;
     scene.add(camera);
 
-    this.cameraPosition$.subscribe((pos: IPosition) => {
-      camera.rotation.x = pos.beta * this.sensitivity * this.inverseX
-      camera.rotation.y = pos.gamma * this.sensitivity * this.inverseY
-    })
+    this.cameraPosition$.subscribe((pos: IPosition) => this.cameraPositionHandler(pos, camera))
 
     if (!canvas) {
       return;
@@ -111,5 +112,14 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     };
 
     animateGeometry();
+  }
+
+  private cameraPositionHandler(pos: IPosition, camera: THREE.PerspectiveCamera): void {
+    if (Math.abs(pos.beta) <= 25 && Math.abs(pos.gamma) <= 25) {
+      return;
+    }
+    
+    camera.rotation.x += this.sensitivity
+    camera.rotation.y += this.sensitivity
   }
 }

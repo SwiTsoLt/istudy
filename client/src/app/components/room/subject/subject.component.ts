@@ -5,25 +5,25 @@ import { DataChannelDataTypeEnum, DataChannelLabelEnum } from '../../../store/we
 import { WebRtcReducerState } from '../../../store/webrtc-store/webrtc.reducer';
 import * as webRtcActions from '../../../store/webrtc-store/webrtc.actions';
 
-export interface ISelectorItem {
+export interface IMap {
   title: string,
   imageName: string,
   disabled: boolean,
 }
 
-export interface ISelector {
+export interface ISubject {
   title: string,
   imageName: string,
   disabled: boolean,
-  children: ISelectorItem[]
+  mapList: IMap[]
 }
 
 @Component({
-  selector: 'app-selector',
-  templateUrl: './selector.component.html',
-  styleUrls: ['./selector.component.scss']
+  selector: 'app-subject',
+  templateUrl: './subject.component.html',
+  styleUrls: ['./subject.component.scss']
 })
-export class SelectorComponent implements OnInit {
+export class SubjectComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -34,17 +34,16 @@ export class SelectorComponent implements OnInit {
 
   public title: string = '';
   public backButtonShow: boolean = false
-  public srcOrigin: string = '/room/selector/'
-  public srcMedia: string = '/app/media/selector/'
-  public selectorList: ISelectorItem[] = []
+  public srcOrigin: string = '/room/subject/'
+  public srcMedia: string = '/app/media/subject/'
   public isOpenMap: boolean = false
+  public mapList: IMap[] = [] 
 
-
-  private selectorData: ISelector[] = [
+  private subjectList: ISubject[] = [
     {
       title: 'Алгебра',
       imageName: 'algebra.jpg',
-      children: [
+      mapList: [
         {
           title: 'Лодка',
           imageName: 'boat.jpg',
@@ -62,25 +61,25 @@ export class SelectorComponent implements OnInit {
       title: 'Геометрия',
       imageName: 'geometry.jpg',
       disabled: true,
-      children: []
+      mapList: []
     },
     {
       title: 'Физика',
       imageName: 'physics.jpg',
       disabled: true,
-      children: []
+      mapList: []
     },
     {
       title: 'Химия',
       imageName: 'chemistry.jpg',
       disabled: true,
-      children: []
+      mapList: []
     },
     {
       title: 'Астрономия',
       imageName: 'astronomy.jpg',
       disabled: true,
-      children: []
+      mapList: []
     },
   ]
 
@@ -88,11 +87,11 @@ export class SelectorComponent implements OnInit {
     this.route.params.subscribe((params: Params) => {
       if (!params['subjectId'] && !params['mapId']) {
         this.title = 'Выберете учебный предмет'
-        this.selectorList = this.selectorData
+        this.mapList = this.subjectList
         this.backButtonShow = false
       } else if (params['subjectId'] && !params['mapId']) {
         this.title = 'Выберете карту'
-        this.selectorList = this.selectorData[params['subjectId']].children
+        this.mapList = this.subjectList[params['subjectId']].mapList
         this.backButtonShow = true
         this.isOpenMap = true
       }

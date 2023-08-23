@@ -1,11 +1,11 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-selector-item',
-  templateUrl: './selector-item.component.html',
-  styleUrls: ['./selector-item.component.scss']
+  selector: 'app-map',
+  templateUrl: './map.component.html',
+  styleUrls: ['./map.component.scss']
 })
-export class SelectorItemComponent {
+export class MapComponent {
   @Input() title: string = ''
   @Input() linkUrl: string = ''
   @Input() imageSrc: string = ''

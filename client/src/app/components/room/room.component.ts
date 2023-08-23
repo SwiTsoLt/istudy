@@ -7,7 +7,6 @@ import * as WSActions from '../../store/ws-store/ws.actions'
 import * as wsSelectors from '../../store/ws-store/ws.selectors';
 import * as webRtcSelectors from '../../store/webrtc-store/webrtc.selector';
 import { WSReducerState } from '../../store/ws-store/ws.reducer';
-import { WebRtcReducerState } from '../../store/webrtc-store/webrtc.reducer';
 import { Title } from '@angular/platform-browser';
 import { ToastState } from '../../store/toast-store/toast.reducer';
 import { createToast } from '../../store/toast-store/toast.actions';
@@ -60,7 +59,7 @@ export class RoomComponent implements OnInit {
           .pipe(take(1))
           .subscribe(isOwner => {
             if (isConnected && !isOwner) {
-              this.router.navigate(['/room/selector'])
+              this.router.navigate(['/room/subject'])
             } else if (!isConnected && isOwner) {
               this.wsStore$.dispatch(WSActions.openOwnerPopup())
             }

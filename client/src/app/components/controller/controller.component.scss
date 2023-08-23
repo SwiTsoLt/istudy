@@ -17,29 +17,32 @@
         padding: 0 calc($p * 2);
 
         .map {
+            position: relative;
             width: 100%;
             height: auto;
             aspect-ratio: 1/1;
-            border-radius: calc($bor-r + 25px);
-            background-color: $m-c-y;
-            padding: 25px;
+            border: 2px solid $m-c-y;
+            border-radius: 50%;
+            padding: 10%;
 
             .mapInner {
-                position: relative;
                 width: 100%;
                 height: 100%;
-                background-color: $m-c-b;
-                border-radius: $bor-r;
+                border: 2px solid $m-c-y;
+                border-radius: 50%;
 
                 .ball {
                     position: absolute;
                     left: 50%;
                     top: 50%;
+                    // margin-top: 40% !important;
+                    // margin-left: 40% !important;
                     transform: translate(-50%, -50%);
                     width: 50px;
                     height: 50px;
                     border-radius: 50%;
                     background-color: $m-c-v;
+                    z-index: 2;
                 }
 
                 .dotCenter {
@@ -47,10 +50,27 @@
                     left: 50%;
                     top: 50%;
                     transform: translate(-50%, -50%);
-                    width: 10px;
-                    height: 10px;
-                    background-color: $text-clr;
+                    width: 14px;
+                    height: 14px;
+                    background-color: $m-c-y;
                     border-radius: 50%;
+                    z-index: 1;
+                }
+
+                &::before, &::after {
+                    content: "";
+                    position: absolute;
+                    left: 50%;
+                    top: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 100%;
+                    height: 2px;
+                    background-color: $m-c-y;
+                    z-index: 1;
+                }
+
+                &::after {
+                    transform: translate(-50%, -50%) rotateZ(90deg);
                 }
             }
         }

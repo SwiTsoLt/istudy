@@ -18,7 +18,7 @@ export class ControllerComponent implements OnInit {
   constructor(
     private controllerService: ControllerService,
     private webRtcService: WebRtcService
-    ) { }
+  ) { }
 
   public isMoveEnabled: boolean = false
 
@@ -31,13 +31,23 @@ export class ControllerComponent implements OnInit {
     this.controllerService.subscribeToDeviceOrientation()
       .subscribe(({ beta, gamma }) => {
         if (this.isMoveEnabled) {
-          [this.position.beta, this.position.gamma] = [beta, gamma]
+          const convertToCircle = this.convertToCircle(beta, gamma);
+          [this.position.beta, this.position.gamma] = [convertToCircle.beta, convertToCircle.gamma]
           this.webRtcService.sendPosition({ beta, gamma })
         }
       })
   }
 
   public toggleEnableMove(): void {
-    this.isMoveEnabled = !this.isMoveEnabled 
+    this.isMoveEnabled = !this.isMoveEnabled
+  }
+
+  private convertToCircle(beta: number, gamma: number): IPosition {
+    const radius: number = Math.abs(beta) >= Math.abs(gamma) ? beta : gamma
+    const inverse: number = radius >= 0 ? 1 : -1
+    const alpha: number = Math.atan(gamma/beta)
+    const resultGamma: number = radius * Math.sin(alpha)
+    const resultBeta: number = inverse * Math.sqrt(radius**2 - resultGamma**2)
+    return { beta: resultBeta, gamma: resultGamma }
   }
 }

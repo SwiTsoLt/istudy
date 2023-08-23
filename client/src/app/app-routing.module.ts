@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { RoomComponent } from './components/room/room.component';
 import { HomeComponent } from './components/home/home.component';
-import { SelectorComponent } from './components/room/selector/selector.component';
+import { SubjectComponent } from './components/room/subject/subject.component';
 import { CanvasComponent } from './components/canvas/canvas.component';
 import { OwnerGuardService } from './guards/owner-guard.service';
 import { ConnectionGuardService } from './guards/connection-guard.service';
@@ -16,19 +16,19 @@ const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
   {
-    path: 'room/selector/:subjectId/:mapId', component: CanvasComponent,
-    canActivate: [ConnectionGuardService, OwnerGuardService]
+    path: 'room/subject/:subjectId/:mapId', component: CanvasComponent,
+    // canActivate: [ConnectionGuardService, OwnerGuardService]
   },
   {
     path: 'room', component: RoomComponent, children: [
       {
-        path: 'selector/:subjectId',
-        component: SelectorComponent,
+        path: 'subject/:subjectId',
+        component: SubjectComponent,
         canActivate: [ConnectionGuardService, JoinerGuardService]
       },
       {
-        path: 'selector',
-        component: SelectorComponent,
+        path: 'subject',
+        component: SubjectComponent,
         canActivate: [ConnectionGuardService, JoinerGuardService]
       },
     ]
@@ -36,7 +36,7 @@ const routes: Routes = [
   {
     path: 'controller',
     component: ControllerComponent,
-    canActivate: [ConnectionGuardService, JoinerGuardService]
+    // canActivate: [ConnectionGuardService, JoinerGuardService]
   },
   {
     path: '**',
