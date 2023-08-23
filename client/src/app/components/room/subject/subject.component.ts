@@ -1,9 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { DataChannelDataTypeEnum, DataChannelLabelEnum } from '../../../store/webrtc-store/webrtc.interface';
-import { WebRtcReducerState } from '../../../store/webrtc-store/webrtc.reducer';
-import * as webRtcActions from '../../../store/webrtc-store/webrtc.actions';
+import { WebRtcService } from '../../../webrtc.service';
+import * as webRtcInterface from '../../../store/webrtc-store/webrtc.interface';
 
 export interface IMap {
   title: string,
@@ -27,8 +25,8 @@ export class SubjectComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private webRtcStore: Store<WebRtcReducerState>
-  ) { }
+    private webRtcService: WebRtcService
+    ) { }
 
   @Input() connectStatus: boolean = false
 
@@ -103,7 +101,7 @@ export class SubjectComponent implements OnInit {
   }
 
   public openMap(url: string) {
-    this.webRtcStore.dispatch(webRtcActions.sendMessage({ label: DataChannelLabelEnum.dataChannel, dataType: DataChannelDataTypeEnum.openMap, data: window.location.pathname + '/' + url }))
+    this.webRtcService.sendData(webRtcInterface.DataChannelLabelEnum.dataChannel, webRtcInterface.DataChannelDataTypeEnum.openMap, "")
     this.router.navigate(["/controller"])
   }
 }

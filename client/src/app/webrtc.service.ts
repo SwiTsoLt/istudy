@@ -78,11 +78,15 @@ export class WebRtcService {
                     })
 
                     event.channel.addEventListener("message", (event) => {
-                        const data = JSON.parse(event.data)
+                        const data: {
+                            label: webRtcEnums.DataChannelLabelEnum,
+                            dataType: webRtcEnums.DataChannelMessageType,
+                            data: webRtcEnums.DataChannelMessageDataType
+                        } = JSON.parse(event.data)
 
                         switch (data.label) {
                             case webRtcEnums.DataChannelLabelEnum.dataChannel:
-                                switch (data.messageType) {
+                                switch (data.dataType) {
                                     case webRtcEnums.DataChannelDataTypeEnum.openMap:
                                         this.router.navigate([data.data])
                                         break;
@@ -95,7 +99,14 @@ export class WebRtcService {
                                 }
                                 break;
                             case webRtcEnums.DataChannelLabelEnum.positionChannel:
-                                this.canvasStore$.dispatch(canvasActions.setCameraPosition({ pos: data.data }))
+                                switch (data.dataType) {
+                                    case webRtcEnums.DataChannelPositionTypeEnum.setCameraPosition:
+                                        this.canvasStore$.dispatch(canvasActions.setCameraPosition({ pos: data.data }))
+                                        break;
+                                
+                                    default:
+                                        break;
+                                }
                                 break;
 
                             default:

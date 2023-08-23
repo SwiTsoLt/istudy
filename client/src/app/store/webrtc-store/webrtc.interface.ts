@@ -36,4 +36,4 @@ export enum DataChannelPositionTypeEnum {
 }
 
 export type DataChannelMessageType = DataChannelDataTypeEnum | DataChannelPositionTypeEnum
-export type DataChannelMessageDataType = IPosition | string
+export type DataChannelMessageDataType = any
