@@ -46,12 +46,16 @@ export class ControllerComponent implements OnInit {
   private convertToCircle(beta: number, gamma: number): IPosition {
     if (beta === 0 || gamma === 0) return { beta, gamma }
 
-    const radius = Math.abs(beta) >= Math.abs(gamma) ? beta : gamma
-    const inverse = radius > 0 ? 1 : -1
+    const radius: number = Math.abs(beta) >= Math.abs(gamma) ? beta : gamma
 
     const alpha: number = Math.atan(gamma / beta)
+   
     const resultGamma: number = radius * Math.sin(alpha)
-    const resultBeta: number = inverse * Math.sqrt(radius ** 2 - resultGamma ** 2)
-    return { beta: resultBeta, gamma: resultGamma }
+    const resultBeta: number = Math.sqrt(radius ** 2 - resultGamma ** 2)
+    
+    return {
+      beta: beta > 0 ? Math.abs(resultBeta) : -Math.abs(resultBeta),
+      gamma: gamma > 0 ? Math.abs(resultGamma) : -Math.abs(resultGamma)
+    }
   }
 }
