@@ -33,7 +33,7 @@ export class ControllerComponent implements OnInit {
         if (this.isMoveEnabled) {
           const convertToCircle = this.convertToCircle(beta, gamma);
           [this.position.beta, this.position.gamma] = [convertToCircle.beta, convertToCircle.gamma]
-          this.webRtcService.sendPosition({ beta, gamma })
+          this.webRtcService.sendPosition({ beta: convertToCircle.beta, gamma: convertToCircle.gamma })
         }
       })
   }
