@@ -5,8 +5,8 @@
             <div
             class="cursor bgimage"
             [ngStyle]="{
-                'marginLeft': ((cameraPosition$ | async) ?? { gamma: 0 }).gamma,
-                'marginBottom': ((cameraPosition$ | async) ?? { beta: 0 }).beta
+                'marginLeft': ((cameraPosition$ | async) || { gamma: 0 }).gamma + '%',
+                'marginTop': ((cameraPosition$ | async) || { beta: 0 }).beta + '%'
             }"
             ></div>
         </div>

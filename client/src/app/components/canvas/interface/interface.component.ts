@@ -11,6 +11,5 @@ export class InterfaceComponent implements OnInit {
   @Input('cameraPosition$') cameraPosition$: Observable<IPosition> = of({ gamma: 0, beta: 0 });
 
   ngOnInit(): void {
-    
   }  
 }
