@@ -31,7 +31,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     //   this.canvasStore$.dispatch(setCameraPosition({ pos: { beta: -40, gamma: 0 } }))
     // }, 30)
 
-    // this.canvasStore$.dispatch(setCameraPosition({ pos: { gamma: 0, beta: 50 } }))
+    this.canvasStore$.dispatch(setCameraPosition({ pos: { gamma: 0, beta: 50 } }))
   }
 
   ngAfterViewInit(): void {
@@ -129,11 +129,25 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     const currentRadius = Math.sqrt(pos.gamma ** 2 + pos.beta ** 2)
 
     if (currentRadius > maxRadius) {
-      const alpha = Math.abs(Math.atan(pos.gamma / pos.beta)) * 180 / Math.PI
+      const alpha = Math.atan(pos.gamma / pos.beta) * 180 / Math.PI
 
-      const sector = Math.abs(Math.floor(alpha)) === 0
-        ? sectorList[0]
-        : sectorList[Math.floor(360 / alpha)]
+      // console.log(alpha);
+
+      let sectorIndex: number = 0;
+
+      for (let i = 0; i < 7; i++) {
+        const min = i * 45 - 22.5
+        const max = (i + 1) * 45 - 22.5
+
+        if (Math.abs(alpha) >= min && Math.abs(alpha) < max) {
+          sectorIndex = i
+          break;
+        }
+      }
+
+      // console.log(sectorIndex);
+
+      const sector = sectorList[sectorIndex]
 
       camera.rotation.y += this.sensitivity * sector[0]
       camera.rotation.x += this.sensitivity * sector[1]
