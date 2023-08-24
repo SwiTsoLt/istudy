@@ -1,7 +1,15 @@
 <div class="interface">
     <div class="container">
         <div class="top"></div>
-        <div class="middle"></div>
+        <div class="middle">
+            <div
+            class="cursor bgimage"
+            [ngStyle]="{
+                'marginLeft': ((cameraPosition$ | async) ?? { gamma: 0 }).gamma,
+                'marginBottom': ((cameraPosition$ | async) ?? { beta: 0 }).beta
+            }"
+            ></div>
+        </div>
         <div class="bottom"></div>
     </div>
 </div>
