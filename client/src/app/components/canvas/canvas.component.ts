@@ -24,11 +24,6 @@ export class CanvasComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit(): void {
-    // setInterval(() => {
-    //   this.canvasStore$.dispatch(setCameraPosition({ pos: { beta: -40, gamma: 0 } }))
-    // }, 30)
-
-    this.canvasStore$.dispatch(setCameraPosition({ pos: { gamma: 0, beta: 50 } }))
   }
 
   ngAfterViewInit(): void {
