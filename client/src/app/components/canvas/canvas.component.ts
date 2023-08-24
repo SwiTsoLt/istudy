@@ -131,7 +131,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     if (currentRadius > maxRadius) {
       const alpha = Math.atan(pos.gamma / pos.beta) * 180 / Math.PI
 
-      // console.log(alpha);
+      let inverse = alpha > 0 ? 1 : -1
 
       let sectorIndex: number = 0;
 
@@ -149,8 +149,8 @@ export class CanvasComponent implements OnInit, AfterViewInit {
 
       const sector = sectorList[sectorIndex]
 
-      camera.rotation.y += this.sensitivity * sector[0]
-      camera.rotation.x += this.sensitivity * sector[1]
+      camera.rotation.y += inverse * this.sensitivity * sector[0]
+      camera.rotation.x += inverse * this.sensitivity * sector[1]
     }
   }
 }
