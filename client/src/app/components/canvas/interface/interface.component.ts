@@ -9,7 +9,7 @@ import { Observable, of } from 'rxjs';
   styleUrls: ['./interface.component.scss']
 })
 export class InterfaceComponent implements OnInit {
-  @Input() pos$: Observable<IPosition> = of({ beta: 0, gamma: 0 })
+  @Input() pos$: Observable<IPosition> = of({ gamma: 0, beta: 0 })
 
   public windowWidth: number = window.innerWidth
   public windowHeight: number = window.innerHeight

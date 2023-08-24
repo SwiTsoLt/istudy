@@ -35,7 +35,9 @@ export class ControllerComponent implements OnInit {
       .subscribe(({ beta, gamma }) => {
         if (this.isMoveEnabled) {
           const convertToCircle = this.convertToCircle(gamma, beta);
+          
           [this.position.gamma, this.position.beta] = [convertToCircle.gamma, convertToCircle.beta]
+          
           this.webRtcService.sendData(
             webRtcInterface.DataChannelLabelEnum.positionChannel,
             webRtcInterface.DataChannelPositionTypeEnum.setCameraPosition,
