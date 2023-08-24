@@ -2,13 +2,12 @@
     <div class="container">
         <div class="top"></div>
         <div class="middle">
-            <div
-            class="cursor bgimage"
-            [ngStyle]="{
+            <div class="cursorContainer">
+                <div class="cursor bgimage" [ngStyle]="{
                 'marginLeft': ((cameraPosition$ | async) || { gamma: 0 }).gamma + '%',
                 'marginTop': ((cameraPosition$ | async) || { beta: 0 }).beta + '%'
-            }"
-            ></div>
+            }"></div>
+            </div>
         </div>
         <div class="bottom"></div>
     </div>
