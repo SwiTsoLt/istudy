@@ -129,7 +129,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     const currentRadius = Math.sqrt(pos.gamma ** 2 + pos.beta ** 2)
 
     if (currentRadius > maxRadius) {
-      const alpha = Math.atan(pos.gamma / pos.beta) * 180 / Math.PI
+      const alpha = Math.abs(Math.atan(pos.gamma / pos.beta)) * 180 / Math.PI
 
       const sector = Math.abs(Math.floor(alpha)) === 0
         ? sectorList[0]
