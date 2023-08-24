@@ -146,11 +146,11 @@ export class CanvasComponent implements OnInit, AfterViewInit {
       const sector = sectorList[sectorIndex]
 
       camera.rotation.y += pos.gamma > 0
-        ? -this.sensitivity * sector[0]
-        : this.sensitivity * sector[0]
+        ? this.sensitivity * sector[0]
+        : -this.sensitivity * sector[0]
       camera.rotation.x += pos.beta > 0
-        ? this.sensitivity * sector[1]
-        : -this.sensitivity * sector[1]
+        ? -this.sensitivity * sector[1]
+        : this.sensitivity * sector[1]
     }
   }
 }
