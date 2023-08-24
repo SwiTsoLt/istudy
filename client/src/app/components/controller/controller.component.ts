@@ -34,12 +34,12 @@ export class ControllerComponent implements OnInit {
     this.controllerService.subscribeToDeviceOrientation()
       .subscribe(({ beta, gamma }) => {
         if (this.isMoveEnabled) {
-          const convertToCircle = this.convertToCircle(beta, gamma);
-          [this.position.beta, this.position.gamma] = [convertToCircle.beta, convertToCircle.gamma]
+          const convertToCircle = this.convertToCircle(gamma, beta);
+          [this.position.gamma, this.position.beta] = [convertToCircle.gamma, convertToCircle.beta]
           this.webRtcService.sendData(
             webRtcInterface.DataChannelLabelEnum.positionChannel,
             webRtcInterface.DataChannelPositionTypeEnum.setCameraPosition,
-            { beta: convertToCircle.beta, gamma: convertToCircle.gamma }
+            { gamma: convertToCircle.gamma, beta: convertToCircle.beta }
           )
         }
       })
@@ -54,19 +54,19 @@ export class ControllerComponent implements OnInit {
     this.isMoveEnabled = !this.isMoveEnabled
   }
 
-  private convertToCircle(beta: number, gamma: number): IPosition {
-    if (beta === 0 || gamma === 0) return { beta, gamma }
+  private convertToCircle(gamma: number, beta: number): IPosition {
+    if (gamma === 0 || beta === 0) return { gamma, beta }
 
-    const radius: number = Math.abs(beta) >= Math.abs(gamma) ? beta : gamma
+    const radius: number = Math.abs(gamma) >= Math.abs(beta) ? gamma : beta
 
-    const alpha: number = Math.atan(gamma / beta)
+    const alpha: number = Math.atan(beta / gamma)
 
-    const resultGamma: number = radius * Math.sin(alpha)
-    const resultBeta: number = Math.sqrt(radius ** 2 - resultGamma ** 2)
+    const resultBeta: number = radius * Math.sin(alpha)
+    const resultGamma: number = Math.sqrt(radius ** 2 - resultBeta ** 2)
 
     return {
-      beta: beta > 0 ? Math.abs(resultBeta) : -Math.abs(resultBeta),
-      gamma: gamma > 0 ? Math.abs(resultGamma) : -Math.abs(resultGamma)
+      gamma: gamma > 0 ? Math.abs(resultGamma) : -Math.abs(resultGamma),
+      beta: beta > 0 ? Math.abs(resultBeta) : -Math.abs(resultBeta)
     }
   }
 

@@ -11,7 +11,7 @@ export interface IPosition {
 })
 export class ControllerService {
 
-    private sensitivity: number = 4
+    private sensitivity: number = 5
 
     public subscribeToDeviceOrientation(): Observable<IPosition> {
         return new Observable(observer => {

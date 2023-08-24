@@ -27,9 +27,11 @@ export class CanvasComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit(): void {
-    // setInterval(() => {
-    //   this.canvasStore$.dispatch(setCameraPosition({ pos: {beta: 26, gamma: 26} }))
-    // }, 30)
+    setInterval(() => {
+      this.canvasStore$.dispatch(setCameraPosition({ pos: {beta: 40, gamma: 0} }))
+    }, 30)
+
+    // this.canvasStore$.dispatch(setCameraPosition({ pos: { beta: 40, gamma: 0 } }))
   }
 
   ngAfterViewInit(): void {
@@ -121,11 +123,22 @@ export class CanvasComponent implements OnInit, AfterViewInit {
   }
 
   private cameraPositionHandler(pos: IPosition, camera: THREE.PerspectiveCamera): void {
-    if (Math.abs(pos.beta) <= 25 && Math.abs(pos.gamma) <= 25) {
-      return;
-    }
+    const sectorList: number[][] = [[1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1], [1, -1]]
 
-    camera.rotation.x += this.sensitivity
-    camera.rotation.y += this.sensitivity
+    const maxRadius = 37.5 // 50 * 0.75
+    const currentRadius = Math.sqrt(pos.beta ** 2 + pos.gamma ** 2)
+
+    if (currentRadius > maxRadius) {
+
+      const alpha = pos.gamma === 0
+        ? 0
+        : Math.tan(pos.beta / pos.gamma) * 180 / Math.PI
+      const sector = alpha === 0
+        ? sectorList[0]
+        : sectorList[Math.floor(360 / alpha)]
+
+      camera.rotation.x += this.sensitivity * sector[0]
+      camera.rotation.y += this.sensitivity * sector[1]
+    }
   }
 }
