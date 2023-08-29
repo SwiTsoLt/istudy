@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store"
 import * as CanvasActions from './canvas.actions'
-import { IPosition } from "../../components/controller/controller.service"
+import { IPosition } from "../../components/pages/controller/controller.service"
 
 export const canvasNode = 'canvas'
 

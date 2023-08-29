@@ -1,6 +1,6 @@
 import { createFeatureSelector, createSelector } from "@ngrx/store";
 import { CanvasState, canvasNode } from "./canvas.reducer";
-import { IPosition } from "../../components/controller/controller.service";
+import { IPosition } from "../../components/pages/controller/controller.service";
 
 export const selectFeature = createFeatureSelector<CanvasState>(canvasNode)
 

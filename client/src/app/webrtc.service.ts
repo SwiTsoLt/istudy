@@ -8,7 +8,7 @@ import { Observable, of, take } from "rxjs";
 import * as webRtcSelectors from './store/webrtc-store/webrtc.selector';
 import * as webRtcEnums from './store/webrtc-store/webrtc.interface';
 import { Router } from "@angular/router";
-import { IPosition } from "./components/controller/controller.service";
+import { IPosition } from "./components/pages/controller/controller.service";
 import * as canvasActions from "./store/canvas-store/canvas.actions";
 
 @Injectable({

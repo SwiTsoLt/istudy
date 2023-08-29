@@ -4,51 +4,27 @@ import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { RoomComponent } from './components/room/room.component';
-import { HomeComponent } from './components/home/home.component';
-import { WebSocketService } from './ws.service';
-import { WebRtcService } from './webrtc.service';
-import { QRCodeModule } from 'angularx-qrcode';
-import { SubjectComponent } from './components/room/subject/subject.component';
-import { MapComponent } from './components/room/subject/map/map.component';
 import { StoreModule } from '@ngrx/store';
 import { reducers, metaReducers } from './store/index'
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { EffectsModule } from '@ngrx/effects'
 import { WSEffects } from './store/ws-store/ws.effects'
 import { WebRtcEffects } from './store/webrtc-store/webrtc.effects';
-import { ConnectionGuardService } from './guards/connection-guard.service';
-import { NotfoundComponent } from './components/notfound/notfound.component';
-import { ToastComponent } from './components/toast/toast.component';
-import { ToastItemComponent } from './components/toast/toast-item/toast-item.component';
-import { LoaderComponent } from './components/loader/loader.component';
 import { JoinerGuardService } from './guards/joiner-guard.service';
 import { OwnerGuardService } from './guards/owner-guard.service';
-import { MyInputComponent } from './components/my-input/my-input.component';
-import { CanvasModule } from './components/canvas/canvas.module';
-import { ControllerComponent } from './components/controller/controller.component';
-import { ControllerService } from './components/controller/controller.service';
+import { PagesModule } from './components/pages/pages.module';
+import { UIModule } from './components/UI/ui.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    RoomComponent,
-    HomeComponent,
-    SubjectComponent,
-    MapComponent,
-    NotfoundComponent,
-    ToastComponent,
-    ToastItemComponent,
-    LoaderComponent,
-    MyInputComponent,
-    ControllerComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    QRCodeModule,
     FormsModule,
-    CanvasModule,
+    PagesModule,
+    UIModule,
     StoreModule.forRoot(reducers, {
       metaReducers
     }),
@@ -65,14 +41,12 @@ import { ControllerService } from './components/controller/controller.service';
     EffectsModule.forRoot([WSEffects, WebRtcEffects])
   ],
   providers: [
-    WebSocketService,
-    WebRtcService,
-    ConnectionGuardService,
     OwnerGuardService,
-    JoinerGuardService,
-    ControllerService
+    JoinerGuardService
   ],
   bootstrap: [AppComponent],
-  exports: []
+  exports: [
+    
+  ]
 })
 export class AppModule { }

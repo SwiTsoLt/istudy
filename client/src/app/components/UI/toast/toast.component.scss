@@ -1,0 +1,21 @@
+@import '../../../../variables.scss';
+
+.toastContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $p;
+    position: fixed;
+    right: $p;
+    top: $p;
+    width: fit-content;
+    height: fit-content;
+    z-index: 20;
+}
+
+@media screen and (max-width: 600px) {
+    .toastContainer {
+        right: 0;
+        top: 0;
+    }
+}

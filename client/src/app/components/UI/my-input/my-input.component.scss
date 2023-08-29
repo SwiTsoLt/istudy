@@ -1,0 +1,21 @@
+@import '../../../../variables.scss';
+
+input {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: fit-content;
+  border: 2px solid $m-c-y;
+  border-radius: $bor-r;
+  font-size: $fs;
+  line-height: $fs;
+  text-align: center;
+  outline: none;
+  padding: $p;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}

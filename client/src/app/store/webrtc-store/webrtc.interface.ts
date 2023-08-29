@@ -1,4 +1,4 @@
-import { IPosition } from "../../components/controller/controller.service";
+import { IPosition } from "../../components/pages/controller/controller.service";
 
 export enum webRtcActionsEnum {
     initWebRtcPeerConnection = '[WebRtc] init peer connection',

@@ -1,0 +1,43 @@
+@import '../../../../variables.scss';
+
+button {
+    position: relative;
+    width: 100%;
+    min-width: 200px;
+    height: fit-content;
+    background-color: $m-c-y;
+    border: none;
+    border-radius: $bor-r-c;
+    color: inherit;
+    overflow: hidden;
+    transition: all $tr ease;
+
+    &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        transform: translateX(-100%);
+        width: 100%;
+        height: 100%;
+        border-radius: $bor-r-c;
+        background-color: $m-c-v;
+        transition: all $tr-l ease;
+    }
+
+    &:hover::before {
+        transform: translateX(0);
+    }
+
+    &:hover > p {
+        color: $m-c-w;
+    }
+
+    p {
+        position: relative;
+        font-size: $fs;
+        color: inherit;
+        padding: $p;
+        transition: all $tr-l ease;
+    }
+}

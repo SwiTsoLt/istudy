@@ -1,0 +1,41 @@
+@import "../../../../variables.scss";
+
+.home {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background-image: url("../../../media/home/bg.png");
+    background-size: cover;
+    background-position: yellow;
+
+    .title {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: absolute;
+        left: 50%;
+        top: 40%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: $m-c-w;
+
+        h1 {
+            font-size: 7em;
+            color: inherit;
+        }
+
+        h2 {
+            color: inherit;
+        }
+
+        app-my-button {
+            width: 300px;
+            font-size: calc($fs * 1.2);
+            margin-top: calc($p * 5);
+            color: $m-c-w;
+        }
+    }
+}
