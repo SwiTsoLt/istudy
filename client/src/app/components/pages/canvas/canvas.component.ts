@@ -43,7 +43,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
 
   private fieldOfView: number = 1;
   private nearClippingPlane: number = 1;
-  private farClippingPlane: number = 4000;
+  private farClippingPlane: number = 100000;
 
   private directionalLight!: THREE.DirectionalLight;
   private pointLight!: THREE.PointLight;
@@ -116,7 +116,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     const assetPath = `/app/media/canvas/assets/${this.subjectName}/${this.map.mapName}/${entity.texture}/scene.gltf`
     this.loaderGLTF.load(assetPath, (gltf: GLTF) => {
       const model = gltf.scene.children[0]
-   
+
       model.position.x = entity.position.x
       model.position.y = entity.position.y
       model.position.z = entity.position.z
@@ -125,7 +125,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
       model.rotation.y = entity.rotation.y * Math.PI / 180
       model.rotation.z = entity.rotation.z * Math.PI / 180
 
-      model.position.multiplyScalar(entity.multiplyScalar)
+      model.scale.multiplyScalar(entity.multiplyScalar)
 
       this.scene.add(model)
     })

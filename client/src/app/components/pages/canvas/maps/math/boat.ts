@@ -24,16 +24,16 @@ export const map: IMapData = {
             "texture": "boat2",
             "model": "boat",
             "credit": "This work is based on \"Fishing boat\" (https://sketchfab.com/3d-models/fishing-boat-f4b38ccf5ffb46018aa7931c0e106654) by Pabooklas (https://sketchfab.com/Pabooklas) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
-            "multiplyScalar": 1,
+            "multiplyScalar": 100,
             "scale": {
-                "width": 100,
-                "height": 100,
-                "depth": 100
+                "width": 1,
+                "height": 1,
+                "depth": 1
             },
             "position": {
                 "x": 0,
                 "y": 0,
-                "z": -3000
+                "z": -10000
             },
             "rotation": {
                 "x": -90,
