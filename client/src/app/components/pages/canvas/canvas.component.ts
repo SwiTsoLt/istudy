@@ -6,6 +6,12 @@ import * as THREE from 'three';
 import { IPosition } from '../../pages/controller/controller.service';
 import * as canvasSelectors from '../../../store/canvas-store/canvas.selector';
 import { setCameraPosition } from '../../../store/canvas-store/canvas.actions';
+import { IMap, ISubject } from '../room/subject/subject.component';
+import { EntityTypeEnum, ICamera, IEntity, IMapData, IWindowSize } from './canvas.interface';
+import { mapsData } from './maps';
+import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+
+const subjectData: { subjectList: ISubject[] } = require("../subjectData.json");
 
 @Component({
   selector: 'app-canvas',
@@ -13,105 +19,144 @@ import { setCameraPosition } from '../../../store/canvas-store/canvas.actions';
   styleUrls: ['./canvas.component.scss']
 })
 export class CanvasComponent implements OnInit, AfterViewInit {
-  @ViewChild('canvas') canvasRef: ElementRef<HTMLCanvasElement> | null = null;
+  @ViewChild('canvas')
+  private canvasRef!: ElementRef<HTMLCanvasElement>;
 
   public cameraPosition$: Observable<IPosition> = this.canvasStore$.pipe(select(canvasSelectors.selectCameraPosition))
-
   private sensitivity: number = 0.01
 
+  private map: IMap = { title: "", mapName: "", imageName: "", disabled: true }
+  private subjectName: string = "math"
+
+  private renderer!: THREE.WebGLRenderer;;
+  private get canvas(): HTMLCanvasElement {
+    return this.canvasRef.nativeElement;
+  }
+  private scene!: THREE.Scene;
+  private camera!: THREE.PerspectiveCamera;
+  private windowSize: IWindowSize = {
+    width: window.innerWidth,
+    height: window.innerHeight
+  }
+
+  private loaderGLTF: GLTFLoader = new GLTFLoader()
+
+  private fieldOfView: number = 1;
+  private nearClippingPlane: number = 1;
+  private farClippingPlane: number = 1000;
+
+  private directionalLight!: THREE.DirectionalLight;
+  private pointLight!: THREE.PointLight;
+
   constructor(
-    private canvasStore$: Store<CanvasState>
+    private canvasStore$: Store<CanvasState>,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
+    this.route.paramMap.subscribe(paramMap => {
+      const subjectId: number = Number(paramMap.get("subjectId"))
+      const mapId: number = Number(paramMap.get("mapId"))
+      const currentMap = subjectData.subjectList[subjectId].mapList[mapId]
+
+      this.map = currentMap
+      this.subjectName = subjectData.subjectList[subjectId].subjectName
+    })
   }
 
   ngAfterViewInit(): void {
-    if (this.canvasRef) {
-      this.createThreeJsBox(this.canvasRef.nativeElement, window.innerWidth, window.innerHeight)
+    const mapInfo: IMapData = mapsData[this.subjectName][this.map.mapName]
+    this.createScene(mapInfo)
 
-      window.addEventListener("resize", () => {
-        if (this.canvasRef) {
-          this.createThreeJsBox(this.canvasRef.nativeElement, window.innerWidth, window.innerHeight)
-        }
-      })
+    window.addEventListener("resize", () => {
+      this.createScene(mapInfo)
+    })
+  }
+
+  createScene(mapInfo: IMapData): void {
+    this.setCanvasSize()
+
+    this.scene = new THREE.Scene();
+    this.scene.background = new THREE.Color(mapInfo.background)
+
+    this.initPerspectiveCamera(mapInfo.camera)
+    this.cameraPosition$.subscribe((pos: IPosition) => this.cameraPositionHandler(pos, this.camera))
+    this.initLight()
+
+    mapInfo.scene.forEach((entity: IEntity) => {
+      this.initEntity(entity)
+    })
+
+    this.startRendering()
+  }
+
+  private setCanvasSize(): void {
+    this.windowSize.width = window.innerWidth;
+    this.windowSize.height = window.innerHeight;
+
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+
+    this.canvas.style.width = window.innerWidth + "px"
+    this.canvas.style.height = window.innerHeight + "px"
+  }
+
+  private initEntity(entity: IEntity) {
+    switch (entity.type) {
+      case EntityTypeEnum.model:
+        this.initModel(entity)
+        break;
+
+      default:
+        break;
     }
   }
 
-  createThreeJsBox(canvas: HTMLCanvasElement, windowWidth: number, windowHeight: number): void {
-    const scene = new THREE.Scene();
+  private initModel(entity: IEntity) {
+    const assetPath = `/app/media/canvas/assets/${this.subjectName}/${this.map.mapName}/${entity.texture}/scene.gltf`
+    this.loaderGLTF.load(assetPath, (gltf: GLTF) => {
+      const model = gltf.scene.children[0]
+   
+      model.position.x = entity.position.x
+      model.position.y = entity.position.y
+      model.position.z = entity.position.z
 
-    const material = new THREE.MeshToonMaterial();
+      model.rotation.x = entity.rotation.x * Math.PI / 180
+      model.rotation.y = entity.rotation.y * Math.PI / 180
+      model.rotation.z = entity.rotation.z * Math.PI / 180
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    scene.add(ambientLight);
+      model.position.multiplyScalar(1)
+      this.scene.add(model)
+    })
+  }
 
-    const pointLight = new THREE.PointLight(0xffffff, 0.5);
-    pointLight.position.x = 2;
-    pointLight.position.y = 2;
-    pointLight.position.z = 2;
-    scene.add(pointLight);
+  private initPerspectiveCamera(options: ICamera): void {
+    this.camera = new THREE.PerspectiveCamera(
+      this.fieldOfView,
+      this.canvas.clientWidth / this.canvas.clientHeight,
+      this.nearClippingPlane,
+      this.farClippingPlane
+    )
 
-    const box = new THREE.Mesh(
-      new THREE.BoxGeometry(1.5, 1.5, 1.5),
-      material
-    );
+    this.camera.position.x = options.position.x
+    this.camera.position.y = options.position.y
+    this.camera.position.z = options.position.z
 
-    const torus = new THREE.Mesh(
-      new THREE.TorusGeometry(5, 1.5, 16, 100),
-      material
-    );
+    this.camera.rotation.x = options.rotation.x * Math.PI / 180
+    this.camera.rotation.y = options.rotation.y * Math.PI / 180
+    this.camera.rotation.z = options.rotation.z * Math.PI / 180
+  }
 
-    scene.add(torus, box);
+  private initLight(): void {
+    this.directionalLight = new THREE.DirectionalLight(0xffffff, 0.4)
+    this.directionalLight.position.set(0, 1, 0)
+    this.directionalLight.castShadow = true
 
-    const clock = new THREE.Clock();
+    this.pointLight = new THREE.PointLight(0xffffff)
+    this.pointLight.position.set(0, 200, 400)
 
-    const canvasSizes = {
-      width: windowWidth,
-      height: windowHeight,
-    };
-
-    const camera = new THREE.PerspectiveCamera(
-      75,
-      canvasSizes.width / canvasSizes.height,
-      0.001,
-      1000
-    );
-    camera.position.z = 30;
-    scene.add(camera);
-
-    this.cameraPosition$.subscribe((pos: IPosition) => this.cameraPositionHandler(pos, camera))
-
-    if (!canvas) {
-      return;
-    }
-
-    const renderer = new THREE.WebGLRenderer({
-      canvas: canvas,
-    });
-    renderer.setClearColor(0xe232222, 1);
-    renderer.setSize(canvasSizes.width, canvasSizes.height);
-
-    const animateGeometry = () => {
-      const elapsedTime = clock.getElapsedTime();
-
-      // Update animation objects
-      box.rotation.x = elapsedTime;
-      box.rotation.y = elapsedTime;
-      box.rotation.z = elapsedTime;
-
-      torus.rotation.x = -elapsedTime;
-      torus.rotation.y = -elapsedTime;
-      torus.rotation.z = -elapsedTime;
-
-      // Render
-      renderer.render(scene, camera);
-
-      // Call animateGeometry again on the next frame
-      window.requestAnimationFrame(animateGeometry);
-    };
-
-    animateGeometry();
+    this.scene.add(this.directionalLight)
+    this.scene.add(this.pointLight)
   }
 
   private cameraPositionHandler(pos: IPosition, camera: THREE.PerspectiveCamera): void {
@@ -144,5 +189,19 @@ export class CanvasComponent implements OnInit, AfterViewInit {
         ? -this.sensitivity * sector[1]
         : this.sensitivity * sector[1]
     }
+  }
+
+  private startRendering(): void {
+    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas })
+    this.renderer.setPixelRatio(devicePixelRatio)
+    this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight)
+
+    const component = this;
+
+    function render() {
+      requestAnimationFrame(render)
+      component.renderer.render(component.scene, component.camera)
+    }
+    render()
   }
 }

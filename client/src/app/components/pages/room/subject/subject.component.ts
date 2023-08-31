@@ -3,14 +3,18 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { WebRtcService } from '../../../../webrtc.service';
 import * as webRtcInterface from '../../../../store/webrtc-store/webrtc.interface';
 
+const subjectData= require("../../subjectData.json");
+
 export interface IMap {
   title: string,
+  mapName: string,
   imageName: string,
   disabled: boolean,
 }
 
 export interface ISubject {
   title: string,
+  subjectName: string,
   imageName: string,
   disabled: boolean,
   mapList: IMap[]
@@ -26,7 +30,7 @@ export class SubjectComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private webRtcService: WebRtcService
-    ) { }
+    ) {}
 
   @Input() connectStatus: boolean = false
 
@@ -37,59 +41,15 @@ export class SubjectComponent implements OnInit {
   public isOpenMap: boolean = false
   public mapList: IMap[] = [] 
 
-  private subjectList: ISubject[] = [
-    {
-      title: 'Алгебра',
-      imageName: 'algebra.jpg',
-      mapList: [
-        {
-          title: 'Лодка',
-          imageName: 'boat.jpg',
-          disabled: false,
-        },
-        {
-          title: 'Поезд',
-          imageName: 'train.jpg',
-          disabled: true,
-        }
-      ],
-      disabled: false,
-    },
-    {
-      title: 'Геометрия',
-      imageName: 'geometry.jpg',
-      disabled: true,
-      mapList: []
-    },
-    {
-      title: 'Физика',
-      imageName: 'physics.jpg',
-      disabled: true,
-      mapList: []
-    },
-    {
-      title: 'Химия',
-      imageName: 'chemistry.jpg',
-      disabled: true,
-      mapList: []
-    },
-    {
-      title: 'Астрономия',
-      imageName: 'astronomy.jpg',
-      disabled: true,
-      mapList: []
-    },
-  ]
-
   ngOnInit(): void {
     this.route.params.subscribe((params: Params) => {
       if (!params['subjectId'] && !params['mapId']) {
         this.title = 'Выберете учебный предмет'
-        this.mapList = this.subjectList
+        this.mapList = subjectData.subjectList
         this.backButtonShow = false
       } else if (params['subjectId'] && !params['mapId']) {
         this.title = 'Выберете карту'
-        this.mapList = this.subjectList[params['subjectId']].mapList
+        this.mapList = subjectData.subjectList[params['subjectId']].mapList
         this.backButtonShow = true
         this.isOpenMap = true
       }
