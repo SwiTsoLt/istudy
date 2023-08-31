@@ -43,7 +43,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
 
   private fieldOfView: number = 1;
   private nearClippingPlane: number = 1;
-  private farClippingPlane: number = 1000;
+  private farClippingPlane: number = 4000;
 
   private directionalLight!: THREE.DirectionalLight;
   private pointLight!: THREE.PointLight;
@@ -125,7 +125,8 @@ export class CanvasComponent implements OnInit, AfterViewInit {
       model.rotation.y = entity.rotation.y * Math.PI / 180
       model.rotation.z = entity.rotation.z * Math.PI / 180
 
-      model.position.multiplyScalar(1)
+      model.position.multiplyScalar(entity.multiplyScalar)
+
       this.scene.add(model)
     })
   }

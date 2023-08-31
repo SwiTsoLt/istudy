@@ -32,6 +32,7 @@ export interface IEntity {
     texture: string,
     model: string,
     credit: string,
+    multiplyScalar: number,
     scale: IEntityScale,
     position: IEntityPosition,
     rotation: IEntityRotation

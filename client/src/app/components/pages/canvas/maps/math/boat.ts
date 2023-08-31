@@ -21,9 +21,10 @@ export const map: IMapData = {
         {
             "title": "Boat",
             "type":  EntityTypeEnum.model,
-            "texture": "boat",
+            "texture": "boat2",
             "model": "boat",
             "credit": "This work is based on \"Fishing boat\" (https://sketchfab.com/3d-models/fishing-boat-f4b38ccf5ffb46018aa7931c0e106654) by Pabooklas (https://sketchfab.com/Pabooklas) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+            "multiplyScalar": 1,
             "scale": {
                 "width": 100,
                 "height": 100,
@@ -32,12 +33,12 @@ export const map: IMapData = {
             "position": {
                 "x": 0,
                 "y": 0,
-                "z": -10
+                "z": -3000
             },
             "rotation": {
                 "x": -90,
                 "y": 0,
-                "z": 180
+                "z": 0
             }
         }
     ]

@@ -1,0 +1,539 @@
+{
+  "accessors": [
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 18694,
+      "max": [
+        2.2743635177612305,
+        5.380882263183594,
+        6.241872787475586
+      ],
+      "min": [
+        -4.702297210693359,
+        -2.1987786293029785,
+        -5.4311089515686035
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 224328,
+      "componentType": 5126,
+      "count": 18694,
+      "max": [
+        0.999678373336792,
+        1.0,
+        0.9999523162841797
+      ],
+      "min": [
+        -0.9995571970939636,
+        -1.0,
+        -0.9997631311416626
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 18694,
+      "max": [
+        0.86566561460495,
+        0.992621660232544
+      ],
+      "min": [
+        0.00453760102391243,
+        0.212374746799469
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 448656,
+      "componentType": 5126,
+      "count": 18694,
+      "max": [
+        0.1835784912109375,
+        2.384185791015625e-07,
+        0.6281416416168213
+      ],
+      "min": [
+        -0.3037816286087036,
+        -2.384185791015625e-07,
+        -0.36203116178512573
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 672984,
+      "componentType": 5126,
+      "count": 18694,
+      "max": [
+        0.3443043828010559,
+        0.22084231674671173,
+        0.3457190692424774
+      ],
+      "min": [
+        -0.34731149673461914,
+        -0.22107358276844025,
+        -0.3448016047477722
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 29028,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 897312,
+      "componentType": 5126,
+      "count": 1040,
+      "max": [
+        1.0,
+        0.09747502952814102,
+        1.0
+      ],
+      "min": [
+        -1.0,
+        0.0,
+        -1.0
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 909792,
+      "componentType": 5126,
+      "count": 1040,
+      "max": [
+        0.48901841044425964,
+        1.0,
+        0.48901838064193726
+      ],
+      "min": [
+        -0.48901838064193726,
+        0.8722734451293945,
+        -0.4585496783256531
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 149552,
+      "componentType": 5126,
+      "count": 1040,
+      "max": [
+        0.36210477352142334,
+        0.8604737520217896
+      ],
+      "min": [
+        0.26845359802246094,
+        0.7668225765228271
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 922272,
+      "componentType": 5126,
+      "count": 1040,
+      "max": [
+        0.0,
+        0.09497131407260895,
+        0.0
+      ],
+      "min": [
+        0.0,
+        -0.1238170638680458,
+        0.0
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 934752,
+      "componentType": 5126,
+      "count": 1040,
+      "max": [
+        0.373039186000824,
+        0.09678894281387329,
+        0.37981662154197693
+      ],
+      "min": [
+        -0.3581541180610657,
+        -0.07525217533111572,
+        -0.28862816095352173
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 947232,
+      "componentType": 5126,
+      "count": 1040,
+      "max": [
+        0.020832300186157227,
+        0.07497896999120712,
+        0.0006324052810668945
+      ],
+      "min": [
+        0.0,
+        -0.06169865280389786,
+        0.0
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 959712,
+      "componentType": 5126,
+      "count": 1040,
+      "max": [
+        0.296498566865921,
+        0.10007160902023315,
+        0.2752305865287781
+      ],
+      "min": [
+        -0.2752302289009094,
+        -0.044966697692871094,
+        -0.2964986264705658
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 116112,
+      "componentType": 5125,
+      "count": 2646,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5126,
+      "count": 40,
+      "max": [
+        1.6666666269302368
+      ],
+      "min": [
+        0.0416666679084301
+      ],
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 3,
+      "byteOffset": 160,
+      "componentType": 5126,
+      "count": 40,
+      "max": [
+        1.0
+      ],
+      "min": [
+        0.0
+      ],
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 3,
+      "byteOffset": 320,
+      "componentType": 5126,
+      "count": 40,
+      "max": [
+        1.6666666269302368
+      ],
+      "min": [
+        0.0416666679084301
+      ],
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 3,
+      "byteOffset": 480,
+      "componentType": 5126,
+      "count": 80,
+      "max": [
+        1.0
+      ],
+      "min": [
+        0.0
+      ],
+      "type": "SCALAR"
+    }
+  ],
+  "animations": [
+    {
+      "channels": [
+        {
+          "sampler": 0,
+          "target": {
+            "node": 4,
+            "path": "weights"
+          }
+        },
+        {
+          "sampler": 1,
+          "target": {
+            "node": 6,
+            "path": "weights"
+          }
+        }
+      ],
+      "name": "Animation",
+      "samplers": [
+        {
+          "input": 14,
+          "interpolation": "LINEAR",
+          "output": 15
+        },
+        {
+          "input": 16,
+          "interpolation": "LINEAR",
+          "output": 17
+        }
+      ]
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "jhouuplzza (https://sketchfab.com/jhouuplzza)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/low-poly-viking-boat-67003c8e96074c319545cb8adb64a616",
+      "title": "Low Poly viking boat"
+    },
+    "generator": "Sketchfab-15.32.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 126696,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 157872,
+      "byteOffset": 126696,
+      "byteStride": 8,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 972192,
+      "byteOffset": 284568,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 800,
+      "byteOffset": 1256760,
+      "name": "floatBufferViews"
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 1257560,
+      "uri": "scene.bin"
+    }
+  ],
+  "images": [
+    {
+      "uri": "textures/PALETA_baseColor.png"
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "name": "PALETA",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.5
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "mesh_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0,
+            "TEXCOORD_0": 2
+          },
+          "indices": 5,
+          "material": 0,
+          "mode": 4,
+          "targets": [
+            {
+              "NORMAL": 4,
+              "POSITION": 3
+            }
+          ]
+        }
+      ],
+      "weights": [
+        0.0
+      ]
+    },
+    {
+      "name": "mesh_1",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 7,
+            "POSITION": 6,
+            "TEXCOORD_0": 8
+          },
+          "indices": 13,
+          "material": 0,
+          "mode": 4,
+          "targets": [
+            {
+              "NORMAL": 10,
+              "POSITION": 9
+            },
+            {
+              "NORMAL": 12,
+              "POSITION": 11
+            }
+          ]
+        }
+      ],
+      "weights": [
+        0.0,
+        0.0
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.220446049250313e-16,
+        -1.0,
+        0.0,
+        0.0,
+        1.0,
+        2.220446049250313e-16,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "Sketchfab_model"
+    },
+    {
+      "children": [
+        2
+      ],
+      "name": "root"
+    },
+    {
+      "children": [
+        3,
+        5
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.220446049250313e-16,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        2.220446049250313e-16,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "GLTF_SceneRootNode"
+    },
+    {
+      "children": [
+        4
+      ],
+      "name": "Cube.004_0",
+      "rotation": [
+        0.0,
+        0.1622258424758911,
+        0.0,
+        0.9867536425590515
+      ],
+      "translation": [
+        0.8194363117218018,
+        0.32165539264678955,
+        -1.4381263256072998
+      ]
+    },
+    {
+      "mesh": 0,
+      "name": "mesh_0"
+    },
+    {
+      "children": [
+        6
+      ],
+      "name": "Plane_1",
+      "scale": [
+        8.321048736572266,
+        8.321048736572266,
+        8.321048736572266
+      ],
+      "translation": [
+        -1.0518293380737305,
+        -1.5209977626800537,
+        0.5276179909706116
+      ]
+    },
+    {
+      "mesh": 1,
+      "name": "mesh_1"
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Sketchfab_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0
+    }
+  ]
+}
