@@ -1,5 +1,5 @@
 import { IMapData } from "../canvas.interface";
-import * as boatMap from "./math/boat"
+import * as boatMap from "./math/boat";
 
 interface IMapPath {
     [mapName: string]: IMapData
@@ -13,4 +13,4 @@ export const mapsData: ISubjectPath = {
     "math": {
         "boat": boatMap.map
     }
-}
+};

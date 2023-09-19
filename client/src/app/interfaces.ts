@@ -7,8 +7,8 @@ export interface IRoom {
 }
 
 export enum RtcDataTypeEnum {
-    description = 'description',
-    icecandidate = 'icecandidate'
+    description = "description",
+    icecandidate = "icecandidate"
 }
 
 export type RtcDataType = RtcDataTypeEnum.description | RtcDataTypeEnum.icecandidate

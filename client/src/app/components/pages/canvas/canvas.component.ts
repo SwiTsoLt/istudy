@@ -1,45 +1,44 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Store, select } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import * as THREE from 'three';
-import { IPosition } from '../../pages/controller/controller.service';
-import * as canvasSelectors from '../../../store/canvas-store/canvas.selector';
-import { setCameraPosition } from '../../../store/canvas-store/canvas.actions';
-import { IMap, ISubject } from '../room/subject/subject.component';
-import { EntityTypeEnum, ICamera, IEntity, IMapData, IWindowSize } from './canvas.interface';
-import { mapsData } from './maps';
-import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
+import { Store, select } from "@ngrx/store";
+import { Observable } from "rxjs";
+import * as THREE from "three";
+import { IPosition } from "../../pages/controller/controller.service";
+import * as canvasSelectors from "../../../store/canvas-store/canvas.selector";
+import { IMap } from "../room/subject/subject.component";
+import { EntityTypeEnum, ICamera, IEntity, IMapData, IWindowSize } from "./canvas.interface";
+import { mapsData } from "./maps";
+import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
-const subjectData: { subjectList: ISubject[] } = require("../subjectData.json");
+import { subjectData } from "../room/subject/subjectData";
 
 @Component({
-  selector: 'app-canvas',
-  templateUrl: './canvas.component.html',
-  styleUrls: ['./canvas.component.scss']
+    selector: "app-canvas",
+    templateUrl: "./canvas.component.html",
+    styleUrls: ["./canvas.component.scss"]
 })
 export class CanvasComponent implements OnInit, AfterViewInit {
-  @ViewChild('canvas')
-  private canvasRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild("canvas")
+    private canvasRef!: ElementRef<HTMLCanvasElement>;
 
-  public cameraPosition$: Observable<IPosition> = this.canvasStore$.pipe(select(canvasSelectors.selectCameraPosition))
-  private sensitivity: number = 0.01
+  public cameraPosition$: Observable<IPosition> = this.canvasStore$.pipe(select(canvasSelectors.selectCameraPosition));
+  private sensitivity: number = 0.01;
 
-  private map: IMap = { title: "", mapName: "", imageName: "", disabled: true }
-  private subjectName: string = "math"
+  private map: IMap = { title: "", mapName: "", imageName: "", disabled: true };
+  private subjectName: string = "math";
 
-  private renderer!: THREE.WebGLRenderer;;
+  private renderer!: THREE.WebGLRenderer;
   private get canvas(): HTMLCanvasElement {
-    return this.canvasRef.nativeElement;
+      return this.canvasRef.nativeElement;
   }
   private scene!: THREE.Scene;
   private camera!: THREE.PerspectiveCamera;
   private windowSize: IWindowSize = {
-    width: window.innerWidth,
-    height: window.innerHeight
-  }
+      width: window.innerWidth,
+      height: window.innerHeight
+  };
 
-  private loaderGLTF: GLTFLoader = new GLTFLoader()
+  private loaderGLTF: GLTFLoader = new GLTFLoader();
 
   private fieldOfView: number = 1;
   private nearClippingPlane: number = 1;
@@ -54,155 +53,206 @@ export class CanvasComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(paramMap => {
-      const subjectId: number = Number(paramMap.get("subjectId"))
-      const mapId: number = Number(paramMap.get("mapId"))
-      const currentMap = subjectData.subjectList[subjectId].mapList[mapId]
+      this.route.paramMap.subscribe(paramMap => {
+          const subjectId: number = Number(paramMap.get("subjectId"));
+          const mapId: number = Number(paramMap.get("mapId"));
+          const currentMap = subjectData.subjectList[subjectId].mapList[mapId];
 
-      this.map = currentMap
-      this.subjectName = subjectData.subjectList[subjectId].subjectName
-    })
+          this.map = currentMap;
+          this.subjectName = subjectData.subjectList[subjectId].subjectName;
+      });
   }
 
   ngAfterViewInit(): void {
-    const mapInfo: IMapData = mapsData[this.subjectName][this.map.mapName]
-    this.createScene(mapInfo)
+      const mapInfo: IMapData = mapsData[this.subjectName][this.map.mapName];
+      this.createScene(mapInfo);
 
-    window.addEventListener("resize", () => {
-      this.createScene(mapInfo)
-    })
+      window.addEventListener("resize", () => {
+          this.createScene(mapInfo);
+      });
   }
 
   createScene(mapInfo: IMapData): void {
-    this.setCanvasSize()
+      this.setCanvasSize();
 
-    this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(mapInfo.background)
+      this.scene = new THREE.Scene();
+      this.scene.background = new THREE.Color(mapInfo.background);
 
-    this.initPerspectiveCamera(mapInfo.camera)
-    this.cameraPosition$.subscribe((pos: IPosition) => this.cameraPositionHandler(pos, this.camera))
-    this.initLight()
+      this.initPerspectiveCamera(mapInfo.camera);
+      this.cameraPosition$.subscribe((pos: IPosition) => this.cameraPositionHandler(pos, this.camera));
+      this.initLight();
 
-    mapInfo.scene.forEach((entity: IEntity) => {
-      this.initEntity(entity)
-    })
+      mapInfo.scene.forEach((entity: IEntity) => {
+          this.initEntity(entity);
+      });
 
-    this.startRendering()
+      this.startRendering();
   }
 
   private setCanvasSize(): void {
-    this.windowSize.width = window.innerWidth;
-    this.windowSize.height = window.innerHeight;
+      this.windowSize.width = window.innerWidth;
+      this.windowSize.height = window.innerHeight;
 
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
+      this.canvas.width = window.innerWidth;
+      this.canvas.height = window.innerHeight;
 
-    this.canvas.style.width = window.innerWidth + "px"
-    this.canvas.style.height = window.innerHeight + "px"
+      this.canvas.style.width = window.innerWidth + "px";
+      this.canvas.style.height = window.innerHeight + "px";
   }
 
   private initEntity(entity: IEntity) {
-    switch (entity.type) {
+      switch (entity.type) {
       case EntityTypeEnum.model:
-        this.initModel(entity)
-        break;
-
+          this.initModel(entity);
+          break;
+      case EntityTypeEnum.square:
+          this.initSquare(entity);
+          break;
       default:
-        break;
-    }
+          break;
+      }
   }
 
   private initModel(entity: IEntity) {
-    const assetPath = `/app/media/canvas/assets/${this.subjectName}/${this.map.mapName}/${entity.texture}/scene.gltf`
-    this.loaderGLTF.load(assetPath, (gltf: GLTF) => {
-      const model = gltf.scene.children[0]
+      const assetPath = `/app/media/canvas/assets/${this.subjectName}/${this.map.mapName}/${entity.texture}/scene.gltf`;
+      this.loaderGLTF.load(assetPath, (gltf: GLTF) => {
+          const model = gltf.scene.children[0];
 
-      model.position.x = entity.position.x
-      model.position.y = entity.position.y
-      model.position.z = entity.position.z
+          model.position.x = entity.position.x;
+          model.position.y = entity.position.y;
+          model.position.z = entity.position.z;
 
-      model.rotation.x = entity.rotation.x * Math.PI / 180
-      model.rotation.y = entity.rotation.y * Math.PI / 180
-      model.rotation.z = entity.rotation.z * Math.PI / 180
+          // model.rotation.x = entity.rotation.x * Math.PI / 180
+          // model.rotation.y = entity.rotation.y * Math.PI / 180
+          // model.rotation.z = entity.rotation.z * Math.PI / 180
 
-      model.scale.multiplyScalar(entity.multiplyScalar)
+          model.scale.multiplyScalar(entity.scale.all);
 
-      this.scene.add(model)
-    })
+          // var box = new THREE.Box3().setFromObject(model);
+          // box.getCenter(model.position);  
+
+          this.scene.add(model);
+      });
+  }
+
+  private initSquare(entity: IEntity) {
+      const geometry = new THREE.PlaneGeometry(entity.scale.width, entity.scale.height);
+      const material = new THREE.MeshBasicMaterial({ color: entity.color, side: entity.hasBothSides ? THREE.DoubleSide : THREE.FrontSide });
+
+      if (entity.texture.length) {
+          const texturePath = `/app/media/canvas/assets/${this.subjectName}/${this.map.mapName}/${entity.texture}/texture.png`;
+          const texture = new THREE.TextureLoader().load(texturePath);
+          material.map = texture;
+          material.needsUpdate = true;
+      }
+
+      const mesh = new THREE.Mesh(geometry, material);
+      this.scene.add(mesh);
   }
 
   private initPerspectiveCamera(options: ICamera): void {
-    this.camera = new THREE.PerspectiveCamera(
-      this.fieldOfView,
-      this.canvas.clientWidth / this.canvas.clientHeight,
-      this.nearClippingPlane,
-      this.farClippingPlane
-    )
+      this.camera = new THREE.PerspectiveCamera(
+          this.fieldOfView,
+          this.canvas.clientWidth / this.canvas.clientHeight,
+          this.nearClippingPlane,
+          this.farClippingPlane
+      );
 
-    this.camera.position.x = options.position.x
-    this.camera.position.y = options.position.y
-    this.camera.position.z = options.position.z
+      this.camera.position.x = 100;
+      this.camera.position.y = 100;
+      this.camera.position.z = 100;
 
-    this.camera.rotation.x = options.rotation.x * Math.PI / 180
-    this.camera.rotation.y = options.rotation.y * Math.PI / 180
-    this.camera.rotation.z = options.rotation.z * Math.PI / 180
+      this.camera.position.x = options.position.x;
+      this.camera.position.y = options.position.y;
+      this.camera.position.z = options.position.z;
+
+      this.camera.rotation.x = options.rotation.x * Math.PI / 180;
+      this.camera.rotation.y = options.rotation.y * Math.PI / 180;
+      this.camera.rotation.z = options.rotation.z * Math.PI / 180;
+
+      let b = 0;
+      let i = 1;
+
+      const inter = setInterval(() => {
+          if (b < -30) {
+              i = 1;
+          } else if (b > 30) {
+              i = -1;
+          }
+
+          b += i / 100;
+
+          this.camera.rotation.y += i / 180 * Math.PI;
+      }, 10);
+
+      clearInterval(inter);
   }
 
   private initLight(): void {
-    this.directionalLight = new THREE.DirectionalLight(0xffffff, 0.4)
-    this.directionalLight.position.set(0, 1, 0)
-    this.directionalLight.castShadow = true
+      this.directionalLight = new THREE.DirectionalLight(0xffffff, 0.4);
+      this.directionalLight.position.set(0, 1, 0);
+      this.directionalLight.castShadow = true;
 
-    this.pointLight = new THREE.PointLight(0xffffff)
-    this.pointLight.position.set(0, 200, 400)
+      this.pointLight = new THREE.PointLight(0xffffff);
+      this.pointLight.position.set(0, 200, 400);
 
-    this.scene.add(this.directionalLight)
-    this.scene.add(this.pointLight)
+      this.scene.add(this.directionalLight);
+      this.scene.add(this.pointLight);
   }
 
-  private cameraPositionHandler(pos: IPosition, camera: THREE.PerspectiveCamera): void {
-    const sectorList: number[][] = [[0, -1], [-1, -1], [-1, 0], [-1, 1], [0, 1], [1, 1], [1, 0], [1, -1]]
+  private cameraPositionHandler(
+      pos: IPosition,
+      camera: THREE.PerspectiveCamera,
+  ): void {
+      const sectorList: number[][] = [
+          [0, -1],
+          [-1, -1],
+          [-1, 0],
+          [-1, 1],
+          [0, 1],
+          [1, 1],
+          [1, 0],
+          [1, -1],
+      ];
 
-    const maxRadius = 37.5 // 50 * 0.75
-    const currentRadius = Math.sqrt(pos.gamma ** 2 + pos.beta ** 2)
+      const maxRadius = 37.5; // 50 * 0.75
+      const currentRadius = Math.sqrt(pos.gamma ** 2 + pos.beta ** 2);
 
-    if (currentRadius > maxRadius) {
-      const alpha = Math.atan(pos.gamma / pos.beta) * 180 / Math.PI
+      if (currentRadius > maxRadius) {
+          const alpha = Math.atan(pos.gamma / pos.beta) * 180 / Math.PI;
 
-      let sectorIndex: number = 0;
+          let sectorIndex: number = 0;
 
-      for (let i = 0; i < 7; i++) {
-        const min = i * 45 - 22.5
-        const max = (i + 1) * 45 - 22.5
+          for (let i = 0; i < 7; i++) {
+              const min = i * 45 - 22.5;
+              const max = (i + 1) * 45 - 22.5;
 
-        if (Math.abs(alpha) >= min && Math.abs(alpha) < max) {
-          sectorIndex = i
-          break;
-        }
+              if (Math.abs(alpha) >= min && Math.abs(alpha) < max) {
+                  sectorIndex = i;
+                  break;
+              }
+          }
+
+          const sector = sectorList[sectorIndex];
+
+          camera.rotation.y += pos.gamma > 0
+              ? this.sensitivity * sector[0]
+              : -this.sensitivity * sector[0];
+          camera.rotation.x += pos.beta > 0
+              ? -this.sensitivity * sector[1]
+              : this.sensitivity * sector[1];
       }
-
-      const sector = sectorList[sectorIndex]
-
-      camera.rotation.y += pos.gamma > 0
-        ? this.sensitivity * sector[0]
-        : -this.sensitivity * sector[0]
-      camera.rotation.x += pos.beta > 0
-        ? -this.sensitivity * sector[1]
-        : this.sensitivity * sector[1]
-    }
   }
 
   private startRendering(): void {
-    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas })
-    this.renderer.setPixelRatio(devicePixelRatio)
-    this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight)
+      this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
+      this.renderer.setPixelRatio(devicePixelRatio);
+      this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
 
-    const component = this;
-
-    function render() {
-      requestAnimationFrame(render)
-      component.renderer.render(component.scene, component.camera)
-    }
-    render()
+      const render = () => {
+          requestAnimationFrame(render);
+          this.renderer.render(this.scene, this.camera);
+      };
+      render();
   }
 }

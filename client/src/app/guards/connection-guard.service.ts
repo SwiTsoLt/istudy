@@ -8,7 +8,7 @@ import { WebRtcReducerState } from "../store/webrtc-store/webrtc.reducer";
 
 @Injectable()
 export class ConnectionGuardService implements CanActivate {
-    private isConnected$: Observable<boolean> = this.webRtcStore$.pipe(select(selectIsConnected))
+    private isConnected$: Observable<boolean> = this.webRtcStore$.pipe(select(selectIsConnected));
 
     constructor(
         private webRtcStore$: Store<WebRtcReducerState>,
@@ -20,13 +20,13 @@ export class ConnectionGuardService implements CanActivate {
             take(1),
             map(isConnected => {
                 if (isConnected) {
-                    return true
+                    return true;
                 }
 
-                this.router.navigate(['/home'])
-                return false
+                this.router.navigate(["/home"]);
+                return false;
             })
-        )
+        );
 
     }
 }

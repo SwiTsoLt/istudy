@@ -17,15 +17,18 @@ export const map: IMapData = {
             "z": 0
         }
     },
+    
     "scene": [
         {
             "title": "Boat",
             "type":  EntityTypeEnum.model,
-            "texture": "boat2",
+            "texture": "boat",
+            "color": 0xffffff,
+            "hasBothSides": false,
             "model": "boat",
             "credit": "This work is based on \"Fishing boat\" (https://sketchfab.com/3d-models/fishing-boat-f4b38ccf5ffb46018aa7931c0e106654) by Pabooklas (https://sketchfab.com/Pabooklas) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
-            "multiplyScalar": 100,
             "scale": {
+                "all": 1,
                 "width": 1,
                 "height": 1,
                 "depth": 1
@@ -33,13 +36,13 @@ export const map: IMapData = {
             "position": {
                 "x": 0,
                 "y": 0,
-                "z": -10000
+                "z": -100
             },
             "rotation": {
-                "x": -90,
+                "x": 0,
                 "y": 0,
                 "z": 0
             }
-        }
+        },
     ]
-}
+};

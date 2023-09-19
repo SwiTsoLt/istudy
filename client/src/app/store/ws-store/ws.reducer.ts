@@ -1,7 +1,7 @@
-import { createReducer, on } from '@ngrx/store';
-import * as WSActions from './ws.actions';
+import { createReducer, on } from "@ngrx/store";
+import * as WSActions from "./ws.actions";
 
-export const wsNode = "websocket"
+export const wsNode = "websocket";
 
 export interface WSReducerState {
     roomCode: string,
@@ -14,14 +14,14 @@ export interface WSReducerState {
 }
 
 export const initialState: WSReducerState = {
-    roomCode: '-',
-    messageLabel: '-',
+    roomCode: "-",
+    messageLabel: "-",
     showOwnerPopupState: false,
     showJoinerPopupState: false,
-    inviteQrCodeUrl: '',
+    inviteQrCodeUrl: "",
     isOwner: false,
     isReady: true,
-}
+};
 
 export const WSReducer = createReducer(
     initialState,
@@ -39,8 +39,8 @@ export const WSReducer = createReducer(
     on(WSActions.removeRoom, state => ({ ...state, isReady: false })),
     on(WSActions.removeRoomSuccess, state => ({
         ...state,
-        roomCode: '-',
-        inviteQrCodeUrl: '',
+        roomCode: "-",
+        inviteQrCodeUrl: "",
         showOwnerPopupState: false,
         isOwner: false,
         isReady: true
@@ -54,7 +54,7 @@ export const WSReducer = createReducer(
     on(WSActions.leaveRoom, state => ({ ...state, isReady: false })),
     on(WSActions.leaveRoomSuccess, state => ({
         ...state,
-        roomCode: state.isOwner ? state.roomCode : '-',
+        roomCode: state.isOwner ? state.roomCode : "-",
         showOwnerPopupState: false,
         showJoinerPopupState: false,
         isReady: true
@@ -65,4 +65,4 @@ export const WSReducer = createReducer(
     on(WSActions.openOwnerPopup, state => ({ ...state, showOwnerPopupState: true })),
     on(WSActions.closeJoinerPopup, state => ({ ...state, showJoinerPopupState: false })),
     on(WSActions.newMessage, (state, { msg }) => ({ ...state, messageLabel: msg })),
-)
+);

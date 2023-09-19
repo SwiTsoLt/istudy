@@ -21,6 +21,7 @@ export interface IEntityPosition {
 }
 
 export interface IEntityScale {
+    all: number,
     width: number,
     height: number,
     depth: number
@@ -30,9 +31,10 @@ export interface IEntity {
     title: string,
     type: EntityType,
     texture: string,
+    color: THREE.ColorRepresentation,
+    hasBothSides: boolean,
     model: string,
     credit: string,
-    multiplyScalar: number,
     scale: IEntityScale,
     position: IEntityPosition,
     rotation: IEntityRotation

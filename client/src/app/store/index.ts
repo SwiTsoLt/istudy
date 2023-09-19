@@ -1,10 +1,10 @@
-import { isDevMode } from '@angular/core';
-import { ActionReducerMap, MetaReducer } from '@ngrx/store';
+import { isDevMode } from "@angular/core";
+import { ActionReducerMap, MetaReducer } from "@ngrx/store";
 
-import { wsNode, WSReducer, WSReducerState } from './ws-store/ws.reducer';
-import { webRtcNode, WebRtcReducer, WebRtcReducerState } from './webrtc-store/webrtc.reducer';
-import { toastNode, ToastReducer, ToastState } from './toast-store/toast.reducer';
-import { canvasNode, CanvasReducer, CanvasState } from './canvas-store/canvas.reducer';
+import { wsNode, WSReducer, WSReducerState } from "./ws-store/ws.reducer";
+import { webRtcNode, WebRtcReducer, WebRtcReducerState } from "./webrtc-store/webrtc.reducer";
+import { toastNode, ToastReducer, ToastState } from "./toast-store/toast.reducer";
+import { canvasNode, CanvasReducer, CanvasState } from "./canvas-store/canvas.reducer";
 
 export interface State {
     [wsNode]: WSReducerState,

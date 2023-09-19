@@ -7,8 +7,7 @@ import { Store, select } from "@ngrx/store";
 import { selectRTCPeerConnection } from "./webrtc.selector";
 import { setLocalDescription } from "./webrtc.actions";
 import { wsEventsEnum, wsSuccessActionsEnum } from "../ws-store/ws.interface";
-import * as webRtcActions from './webrtc.actions'
-import { Router } from "@angular/router";
+import * as webRtcActions from "./webrtc.actions";
 interface IDataChannelList {
     [key: string]: RTCDataChannel | null
 }
@@ -16,8 +15,8 @@ interface IDataChannelList {
 @Injectable()
 export class WebRtcEffects {
 
-    private pc$: Observable<RTCPeerConnection | null> = this.store$.pipe(select(selectRTCPeerConnection))
-    private dataChannelList: IDataChannelList = {}
+    private pc$: Observable<RTCPeerConnection | null> = this.store$.pipe(select(selectRTCPeerConnection));
+    private dataChannelList: IDataChannelList = {};
 
     constructor(
         private actions$: Actions,
@@ -39,21 +38,21 @@ export class WebRtcEffects {
                                 .pipe(
                                     take(1),
                                     map((description: RTCSessionDescriptionInit) => {
-                                        this.store$.dispatch(setLocalDescription({ description }))
-                                        this.webSocketService.emit(wsEventsEnum.rtcData, { type: webRtcDataTypeEnum.offer, description })
-                                        return EMPTY
+                                        this.store$.dispatch(setLocalDescription({ description }));
+                                        this.webSocketService.emit(wsEventsEnum.rtcData, { type: webRtcDataTypeEnum.offer, description });
+                                        return EMPTY;
                                     }),
                                     catchError((err) => {
                                         console.log(err);
-                                        return EMPTY
+                                        return EMPTY;
                                     })
-                                ).subscribe()
+                                ).subscribe();
                         }
-                        return ({ type: webRtcActionsEnum.empty })
-                    })
-                return ({ type: webRtcActionsEnum.empty })
+                        return ({ type: webRtcActionsEnum.empty });
+                    });
+                return ({ type: webRtcActionsEnum.empty });
             })
-        ))
+        ));
 
     public createDataChannel$ = createEffect(() =>
         this.actions$.pipe(
@@ -63,18 +62,18 @@ export class WebRtcEffects {
                     take(1)
                 ).subscribe((pc: RTCPeerConnection | null) => {
                     if (pc) {
-                        const channel = pc.createDataChannel(label)
-                        this.dataChannelList[label] = channel
-                        channel?.addEventListener('open', (event: Event) => {
-                            console.log('connect', event);
-                            this.store$.dispatch(webRtcActions.connectSuccess())
-                        })
-                        channel?.addEventListener('message', this.channelHandler)
+                        const channel = pc.createDataChannel(label);
+                        this.dataChannelList[label] = channel;
+                        channel?.addEventListener("open", (event: Event) => {
+                            console.log("connect", event);
+                            this.store$.dispatch(webRtcActions.connectSuccess());
+                        });
+                        channel?.addEventListener("message", this.channelHandler);
                     }
-                })
-                return ({ type: webRtcActionsEnum.empty })
+                });
+                return ({ type: webRtcActionsEnum.empty });
             })
-        ))
+        ));
 
     public createAnswer$ = createEffect(() =>
         this.actions$.pipe(
@@ -86,76 +85,81 @@ export class WebRtcEffects {
                             .pipe(
                                 take(1),
                                 map((description: RTCSessionDescriptionInit) => {
-                                    this.store$.dispatch(setLocalDescription({ description }))
-                                    this.webSocketService.emit(wsEventsEnum.rtcData, { type: webRtcDataTypeEnum.answer, description })
-                                    return EMPTY
+                                    this.store$.dispatch(setLocalDescription({ description }));
+                                    this.webSocketService.emit(wsEventsEnum.rtcData, { type: webRtcDataTypeEnum.answer, description });
+                                    return EMPTY;
                                 }),
                                 catchError((err) => {
                                     console.log(err);
-                                    return EMPTY
+                                    return EMPTY;
                                 })
-                            ).subscribe()
+                            ).subscribe();
                     }
-                    return ({ type: webRtcActionsEnum.empty })
-                })
+                    return ({ type: webRtcActionsEnum.empty });
+                });
 
-                return ({ type: webRtcActionsEnum.empty })
+                return ({ type: webRtcActionsEnum.empty });
             })
-        ))
+        ));
 
     public leaveRoomSuccess$ = createEffect(() =>
         this.actions$.pipe(
             ofType(wsSuccessActionsEnum.leaveRoomSuccess),
             map(() => {
-                return ({ type: webRtcActionsEnum.disconnectSuccess })
+                return ({ type: webRtcActionsEnum.disconnectSuccess });
             })
-        ))
+        ));
 
     public removeRoomSuccess$ = createEffect(() =>
         this.actions$.pipe(
             ofType(wsSuccessActionsEnum.removeRoomSuccess),
             map(() => {
-                return ({ type: webRtcActionsEnum.disconnectSuccess })
+                return ({ type: webRtcActionsEnum.disconnectSuccess });
             })
-        ))
+        ));
 
     public sendMessage$ = createEffect(() =>
         this.actions$.pipe(
             ofType(webRtcActionsEnum.sendMessage),
-            map((message: { label: DataChannelLabelEnum, dataType: DataChannelMessageType,  data: DataChannelMessageType }) => {
+            map((message: { label: DataChannelLabelEnum, dataType: DataChannelMessageType, data: DataChannelMessageType }) => {
                 this.pc$.pipe(take(1))
-                    .subscribe((pc: RTCPeerConnection | null) => {                        
+                    .subscribe((pc: RTCPeerConnection | null) => {
                         if (
-                            pc?.connectionState === 'connected' &&
-                            this.dataChannelList[message.label]?.readyState === 'open'
+                            pc?.connectionState === "connected" &&
+                            this.dataChannelList[message.label]?.readyState === "open"
                         ) {
-                            this.dataChannelList[message.label]?.send(JSON.stringify(message))
+                            this.dataChannelList[message.label]?.send(JSON.stringify(message));
                         }
-                    })
-                return ({ type: webRtcActionsEnum.empty })
+                    });
+                return ({ type: webRtcActionsEnum.empty });
             })
-        ))
+        ));
 
-    private channelHandler(event: any) {
-        switch (event.target.label) {
-            case "dataChannel":
-                this.dataChannelHandler(event)
-                break;
+    private channelHandler(event: unknown) {
+        const target = "target" as keyof typeof event;
+        const label = "label" as keyof typeof target;
 
-            case "positionChannel":
-                this.positionChannelHandler(event)
-                break;
+        if (!event || !target || !label) return;
 
-            default:
-                break;
+        switch (label) {
+        case "dataChannel":
+            this.dataChannelHandler(event);
+            break;
+
+        case "positionChannel":
+            this.positionChannelHandler(event);
+            break;
+
+        default:
+            break;
         }
     }
 
-    private dataChannelHandler(event: any) {
+    private dataChannelHandler(event: unknown) {
         console.log(event);
     }
 
-    private positionChannelHandler(event: any) {
-        console.log(event.data);
+    private positionChannelHandler(event: unknown) {
+        event && console.log(event["data" as keyof typeof event]);
     }
 }

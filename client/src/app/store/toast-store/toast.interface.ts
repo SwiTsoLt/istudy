@@ -1,6 +1,6 @@
 export enum toastActionsEnum {
-    createToast = '[Toast] Create toast',
-    removeToast = '[Toast] Remove toast',
+    createToast = "[Toast] Create toast",
+    removeToast = "[Toast] Remove toast",
 }
 
-export type ToastType = 'success' | 'error' | 'warning' | 'notify'
+export type ToastType = "success" | "error" | "warning" | "notify"
