@@ -13,7 +13,7 @@ export const map: IMapData = {
         },
         "rotation": {
             "x": 0,
-            "y": -170,
+            "y": 0,
             "z": 0
         }
     },
@@ -70,7 +70,7 @@ export const map: IMapData = {
         {
             "title": "Sky 1 (Sun)",
             "type": EntityTypeEnum.square,
-            "texture": "sun/sun2.png",
+            "texture": "sun/sun.png",
             "model": "",
             "credit": "",
             "color": 0xffffff,
@@ -139,7 +139,7 @@ export const map: IMapData = {
                 "z": 0
             }
         },
-        {
+        {   
             "title": "Sky 4",
             "type": EntityTypeEnum.square,
             "texture": "sun/sky.png",
