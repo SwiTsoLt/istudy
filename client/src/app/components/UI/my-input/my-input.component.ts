@@ -14,9 +14,9 @@ export class MyInputComponent {
 
   @ViewChild("myInput") myInputRef: ElementRef<HTMLInputElement> | null = null;
 
-  public inputHandler(event: { data: string }) {
+  public inputHandler(inputElem: HTMLInputElement) {
       if (this.myInputRef?.nativeElement) {
-          if (["e", "E"].includes(event.data)) {
+          if (["e", "E"].includes(inputElem.value)) {
               this.myInputRef.nativeElement.value = "";
           }
       
