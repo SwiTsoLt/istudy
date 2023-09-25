@@ -48,6 +48,7 @@ export class ControllerComponent implements OnInit {
     }
 
     public exit() {
+        this.isMoveEnabled = !this.isMoveEnabled;
         this.router.navigate(["/room"]);
         this.webRtcService.sendData(webRtcInterface.DataChannelLabelEnum.dataChannel, webRtcInterface.DataChannelDataTypeEnum.exitMap, "");
     }

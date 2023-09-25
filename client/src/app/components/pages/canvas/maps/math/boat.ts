@@ -34,7 +34,7 @@ export const map: IMapData = {
             "position": {
                 "x": 0,
                 "y": 0,
-                "z": -1 
+                "z": -0.5 
             },
             "rotation": {
                 "x": -90,
