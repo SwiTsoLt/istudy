@@ -8,8 +8,8 @@ import { Observable, of } from "rxjs";
 import * as webRtcSelectors from "./store/webrtc-store/webrtc.selector";
 import * as webRtcEnums from "./store/webrtc-store/webrtc.interface";
 import { Router } from "@angular/router";
-import * as canvasActions from "./store/canvas-store/canvas.actions";
 import { IPosition } from "./components/pages/controller/controller.service";
+import * as canvasActions from "./store/canvas-store/canvas.actions";
 
 @Injectable({
     providedIn: "root",
@@ -43,7 +43,7 @@ export class WebRtcService {
 
         this.webSocketService.listen(wsListenerEventEnum.offer)
             .subscribe(({ description }) => {
-                if (!(description instanceof RTCSessionDescription)) return;
+                if (!description) return;
 
                 this.webRtcStore$.dispatch(webRtcActions.initWebRtcPeerConnection());
                 this.webRtcStore$.dispatch(webRtcActions.setRemoteDescription({ description }));
@@ -52,14 +52,15 @@ export class WebRtcService {
 
         this.webSocketService.listen(wsListenerEventEnum.answer)
             .subscribe(({ description }) => {
-                if (!(description instanceof RTCSessionDescription)) return;
+                if (!description) return;
+
                 this.webRtcStore$.dispatch(webRtcActions.setRemoteDescription({ description }));
             });
 
         this.webSocketService.listen(wsListenerEventEnum.icecandidate)
             .subscribe(({ candidate }) => {
-                console.log(candidate);
-                if (!(candidate instanceof RTCIceCandidate) && !(typeof(candidate) === "undefined")) return;
+                if (!candidate) return;
+
                 return this.webRtcStore$.dispatch(webRtcActions.addIceCandidate({ candidate }));
             });
 
@@ -82,11 +83,11 @@ export class WebRtcService {
                         this.webRtcStore$.dispatch(webRtcActions.connectSuccess());
                     });
 
-                    event.channel.addEventListener("message", (event) => {
+                    event.channel.addEventListener("message", (event: MessageEvent) => {
                         const data: {
                             label: webRtcEnums.DataChannelLabelEnum,
                             dataType: webRtcEnums.DataChannelMessageType,
-                            data: webRtcEnums.DataChannelMessageDataType
+                            data: webRtcEnums.IListenerReturnData | IPosition | string
                         } = JSON.parse(event.data);
 
                         switch (data.label) {
@@ -106,7 +107,8 @@ export class WebRtcService {
                         case webRtcEnums.DataChannelLabelEnum.positionChannel:
                             switch (data.dataType) {
                             case webRtcEnums.DataChannelPositionTypeEnum.setCameraPosition:
-                                this.canvasStore$.dispatch(canvasActions.setCameraPosition({ pos: data.data as IPosition }));
+                                if (typeof(data.data) === "string" || !("gamma" in data.data && "beta" in data.data)) break;
+                                this.canvasStore$.dispatch(canvasActions.setCameraPosition({ pos: data.data }));
                                 break;
                                 
                             default:

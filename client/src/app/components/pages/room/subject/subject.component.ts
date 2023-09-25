@@ -2,21 +2,14 @@ import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { WebRtcService } from "../../../../webrtc.service";
 import * as webRtcInterface from "../../../../store/webrtc-store/webrtc.interface";
+import { subjectData } from "../../subjectData";
 
-import { subjectData } from "./subjectData";
-export interface IMap {
+export interface ISelector {
   title: string,
-  mapName: string,
+  name: string,
   imageName: string,
   disabled: boolean,
-}
-
-export interface ISubject {
-  title: string,
-  subjectName: string,
-  imageName: string,
-  disabled: boolean,
-  mapList: IMap[]
+  childList: ISelector[]
 }
 
 @Component({
@@ -35,20 +28,20 @@ export class SubjectComponent implements OnInit {
 
   public title: string = "";
   public backButtonShow: boolean = false;
-  public srcOrigin: string = "/room/subject/";
-  public srcMedia: string = "/app/media/subject/";
+  public readonly srcOrigin: string = "/room/subject/";
+  public readonly srcMedia: string = "/app/media/subject/";
   public isOpenMap: boolean = false;
-  public mapList: IMap[] = []; 
+  public mapList: ISelector[] = []; 
 
   ngOnInit(): void {
       this.route.params.subscribe((params: Params) => {
           if (!params["subjectId"] && !params["mapId"]) {
               this.title = "Выберете учебный предмет";
-              this.mapList = subjectData.subjectList[params["mapId"]].mapList;
+              this.mapList = subjectData.subjectList;
               this.backButtonShow = false;
           } else if (params["subjectId"] && !params["mapId"]) {
               this.title = "Выберете карту";
-              this.mapList = subjectData.subjectList[params["subjectId"]].mapList;
+              this.mapList = subjectData.subjectList[params["subjectId"]].childList;
               this.backButtonShow = true;
               this.isOpenMap = true;
           }

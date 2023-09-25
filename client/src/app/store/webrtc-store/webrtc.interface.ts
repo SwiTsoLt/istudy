@@ -33,11 +33,11 @@ export enum DataChannelPositionTypeEnum {
     setCameraPosition = "setCameraPosition"
 }
 
-export type DataChannelMessageType = DataChannelDataTypeEnum | DataChannelPositionTypeEnum
-export type DataChannelMessageDataType = unknown
-
-export interface IListenerData {
-    [key: string]: RTCSessionDescriptionInit | RTCIceCandidate
+export interface IListenerReturnData {
+    roomCode?: string,
+    candidate?: RTCIceCandidate,
+    description?: RTCSessionDescription,
 }
 
-export type RTCSessionDescriptionInitType = RTCSessionDescriptionInit
+export type DataChannelMessageType = DataChannelDataTypeEnum | DataChannelPositionTypeEnum
+export type DataChannelMessageDataType = unknown

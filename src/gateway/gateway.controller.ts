@@ -18,65 +18,64 @@ export class GatewayController implements OnModuleInit {
         this.gatewayService.init();
     }
 
-    @SubscribeMessage("createRoom")
+  @SubscribeMessage("createRoom")
     handleCreateRoomEvent(@ConnectedSocket() socket: Socket) {
         const response: interfaces.IMessage =
-            this.gatewayService.createRoom(socket);
+      this.gatewayService.createRoom(socket);
 
         if (response?.type) {
             socket.send(response);
         }
     }
 
-    @SubscribeMessage("removeRoom")
-    handleRemoveRoomEvent(@ConnectedSocket() socket: Socket) {
-        const response: interfaces.IMessage =
-            this.gatewayService.removeRoom(socket);
+  @SubscribeMessage("removeRoom")
+  handleRemoveRoomEvent(@ConnectedSocket() socket: Socket) {
+      const response: interfaces.IMessage =
+      this.gatewayService.removeRoom(socket);
 
-        if (response?.type) {
-            socket.send(response);
-        }
-    }
+      if (response?.type) {
+          socket.send(response);
+      }
+  }
 
-    @SubscribeMessage("joinRoom")
-    handleJoinRoomEvent(
-        @ConnectedSocket() socket: Socket,
-        @MessageBody() joinDto: JoinDto,
-    ) {
-        const response: interfaces.IMessage = this.gatewayService.joinRoom(
-            socket,
-            joinDto,
-        );
+  @SubscribeMessage("joinRoom")
+  handleJoinRoomEvent(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() joinDto: JoinDto
+  ) {
+      const response: interfaces.IMessage = this.gatewayService.joinRoom(
+          socket,
+          joinDto
+      );
 
-        if (response?.type) {
-            socket.send(response);
-        }
-    }
+      if (response?.type) {
+          socket.send(response);
+      }
+  }
 
-    @SubscribeMessage("leaveRoom")
-    handleLeaveRoomEvent(@ConnectedSocket() socket: Socket) {
-        const response: interfaces.IMessage =
-            this.gatewayService.leaveRoom(socket);
+  @SubscribeMessage("leaveRoom")
+  handleLeaveRoomEvent(@ConnectedSocket() socket: Socket) {
+      const response: interfaces.IMessage = this.gatewayService.leaveRoom(socket);
 
-        if (response?.type) {
-            socket.send(response);
-        }
-    }
+      if (response?.type) {
+          socket.send(response);
+      }
+  }
 
-    // RTC
+  // RTC
 
-    @SubscribeMessage("rtcData")
-    handleRtcDataEvent(
-        @ConnectedSocket() socket: Socket,
-        @MessageBody() rtcDataDto: RtcDataDto,
-    ) {
-        const response: interfaces.IMessage = this.gatewayService.rtcData(
-            socket,
-            rtcDataDto,
-        );
+  @SubscribeMessage("rtcData")
+  handleRtcDataEvent(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() rtcDataDto: RtcDataDto
+  ) {
+      const response: interfaces.IMessage = this.gatewayService.rtcData(
+          socket,
+          rtcDataDto
+      );
 
-        if (response?.type) {
-            socket.send(response);
-        }
-    }
+      if (response?.type) {
+          socket.send(response);
+      }
+  }
 }

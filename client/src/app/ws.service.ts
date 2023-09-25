@@ -8,7 +8,7 @@ import * as WSActions from "./store/ws-store/ws.actions";
 import { ToastState } from "./store/toast-store/toast.reducer";
 import { createToast } from "./store/toast-store/toast.actions";
 import { wsListenerEventEnum } from "./store/ws-store/ws.interface";
-import { IListenerData } from "./store/webrtc-store/webrtc.interface";
+import { IListenerReturnData } from "./store/webrtc-store/webrtc.interface";
 
 @Injectable({
     providedIn: "root",
@@ -20,8 +20,8 @@ export class WebSocketService {
     private reconnectCounter: number = 0;
 
     constructor(
-        private wsStore$: Store<WSReducerState>,
-        private toastStore$: Store<ToastState>,
+    private wsStore$: Store<WSReducerState>,
+    private toastStore$: Store<ToastState>,
     ) {
         this.socket = io.connect(this.uri, {
             reconnectionAttempts: 0, // Infinity
@@ -39,9 +39,9 @@ export class WebSocketService {
             : `ws://${origin}:3000`;
     }
 
-    public listen(eventName: string): Observable<IListenerData> {
+    public listen(eventName: string): Observable<IListenerReturnData> {
         return new Observable((subscriber) => {
-            this.socket.on(eventName, (data: IListenerData) => {
+            this.socket.on(eventName, (data: IListenerReturnData) => {
                 subscriber.next(data);
             });
         });
@@ -105,7 +105,7 @@ export class WebSocketService {
 
     private subscribeHandler(
         listenerName: string,
-        successFunction: ({ roomCode } : { roomCode: string }) => Action,
+        successFunction: ({ roomCode }: { roomCode: string }) => Action,
         errorFunction: () => Action,
         withRoomCode: boolean
     ): void {
@@ -115,12 +115,13 @@ export class WebSocketService {
                     this.wsStore$.dispatch(errorFunction());
                     return EMPTY;
                 })
-            ).subscribe((data: unknown) => {
+            ).subscribe((data) => {
                 if (withRoomCode) {
-                    if (!data) return this.wsStore$.dispatch(errorFunction());
-                    if (!data["roomCode" as keyof typeof data]) return this.wsStore$.dispatch(errorFunction());
+                    if (!data?.roomCode) {
+                        return this.wsStore$.dispatch(errorFunction());
+                    }
 
-                    return this.wsStore$.dispatch(successFunction({ roomCode: data["roomCode" as keyof typeof data] }));
+                    return this.wsStore$.dispatch(successFunction({ roomCode: data.roomCode }));
                 }
                 return this.wsStore$.dispatch(successFunction({ roomCode: "" }));
             });

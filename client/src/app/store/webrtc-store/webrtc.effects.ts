@@ -121,9 +121,9 @@ export class WebRtcEffects {
     public sendMessage$ = createEffect(() =>
         this.actions$.pipe(
             ofType(webRtcActionsEnum.sendMessage),
-            map((message: { label: DataChannelLabelEnum, dataType: DataChannelMessageType, data: DataChannelMessageType }) => {
+            map((message: { label: DataChannelLabelEnum, dataType: DataChannelMessageType,  data: DataChannelMessageType }) => {
                 this.pc$.pipe(take(1))
-                    .subscribe((pc: RTCPeerConnection | null) => {
+                    .subscribe((pc: RTCPeerConnection | null) => {                        
                         if (
                             pc?.connectionState === "connected" &&
                             this.dataChannelList[message.label]?.readyState === "open"
@@ -135,31 +135,30 @@ export class WebRtcEffects {
             })
         ));
 
-    private channelHandler(event: unknown) {
-        const target = "target" as keyof typeof event;
-        const label = "label" as keyof typeof target;
+    private channelHandler(event: MessageEvent<unknown>) {
+        if (!event || !event.target) return;
 
-        if (!event || !target || !label) return;
+        console.log(event);
 
-        switch (label) {
-        case "dataChannel":
-            this.dataChannelHandler(event);
-            break;
+        // switch (event.target) {
+        // case "dataChannel":
+        //     this.dataChannelHandler(event);
+        //     break;
 
-        case "positionChannel":
-            this.positionChannelHandler(event);
-            break;
+        // case "positionChannel":
+        //     this.positionChannelHandler(event);
+        //     break;
 
-        default:
-            break;
-        }
+        // default:
+        //     break;
+        // }
     }
 
-    private dataChannelHandler(event: unknown) {
+    private dataChannelHandler(event: MessageEvent<unknown>) {
         console.log(event);
     }
 
-    private positionChannelHandler(event: unknown) {
-        event && console.log(event["data" as keyof typeof event]);
+    private positionChannelHandler(event: MessageEvent<unknown>) {
+        console.log(event.data);
     }
 }

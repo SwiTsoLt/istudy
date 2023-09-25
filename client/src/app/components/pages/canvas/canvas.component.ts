@@ -5,254 +5,285 @@ import { Observable } from "rxjs";
 import * as THREE from "three";
 import { IPosition } from "../../pages/controller/controller.service";
 import * as canvasSelectors from "../../../store/canvas-store/canvas.selector";
-import { IMap } from "../room/subject/subject.component";
+import { ISelector } from "../room/subject/subject.component";
 import { EntityTypeEnum, ICamera, IEntity, IMapData, IWindowSize } from "./canvas.interface";
 import { mapsData } from "./maps";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
-import { subjectData } from "../room/subject/subjectData";
-
+import { subjectData } from "../subjectData";
 @Component({
     selector: "app-canvas",
     templateUrl: "./canvas.component.html",
     styleUrls: ["./canvas.component.scss"]
 })
 export class CanvasComponent implements OnInit, AfterViewInit {
-  @ViewChild("canvas")
+    @ViewChild("canvas")
     private canvasRef!: ElementRef<HTMLCanvasElement>;
 
-  public cameraPosition$: Observable<IPosition> = this.canvasStore$.pipe(select(canvasSelectors.selectCameraPosition));
-  private sensitivity: number = 0.01;
+    public cameraPosition$: Observable<IPosition> = this.canvasStore$.pipe(select(canvasSelectors.selectCameraPosition));
+    private sensitivity: number = 0.01;
 
-  private map: IMap = { title: "", mapName: "", imageName: "", disabled: true };
-  private subjectName: string = "math";
+    private map: ISelector = { title: "", name: "", imageName: "", disabled: true, childList: [] };
+    private subjectName: string = "math";
 
-  private renderer!: THREE.WebGLRenderer;
-  private get canvas(): HTMLCanvasElement {
-      return this.canvasRef.nativeElement;
-  }
-  private scene!: THREE.Scene;
-  private camera!: THREE.PerspectiveCamera;
-  private windowSize: IWindowSize = {
-      width: window.innerWidth,
-      height: window.innerHeight
-  };
+    private readonly ASSET_PATH = "/app/media/canvas/assets";
 
-  private loaderGLTF: GLTFLoader = new GLTFLoader();
+    private renderer!: THREE.WebGLRenderer;
+    private get canvas(): HTMLCanvasElement {
+        return this.canvasRef.nativeElement;
+    }
+    private scene!: THREE.Scene;
+    private camera!: THREE.PerspectiveCamera;
+    private windowSize: IWindowSize = {
+        width: window.innerWidth,
+        height: window.innerHeight
+    };
 
-  private fieldOfView: number = 1;
-  private nearClippingPlane: number = 1;
-  private farClippingPlane: number = 100000;
+    private loaderGLTF: GLTFLoader = new GLTFLoader();
 
-  private directionalLight!: THREE.DirectionalLight;
-  private pointLight!: THREE.PointLight;
+    private fieldOfView: number = 50;
+    private nearClippingPlane: number = 0.1;
+    private farClippingPlane: number = 100;
 
-  constructor(
-    private canvasStore$: Store<CanvasState>,
-    private route: ActivatedRoute
-  ) { }
+    private directionalLight!: THREE.DirectionalLight;
+    private pointLight!: THREE.PointLight;
 
-  ngOnInit(): void {
-      this.route.paramMap.subscribe(paramMap => {
-          const subjectId: number = Number(paramMap.get("subjectId"));
-          const mapId: number = Number(paramMap.get("mapId"));
-          const currentMap = subjectData.subjectList[subjectId].mapList[mapId];
+    constructor(
+        private canvasStore$: Store<CanvasState>,
+        private route: ActivatedRoute
+    ) { }
 
-          this.map = currentMap;
-          this.subjectName = subjectData.subjectList[subjectId].subjectName;
-      });
-  }
+    ngOnInit(): void {
+        this.route.paramMap.subscribe(paramMap => {
+            const subjectId: number = Number(paramMap.get("subjectId"));
+            const mapId: number = Number(paramMap.get("mapId"));
+            const currentMap = subjectData.subjectList[subjectId].childList[mapId];
 
-  ngAfterViewInit(): void {
-      const mapInfo: IMapData = mapsData[this.subjectName][this.map.mapName];
-      this.createScene(mapInfo);
+            this.map = currentMap;
+            this.subjectName = subjectData.subjectList[subjectId].name;
+        });
+    }
 
-      window.addEventListener("resize", () => {
-          this.createScene(mapInfo);
-      });
-  }
+    ngAfterViewInit(): void {
+        const mapInfo: IMapData = mapsData[this.subjectName][this.map.name];
+        this.createScene(mapInfo);
 
-  createScene(mapInfo: IMapData): void {
-      this.setCanvasSize();
+        window.addEventListener("resize", () => {
+            this.createScene(mapInfo);
+        });
+    }
 
-      this.scene = new THREE.Scene();
-      this.scene.background = new THREE.Color(mapInfo.background);
+    createScene(mapInfo: IMapData): void {
+        this.setCanvasSize();
 
-      this.initPerspectiveCamera(mapInfo.camera);
-      this.cameraPosition$.subscribe((pos: IPosition) => this.cameraPositionHandler(pos, this.camera));
-      this.initLight();
+        this.scene = new THREE.Scene();
 
-      mapInfo.scene.forEach((entity: IEntity) => {
-          this.initEntity(entity);
-      });
+        this.initPerspectiveCamera(mapInfo.camera);
+        this.cameraPosition$.subscribe((pos: IPosition) => this.cameraPositionHandler(pos, this.camera));
+        this.initLight();
 
-      this.startRendering();
-  }
+        mapInfo.scene.forEach((entity: IEntity) => {
+            this.initEntity(entity);
+        });
 
-  private setCanvasSize(): void {
-      this.windowSize.width = window.innerWidth;
-      this.windowSize.height = window.innerHeight;
+        this.initRenderer();
+        
+        if (mapInfo.background) {
+            this.scene.background = new THREE.Color(mapInfo.background);
+        } else {
+            this.renderer.setClearColor(0x000000, 0);
+        }
 
-      this.canvas.width = window.innerWidth;
-      this.canvas.height = window.innerHeight;
+        this.render();
+    }
 
-      this.canvas.style.width = window.innerWidth + "px";
-      this.canvas.style.height = window.innerHeight + "px";
-  }
+    private setCanvasSize(): void {
+        this.windowSize.width = window.innerWidth;
+        this.windowSize.height = window.innerHeight;
 
-  private initEntity(entity: IEntity) {
-      switch (entity.type) {
-      case EntityTypeEnum.model:
-          this.initModel(entity);
-          break;
-      case EntityTypeEnum.square:
-          this.initSquare(entity);
-          break;
-      default:
-          break;
-      }
-  }
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
 
-  private initModel(entity: IEntity) {
-      const assetPath = `/app/media/canvas/assets/${this.subjectName}/${this.map.mapName}/${entity.texture}/scene.gltf`;
-      this.loaderGLTF.load(assetPath, (gltf: GLTF) => {
-          const model = gltf.scene.children[0];
+        this.canvas.style.width = window.innerWidth + "px";
+        this.canvas.style.height = window.innerHeight + "px";
+    }
 
-          model.position.x = entity.position.x;
-          model.position.y = entity.position.y;
-          model.position.z = entity.position.z;
+    private initEntity(entity: IEntity) {
+        switch (entity.type) {
+        case EntityTypeEnum.model:
+            this.initModel(entity);
+            break;
+        case EntityTypeEnum.square:
+            this.initSquare(entity);
+            break;
+        case EntityTypeEnum.circle:
+            this.initCircle(entity);
+            break;
+        case EntityTypeEnum.cube:
+            this.initCube(entity);
+            break;
+        default:
+            break;
+        }
+    }
 
-          // model.rotation.x = entity.rotation.x * Math.PI / 180
-          // model.rotation.y = entity.rotation.y * Math.PI / 180
-          // model.rotation.z = entity.rotation.z * Math.PI / 180
+    private initSquare(entity: IEntity) {
+        const geometry = new THREE.PlaneGeometry(entity.scale.width, entity.scale.height);
 
-          model.scale.multiplyScalar(entity.scale.all);
+        let texture: THREE.Texture | undefined;
 
-          // var box = new THREE.Box3().setFromObject(model);
-          // box.getCenter(model.position);  
+        if (entity.texture) {
+            texture = new THREE.TextureLoader()
+                .load(`${this.ASSET_PATH}/${this.subjectName}/${this.map.name}/${entity.texture}`);
+        }
 
-          this.scene.add(model);
-      });
-  }
+        const material = new THREE.MeshBasicMaterial({ map: texture, color: entity.color, side: THREE.DoubleSide });
+        const plane = new THREE.Mesh(geometry, material);
 
-  private initSquare(entity: IEntity) {
-      const geometry = new THREE.PlaneGeometry(entity.scale.width, entity.scale.height);
-      const material = new THREE.MeshBasicMaterial({ color: entity.color, side: entity.hasBothSides ? THREE.DoubleSide : THREE.FrontSide });
+        plane.position.set(
+            entity.position.x,
+            entity.position.y,
+            entity.position.z
+        );
+        plane.rotation.set(
+            entity.rotation.x * Math.PI / 180,
+            entity.rotation.y * Math.PI / 180,
+            entity.rotation.z * Math.PI / 180
+        );
+        console.log(plane.rotation);
+        this.scene.add(plane);
+    }
 
-      if (entity.texture.length) {
-          const texturePath = `/app/media/canvas/assets/${this.subjectName}/${this.map.mapName}/${entity.texture}/texture.png`;
-          const texture = new THREE.TextureLoader().load(texturePath);
-          material.map = texture;
-          material.needsUpdate = true;
-      }
+    private initCircle(entity: IEntity) {
+        const geometry = new THREE.CircleGeometry(entity.scale.width, entity.scale.height);
 
-      const mesh = new THREE.Mesh(geometry, material);
-      this.scene.add(mesh);
-  }
+        let texture: THREE.Texture | undefined;
 
-  private initPerspectiveCamera(options: ICamera): void {
-      this.camera = new THREE.PerspectiveCamera(
-          this.fieldOfView,
-          this.canvas.clientWidth / this.canvas.clientHeight,
-          this.nearClippingPlane,
-          this.farClippingPlane
-      );
+        if (entity.texture) {
+            texture = new THREE.TextureLoader()
+                .load(`${this.ASSET_PATH}/${this.subjectName}/${this.map.name}/${entity.texture}`);
+        }
 
-      this.camera.position.x = 100;
-      this.camera.position.y = 100;
-      this.camera.position.z = 100;
+        const material = new THREE.MeshBasicMaterial({ map: texture, color: entity.color, side: THREE.DoubleSide });
+        const plane = new THREE.Mesh(geometry, material);
 
-      this.camera.position.x = options.position.x;
-      this.camera.position.y = options.position.y;
-      this.camera.position.z = options.position.z;
+        plane.position.set(
+            entity.position.x,
+            entity.position.y,
+            entity.position.z
+        );
+        plane.rotation.set(
+            entity.rotation.x * Math.PI / 180,
+            entity.rotation.y * Math.PI / 180,
+            entity.rotation.z * Math.PI / 180
+        );
+        this.scene.add(plane);
+    }
 
-      this.camera.rotation.x = options.rotation.x * Math.PI / 180;
-      this.camera.rotation.y = options.rotation.y * Math.PI / 180;
-      this.camera.rotation.z = options.rotation.z * Math.PI / 180;
+    private initCube(entity: IEntity) {
+        const geometry = new THREE.BoxGeometry(entity.scale.width, entity.scale.height, entity.scale.depth);
+        const material = new THREE.MeshStandardMaterial({ color: entity.color, roughness: 0 });
+        const cube = new THREE.Mesh(geometry, material);
 
-      let b = 0;
-      let i = 1;
+        cube.position.set(entity.position.x, entity.position.y, entity.position.z);
+        cube.rotation.set(entity.rotation.x * Math.PI / 180, entity.rotation.y * Math.PI / 180, entity.rotation.z * Math.PI / 180);
 
-      const inter = setInterval(() => {
-          if (b < -30) {
-              i = 1;
-          } else if (b > 30) {
-              i = -1;
-          }
+        this.scene.add(cube);
+    }
 
-          b += i / 100;
+    private initModel(entity: IEntity) {
+        this.loaderGLTF.load(`${this.ASSET_PATH}/${this.subjectName}/${this.map.name}/${entity.model}/scene.gltf`, (gltf: GLTF) => {
+            const model = gltf.scene.children[0];
 
-          this.camera.rotation.y += i / 180 * Math.PI;
-      }, 10);
+            model.position.x = entity.position.x;
+            model.position.y = entity.position.y;
+            model.position.z = entity.position.z;
 
-      clearInterval(inter);
-  }
+            model.rotation.x = entity.rotation.x * Math.PI / 180;
+            model.rotation.y = entity.rotation.y * Math.PI / 180;
+            model.rotation.z = entity.rotation.z * Math.PI / 180;
 
-  private initLight(): void {
-      this.directionalLight = new THREE.DirectionalLight(0xffffff, 0.4);
-      this.directionalLight.position.set(0, 1, 0);
-      this.directionalLight.castShadow = true;
+            model.scale.multiplyScalar(entity.multiplyScalar);
 
-      this.pointLight = new THREE.PointLight(0xffffff);
-      this.pointLight.position.set(0, 200, 400);
+            this.scene.add(model);
+        });
+    }
 
-      this.scene.add(this.directionalLight);
-      this.scene.add(this.pointLight);
-  }
+    private initPerspectiveCamera(options: ICamera): void {
+        this.camera = new THREE.PerspectiveCamera(
+            this.fieldOfView,
+            window.innerWidth / window.innerHeight,
+            this.nearClippingPlane,
+            this.farClippingPlane
+        );
 
-  private cameraPositionHandler(
-      pos: IPosition,
-      camera: THREE.PerspectiveCamera,
-  ): void {
-      const sectorList: number[][] = [
-          [0, -1],
-          [-1, -1],
-          [-1, 0],
-          [-1, 1],
-          [0, 1],
-          [1, 1],
-          [1, 0],
-          [1, -1],
-      ];
+        this.camera.position.set(
+            options.position.x,
+            options.position.y,
+            options.position.z
+        );
 
-      const maxRadius = 37.5; // 50 * 0.75
-      const currentRadius = Math.sqrt(pos.gamma ** 2 + pos.beta ** 2);
+        this.camera.rotation.set(
+            options.rotation.x * Math.PI / 180,
+            options.rotation.y * Math.PI / 180,
+            options.rotation.z * Math.PI / 180
+        );
+    }
 
-      if (currentRadius > maxRadius) {
-          const alpha = Math.atan(pos.gamma / pos.beta) * 180 / Math.PI;
+    private initLight(): void {
+        const light = new THREE.DirectionalLight(0xffffff, 3);
+        light.position.set(-4, 20, -2);
 
-          let sectorIndex: number = 0;
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.4);
+        directionalLight.position.set(3, 3, -1);
+        this.scene.add(light, directionalLight);
+    }
 
-          for (let i = 0; i < 7; i++) {
-              const min = i * 45 - 22.5;
-              const max = (i + 1) * 45 - 22.5;
+    private cameraPositionHandler(pos: IPosition, camera: THREE.PerspectiveCamera): void {
+        const sectorList: number[][] = [[0, -1], [-1, -1], [-1, 0], [-1, 1], [0, 1], [1, 1], [1, 0], [1, -1]];
 
-              if (Math.abs(alpha) >= min && Math.abs(alpha) < max) {
-                  sectorIndex = i;
-                  break;
-              }
-          }
+        const maxRadius = 37.5; // 50 * 0.75
+        const currentRadius = Math.sqrt(pos.gamma ** 2 + pos.beta ** 2);
 
-          const sector = sectorList[sectorIndex];
+        if (currentRadius > maxRadius) {
+            const alpha = Math.atan(pos.gamma / pos.beta) * 180 / Math.PI;
 
-          camera.rotation.y += pos.gamma > 0
-              ? this.sensitivity * sector[0]
-              : -this.sensitivity * sector[0];
-          camera.rotation.x += pos.beta > 0
-              ? -this.sensitivity * sector[1]
-              : this.sensitivity * sector[1];
-      }
-  }
+            let sectorIndex: number = 0;
 
-  private startRendering(): void {
-      this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
-      this.renderer.setPixelRatio(devicePixelRatio);
-      this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
+            for (let i = 0; i < 7; i++) {
+                const min = i * 45 - 22.5;
+                const max = (i + 1) * 45 - 22.5;
 
-      const render = () => {
-          requestAnimationFrame(render);
-          this.renderer.render(this.scene, this.camera);
-      };
-      render();
-  }
+                if (Math.abs(alpha) >= min && Math.abs(alpha) < max) {
+                    sectorIndex = i;
+                    break;
+                }
+            }
+
+            const sector = sectorList[sectorIndex];
+
+            camera.rotation.y += pos.gamma > 0
+                ? this.sensitivity * sector[0]
+                : -this.sensitivity * sector[0];
+            camera.rotation.x += pos.beta > 0
+                ? -this.sensitivity * sector[1]
+                : this.sensitivity * sector[1];
+        }
+    }
+
+    private initRenderer(): void {
+        this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
+        this.renderer.setPixelRatio(devicePixelRatio);
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.xr.enabled = true;
+    }
+
+    private render() {
+        const rend = () => {
+            requestAnimationFrame(rend);
+            this.renderer.render(this.scene, this.camera);
+        };
+        rend();
+    }
 }

@@ -1,52 +1,56 @@
-export const subjectData = {
+import { ISelector } from "./room/subject/subject.component";
+
+export const subjectData: { subjectList: ISelector[] } = {
     "subjectList": [
         {
             "title": "Алгебра",
-            "subjectName": "math", 
+            "name": "math",
             "imageName": "algebra.jpg",
-            "mapList": [
+            "childList": [
                 {
                     "title": "Лодка",
-                    "mapName": "boat",
+                    "name": "boat",
                     "imageName": "boat.jpg",
-                    "disabled": false
+                    "disabled": false,
+                    "childList": []
                 },
                 {
                     "title": "Поезд",
-                    "mapName": "train",
+                    "name": "train",
                     "imageName": "train.jpg",
-                    "disabled": true
+                    "disabled": true,
+                    "childList": []
                 }
             ],
             "disabled": false
         },
         {
             "title": "Геометрия",
-            "subjectName": "geometry",
+            "name": "geometry",
             "imageName": "geometry.jpg",
             "disabled": true,
-            "mapList": []
+            "childList": []
         },
         {
             "title": "Физика",
-            "subjectName": "physics",
+            "name": "physics",
             "imageName": "physics.jpg",
             "disabled": true,
-            "mapList": []
+            "childList": []
         },
         {
             "title": "Химия",
-            "subjectName": "chemistry",
+            "name": "chemistry",
             "imageName": "chemistry.jpg",
             "disabled": true,
-            "mapList": []
+            "childList": []
         },
         {
             "title": "Астрономия",
-            "subjectName": "astronomy",
+            "name": "astronomy",
             "imageName": "astronomy.jpg",
             "disabled": true,
-            "mapList": []
+            "childList": []
         }
     ]
 };

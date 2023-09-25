@@ -21,7 +21,6 @@ export interface IEntityPosition {
 }
 
 export interface IEntityScale {
-    all: number,
     width: number,
     height: number,
     depth: number
@@ -31,10 +30,10 @@ export interface IEntity {
     title: string,
     type: EntityType,
     texture: string,
-    color: THREE.ColorRepresentation,
-    hasBothSides: boolean,
+    color: THREE.ColorRepresentation | undefined,
     model: string,
     credit: string,
+    multiplyScalar: number,
     scale: IEntityScale,
     position: IEntityPosition,
     rotation: IEntityRotation
@@ -60,7 +59,7 @@ export interface ICamera {
 export interface IMapData {
     title: string,
     map: string,
-    background: THREE.ColorRepresentation,
+    background: THREE.ColorRepresentation | undefined,
     subject: string,
     camera: ICamera,
     scene: IEntity[]

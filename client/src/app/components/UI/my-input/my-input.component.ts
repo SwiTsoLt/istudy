@@ -9,16 +9,14 @@ export class MyInputComponent {
   @Input() type: string = "";
   @Input() placeholder: string = "";
   @Input() maxLength: number = 0;
-  @Input() inputCallback: (text: string) => void = () => { };
+  @Input() inputCallback: (val: string) => void = () => { };
   @Input() enterCallback: () => void = () => { };
 
   @ViewChild("myInput") myInputRef: ElementRef<HTMLInputElement> | null = null;
 
-  public inputHandler(event: Event) {
-
+  public inputHandler(event: { data: string }) {
       if (this.myInputRef?.nativeElement) {
-          const data = event["data" as keyof typeof event];
-          if (data && typeof(data) === "string" && ["e", "E"].includes(data)) {
+          if (["e", "E"].includes(event.data)) {
               this.myInputRef.nativeElement.value = "";
           }
       
