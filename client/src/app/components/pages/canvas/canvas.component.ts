@@ -6,11 +6,18 @@ import * as THREE from "three";
 import { IPosition } from "../../pages/controller/controller.service";
 import * as canvasSelectors from "../../../store/canvas-store/canvas.selector";
 import { ISelector } from "../room/subject/subject.component";
-import { EntityTypeEnum, ICamera, IEntity, IMapData, IWindowSize } from "./canvas.interface";
+import * as canvasInterface from "./canvas.interface";
 import { mapsData } from "./maps";
-import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 import { subjectData } from "../subjectData";
+import { SquareEntity } from "./entity/square-entity";
+import { CircleEntity } from "./entity/circle-entity";
+import { CubeEntity } from "./entity/cube-entity";
+import { ModelEntity } from "./entity/model-entity";
+import { SphereEntity } from "./entity/sphere-entity";
+
+import * as Stats from "stats.js";
+
 @Component({
     selector: "app-canvas",
     templateUrl: "./canvas.component.html",
@@ -23,10 +30,8 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     public cameraPosition$: Observable<IPosition> = this.canvasStore$.pipe(select(canvasSelectors.selectCameraPosition));
     private sensitivity: number = 0.01;
 
-    private map: ISelector = { title: "", name: "", imageName: "", disabled: true, childList: [] };
-    private subjectName: string = "math";
-
-    private readonly ASSET_PATH = "/app/media/canvas/assets";
+    public map: ISelector = { title: "", name: "", imageName: "", disabled: true, childList: [] };
+    public subjectName: string = "math";
 
     private renderer!: THREE.WebGLRenderer;
     private get canvas(): HTMLCanvasElement {
@@ -34,12 +39,10 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     }
     private scene!: THREE.Scene;
     private camera!: THREE.PerspectiveCamera;
-    private windowSize: IWindowSize = {
+    private windowSize: canvasInterface.IWindowSize = {
         width: window.innerWidth,
         height: window.innerHeight
     };
-
-    private loaderGLTF: GLTFLoader = new GLTFLoader();
 
     private fieldOfView: number = 50;
     private nearClippingPlane: number = 0.1;
@@ -47,6 +50,8 @@ export class CanvasComponent implements OnInit, AfterViewInit {
 
     private directionalLight!: THREE.DirectionalLight;
     private pointLight!: THREE.PointLight;
+
+    private stats: Stats = new Stats();
 
     constructor(
         private canvasStore$: Store<CanvasState>,
@@ -65,7 +70,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        const mapInfo: IMapData = mapsData[this.subjectName][this.map.name];
+        const mapInfo: canvasInterface.IMapData = mapsData[this.subjectName][this.map.name];
         this.createScene(mapInfo);
 
         window.addEventListener("resize", () => {
@@ -73,28 +78,31 @@ export class CanvasComponent implements OnInit, AfterViewInit {
         });
     }
 
-    createScene(mapInfo: IMapData): void {
+    // Create canvas
+
+    createScene(mapInfo: canvasInterface.IMapData): void {
+        this.initStats();
         this.setCanvasSize();
 
         this.scene = new THREE.Scene();
+        this.scene.background = new THREE.Color(mapInfo.background);
 
         this.initPerspectiveCamera(mapInfo.camera);
         this.cameraPosition$.subscribe((pos: IPosition) => this.cameraPositionHandler(pos, this.camera));
+        
         this.initLight();
 
-        mapInfo.scene.forEach((entity: IEntity) => {
+        mapInfo.scene.forEach((entity: canvasInterface.IEntity) => {
             this.initEntity(entity);
         });
 
         this.initRenderer();
-        
-        if (mapInfo.background) {
-            this.scene.background = new THREE.Color(mapInfo.background);
-        } else {
-            this.renderer.setClearColor(0x000000, 0);
-        }
-
         this.render();
+    }
+
+    private initStats() {
+        this.stats.showPanel(0);
+        document.body.appendChild(this.stats.dom);
     }
 
     private setCanvasSize(): void {
@@ -108,108 +116,9 @@ export class CanvasComponent implements OnInit, AfterViewInit {
         this.canvas.style.height = window.innerHeight + "px";
     }
 
-    private initEntity(entity: IEntity) {
-        switch (entity.type) {
-        case EntityTypeEnum.model:
-            this.initModel(entity);
-            break;
-        case EntityTypeEnum.square:
-            this.initSquare(entity);
-            break;
-        case EntityTypeEnum.circle:
-            this.initCircle(entity);
-            break;
-        case EntityTypeEnum.cube:
-            this.initCube(entity);
-            break;
-        default:
-            break;
-        }
-    }
+    // Initialize Camera
 
-    private initSquare(entity: IEntity) {
-        const geometry = new THREE.PlaneGeometry(entity.scale.width, entity.scale.height);
-
-        let texture: THREE.Texture | undefined;
-
-        if (entity.texture) {
-            texture = new THREE.TextureLoader()
-                .load(`${this.ASSET_PATH}/${this.subjectName}/${this.map.name}/${entity.texture}`);
-        }
-
-        const material = new THREE.MeshBasicMaterial({ map: texture, color: entity.color, side: THREE.DoubleSide });
-        const plane = new THREE.Mesh(geometry, material);
-
-        plane.position.set(
-            entity.position.x,
-            entity.position.y,
-            entity.position.z
-        );
-        plane.rotation.set(
-            entity.rotation.x * Math.PI / 180,
-            entity.rotation.y * Math.PI / 180,
-            entity.rotation.z * Math.PI / 180
-        );
-        console.log(plane.rotation);
-        this.scene.add(plane);
-    }
-
-    private initCircle(entity: IEntity) {
-        const geometry = new THREE.CircleGeometry(entity.scale.width, entity.scale.height);
-
-        let texture: THREE.Texture | undefined;
-
-        if (entity.texture) {
-            texture = new THREE.TextureLoader()
-                .load(`${this.ASSET_PATH}/${this.subjectName}/${this.map.name}/${entity.texture}`);
-        }
-
-        const material = new THREE.MeshBasicMaterial({ map: texture, color: entity.color, side: THREE.DoubleSide });
-        const plane = new THREE.Mesh(geometry, material);
-
-        plane.position.set(
-            entity.position.x,
-            entity.position.y,
-            entity.position.z
-        );
-        plane.rotation.set(
-            entity.rotation.x * Math.PI / 180,
-            entity.rotation.y * Math.PI / 180,
-            entity.rotation.z * Math.PI / 180
-        );
-        this.scene.add(plane);
-    }
-
-    private initCube(entity: IEntity) {
-        const geometry = new THREE.BoxGeometry(entity.scale.width, entity.scale.height, entity.scale.depth);
-        const material = new THREE.MeshStandardMaterial({ color: entity.color, roughness: 0 });
-        const cube = new THREE.Mesh(geometry, material);
-
-        cube.position.set(entity.position.x, entity.position.y, entity.position.z);
-        cube.rotation.set(entity.rotation.x * Math.PI / 180, entity.rotation.y * Math.PI / 180, entity.rotation.z * Math.PI / 180);
-
-        this.scene.add(cube);
-    }
-
-    private initModel(entity: IEntity) {
-        this.loaderGLTF.load(`${this.ASSET_PATH}/${this.subjectName}/${this.map.name}/${entity.model}/scene.gltf`, (gltf: GLTF) => {
-            const model = gltf.scene.children[0];
-
-            model.position.x = entity.position.x;
-            model.position.y = entity.position.y;
-            model.position.z = entity.position.z;
-
-            model.rotation.x = entity.rotation.x * Math.PI / 180;
-            model.rotation.y = entity.rotation.y * Math.PI / 180;
-            model.rotation.z = entity.rotation.z * Math.PI / 180;
-
-            model.scale.multiplyScalar(entity.multiplyScalar);
-
-            this.scene.add(model);
-        });
-    }
-
-    private initPerspectiveCamera(options: ICamera): void {
+    private initPerspectiveCamera(options: canvasInterface.ICamera): void {
         this.camera = new THREE.PerspectiveCamera(
             this.fieldOfView,
             window.innerWidth / window.innerHeight,
@@ -228,15 +137,6 @@ export class CanvasComponent implements OnInit, AfterViewInit {
             options.rotation.y * Math.PI / 180,
             options.rotation.z * Math.PI / 180
         );
-    }
-
-    private initLight(): void {
-        const light = new THREE.DirectionalLight(0xffffff, 3);
-        light.position.set(-4, 20, -2);
-
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.4);
-        directionalLight.position.set(3, 3, -1);
-        this.scene.add(light, directionalLight);
     }
 
     private cameraPositionHandler(pos: IPosition, camera: THREE.PerspectiveCamera): void {
@@ -271,6 +171,73 @@ export class CanvasComponent implements OnInit, AfterViewInit {
         }
     }
 
+    // Initialize light
+
+    private initLight(): void {
+        const light = new THREE.DirectionalLight(0xffffff, 0.5);
+        light.position.set(-5, 5, -5);
+
+        this.scene.add(light);
+    }
+
+    // Initialize entities
+
+    private initEntity(entity: canvasInterface.IEntity) {
+        switch (entity.type) {
+        case canvasInterface.EntityTypeEnum.model:
+            this.initModel(entity);
+            break;
+        case canvasInterface.EntityTypeEnum.cube:
+            this.initCube(entity);
+            break;
+        case canvasInterface.EntityTypeEnum.sphere:
+            this.initSphere(entity);
+            break;
+        case canvasInterface.EntityTypeEnum.square:
+            this.initSquare(entity);
+            break;
+        case canvasInterface.EntityTypeEnum.circle:
+            this.initCircle(entity);
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    private initModel(entity: canvasInterface.IEntity) {
+        const modelEntity: ModelEntity = new ModelEntity(this.subjectName, this.map.name, entity);
+        modelEntity.init().subscribe((mesh: THREE.Object3D) => {
+            this.scene.add(mesh);
+        });
+    }
+
+    private initCube(entity: canvasInterface.IEntity) {
+        const cubeEntity: CubeEntity = new CubeEntity(entity);
+        const mesh: THREE.Mesh = cubeEntity.init();
+        this.scene.add(mesh);
+    }
+
+    private initSphere(entity: canvasInterface.IEntity) {
+        const sphereEntity: SphereEntity = new SphereEntity(entity);
+        const mesh: THREE.Mesh = sphereEntity.init();
+        this.scene.add(mesh);
+    }
+
+    private initSquare(entity: canvasInterface.IEntity) {
+        const squareEntity: SquareEntity = new SquareEntity(this.subjectName, this.map.name, entity);
+        const mesh: THREE.Mesh = squareEntity.init();
+        this.scene.add(mesh);
+    }
+
+    private initCircle(entity: canvasInterface.IEntity) {
+        const circleEntity: CircleEntity = new CircleEntity(this.subjectName, this.map.name, entity);
+        const mesh: THREE.Mesh = circleEntity.init();
+        this.scene.add(mesh);
+    }
+
+    // Initialize renderer
+
     private initRenderer(): void {
         this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
         this.renderer.setPixelRatio(devicePixelRatio);
@@ -281,8 +248,10 @@ export class CanvasComponent implements OnInit, AfterViewInit {
 
     private render() {
         const rend = () => {
-            requestAnimationFrame(rend);
+            this.stats.begin();
             this.renderer.render(this.scene, this.camera);
+            this.stats.end();
+            requestAnimationFrame(rend);
         };
         rend();
     }

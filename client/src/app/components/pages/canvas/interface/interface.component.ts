@@ -8,7 +8,7 @@ import { IPosition } from "../../../pages/controller/controller.service";
 })
 export class InterfaceComponent implements OnInit {
 
-  @Input("cameraPosition$") cameraPosition$: Observable<IPosition> = of({ gamma: 0, beta: 0 });
+  @Input("cameraPosition$") cameraPosition$: Observable<IPosition> = of({ gamma: 0, beta: 0, alpha: 0 });
 
   ngOnInit(): void {
   }  

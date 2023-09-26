@@ -1,13 +1,8 @@
 import { Component, OnInit } from "@angular/core";
-import { ControllerService } from "./controller.service";
+import { ControllerService, IPosition } from "./controller.service";
 import { WebRtcService } from "../../../webrtc.service";
 import { Router } from "@angular/router";
 import * as webRtcInterface from "../../../store/webrtc-store/webrtc.interface";
-
-export interface IPosition {
-  beta: number,
-  gamma: number
-}
 
 @Component({
     selector: "app-controller",
@@ -27,16 +22,25 @@ export class ControllerComponent implements OnInit {
 
     public position: IPosition = {
         beta: 0,
-        gamma: 0
+        gamma: 0,
+        alpha: 0
     };
 
     ngOnInit(): void {
         this.controllerService.subscribeToDeviceOrientation()
-            .subscribe(({ beta, gamma }) => {
+            .subscribe(({ beta, gamma, alpha }) => {
                 if (this.isMoveEnabled) {
-                    const convertToCircle = this.convertToCircle(gamma, beta);
+                    const convertToCircle = this.convertToCircle(gamma, beta, alpha);
           
-                    [this.position.gamma, this.position.beta] = [convertToCircle.gamma, convertToCircle.beta];
+                    [
+                        this.position.gamma,
+                        this.position.beta,
+                        this.position.alpha
+                    ] = [
+                        convertToCircle.gamma,
+                        convertToCircle.beta,
+                        convertToCircle.alpha
+                    ];
           
                     this.webRtcService.sendData(
                         webRtcInterface.DataChannelLabelEnum.positionChannel,
@@ -57,19 +61,20 @@ export class ControllerComponent implements OnInit {
         this.isMoveEnabled = !this.isMoveEnabled;
     }
 
-    private convertToCircle(gamma: number, beta: number): IPosition {
-        if (gamma === 0 || beta === 0) return { gamma, beta };
+    private convertToCircle(gamma: number, beta: number, alpha: number): IPosition {
+        if (gamma === 0 || beta === 0) return { gamma, beta, alpha };
 
         const radius: number = Math.abs(gamma) >= Math.abs(beta) ? gamma : beta;
 
-        const alpha: number = Math.atan(beta / gamma);
+        const alpha_temp: number = Math.atan(beta / gamma);
 
-        const resultBeta: number = radius * Math.sin(alpha);
+        const resultBeta: number = radius * Math.sin(alpha_temp);
         const resultGamma: number = Math.sqrt(radius ** 2 - resultBeta ** 2);
 
         return {
             gamma: gamma > 0 ? Math.abs(resultGamma) : -Math.abs(resultGamma),
-            beta: beta > 0 ? Math.abs(resultBeta) : -Math.abs(resultBeta)
+            beta: beta > 0 ? Math.abs(resultBeta) : -Math.abs(resultBeta),
+            alpha
         };
     }
 

@@ -3,7 +3,8 @@ import { Observable } from "rxjs";
 
 export interface IPosition {
     beta: number,
-    gamma: number
+    gamma: number,
+    alpha: number
 }
 
 @Injectable({
@@ -16,15 +17,15 @@ export class ControllerService {
     public subscribeToDeviceOrientation(): Observable<IPosition> {
         return new Observable(observer => {
             window.addEventListener("deviceorientation", event => {
-                if (event.beta !== null && event.gamma !== null) {
-                    const { beta, gamma } = this.normalizePosition(event.beta, event.gamma);
-                    observer.next({ beta, gamma });
+                if (event.beta !== null && event.gamma !== null && event.alpha !== null) {
+                    const { beta, gamma, alpha } = this.normalizePosition(event.beta, event.gamma, event.alpha);
+                    observer.next({ beta, gamma, alpha });
                 }
             });
         });
     }
 
-    private normalizePosition(beta: number, gamma: number): IPosition {
+    private normalizePosition(beta: number, gamma: number, alpha: number): IPosition {
         const radius = 50;
         const maxRotation = 180;
         const defaultBetaRotation = 40;
@@ -46,7 +47,8 @@ export class ControllerService {
     
         return {
             beta: normalizeBeta,
-            gamma: normalizeGamma
+            gamma: normalizeGamma,
+            alpha
         };
     }
 }

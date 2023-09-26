@@ -9,7 +9,7 @@ export interface CanvasState {
 }
 
 export const initialState: CanvasState = {
-    cameraPosition: {beta: 0, gamma: 0}
+    cameraPosition: {beta: 0, gamma: 0, alpha: 0}
 };
 
 export const CanvasReducer = createReducer(

@@ -1,3 +1,5 @@
+export const ASSET_PATH = "/app/media/canvas/assets";
+
 export enum EntityTypeEnum {
     model = "model",
     cube = "cube",
@@ -6,7 +8,16 @@ export enum EntityTypeEnum {
     circle = "circle"
 }
 
-export type EntityType = EntityTypeEnum.model | EntityTypeEnum.cube | EntityTypeEnum.sphere | EntityTypeEnum.square | EntityTypeEnum.circle
+export enum EntityMaterialTypeEnum {
+    basic = "basic",
+    standard = "standard",
+    phong = "phong",
+    phong_shininess = "phong_shininess",
+    lambert = "lambert"
+}
+
+export type EntityType = EntityTypeEnum.model | EntityTypeEnum.cube | EntityTypeEnum.sphere | EntityTypeEnum.square | EntityTypeEnum.circle;
+export type EntityMaterialType = EntityMaterialTypeEnum.basic | EntityMaterialTypeEnum.standard | EntityMaterialTypeEnum.phong | EntityMaterialTypeEnum.phong_shininess | EntityMaterialTypeEnum.lambert;
 
 export interface IEntityRotation {
     x: number,
@@ -26,17 +37,48 @@ export interface IEntityScale {
     depth: number
 }
 
+export const EntityDefaults: Pick<
+IEntity, "title" | "type" | "texture" | "materialType"
+| "color" | "model" | "credit" | "multiplyScalar"
+| "scale" | "position" | "rotation"
+> = {
+    title: "unknown_map",
+    type: EntityTypeEnum.square,
+    texture: "",
+    materialType: EntityMaterialTypeEnum.basic,
+    color: 0xFFFFFF,
+    model: "",
+    credit: "",
+    multiplyScalar: 1,
+    scale: {
+        width: 1,
+        height: 1,
+        depth: 1,
+    },
+    position: {
+        x: 0,
+        y: 0,
+        z: 0,
+    },
+    rotation: {
+        x: 0,
+        y: 0,
+        z: 0,
+    }
+};
+
 export interface IEntity {
     title: string,
     type: EntityType,
     texture: string,
-    color: THREE.ColorRepresentation | undefined,
+    materialType: EntityMaterialType,
+    color: THREE.ColorRepresentation,
     model: string,
     credit: string,
     multiplyScalar: number,
     scale: IEntityScale,
     position: IEntityPosition,
-    rotation: IEntityRotation
+    rotation: IEntityRotation,
 }
 
 export interface ICameraPosition {

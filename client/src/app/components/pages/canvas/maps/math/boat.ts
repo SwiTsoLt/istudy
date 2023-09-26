@@ -1,4 +1,4 @@
-import { EntityTypeEnum, IMapData } from "../../canvas.interface";
+import { EntityTypeEnum, IMapData, EntityDefaults, EntityMaterialTypeEnum } from "../../canvas.interface";
 
 export const map: IMapData = {
     "title": "Boat",
@@ -19,22 +19,21 @@ export const map: IMapData = {
     },
     "scene": [
         {
+            ...EntityDefaults,
             "title": "Boat",
             "type":  EntityTypeEnum.model,
-            "texture": "",
-            color: 0xEEEEEE,
             "model": "boat",
             "credit": "This work is based on \"Fishing boat\" (https://sketchfab.com/3d-models/fishing-boat-f4b38ccf5ffb46018aa7931c0e106654) by Pabooklas (https://sketchfab.com/Pabooklas) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
-            "multiplyScalar": 1,
+            "multiplyScalar": 2,
             "scale": {
                 "width": 1,
                 "height": 1,
-                "depth": 1
+                "depth": 1,
             },
             "position": {
                 "x": 0,
                 "y": 0,
-                "z": -0.5 
+                "z": -1
             },
             "rotation": {
                 "x": -90,
@@ -43,13 +42,9 @@ export const map: IMapData = {
             }
         },
         {
+            ...EntityDefaults,
             "title": "Sea",
-            "type": EntityTypeEnum.square,
             "texture": "sea/sea.jpg",
-            "model": "",
-            "credit": "",
-            "color": 0xffffff,
-            "multiplyScalar": 1,
             "scale": {
                 "width": 50,
                 "height": 50,
@@ -68,13 +63,9 @@ export const map: IMapData = {
 
         },
         {
+            ...EntityDefaults,
             "title": "Sky 1 (Sun)",
-            "type": EntityTypeEnum.square,
             "texture": "sun/sun.png",
-            "model": "",
-            "credit": "",
-            "color": 0xffffff,
-            "multiplyScalar": 1,
             "scale": {
                 "width": 140,
                 "height": 30,
@@ -85,20 +76,11 @@ export const map: IMapData = {
                 "y": 10,
                 "z": -49
             },
-            "rotation": {
-                "x": 0,
-                "y": 0,
-                "z": 0
-            }
         },
         {
+            ...EntityDefaults,
             "title": "Sky 2",
-            "type": EntityTypeEnum.square,
             "texture": "sun/sky.png",
-            "model": "",
-            "credit": "",
-            "color": 0xffffff,
-            "multiplyScalar": 1,
             "scale": {
                 "width": 140,
                 "height": 30,
@@ -116,13 +98,9 @@ export const map: IMapData = {
             }
         },
         {
+            ...EntityDefaults,
             "title": "Sky 3",
-            "type": EntityTypeEnum.square,
             "texture": "sun/sky.png",
-            "model": "",
-            "credit": "",
-            "color": 0xffffff,
-            "multiplyScalar": 1,
             "scale": {
                 "width": 140,
                 "height": 30,
@@ -140,13 +118,9 @@ export const map: IMapData = {
             }
         },
         {   
+            ...EntityDefaults,
             "title": "Sky 4",
-            "type": EntityTypeEnum.square,
             "texture": "sun/sky.png",
-            "model": "",
-            "credit": "",
-            "color": 0xffffff,
-            "multiplyScalar": 1,
             "scale": {
                 "width": 140,
                 "height": 30,
@@ -163,29 +137,26 @@ export const map: IMapData = {
                 "z": 0
             }
         },
-        // {
-        //     "title": "Cube",
-        //     "type": EntityTypeEnum.cube,
-        //     "texture": "",
-        //     "model": "",
-        //     "credit": "",
-        //     "color": 0x00ff00,
-        //     "multiplyScalar": 1,
-        //     "scale": {
-        //         "width": 0.2,
-        //         "height": 0.2,
-        //         "depth": 0.2
-        //     },
-        //     "position": {
-        //         "x": 0,
-        //         "y": 0,
-        //         "z": -2
-        //     },
-        //     "rotation": {
-        //         "x": -10,
-        //         "y": 30,
-        //         "z": 0
-        //     }
-        // }
+        {
+            ...EntityDefaults,
+            type: EntityTypeEnum.sphere,
+            materialType: EntityMaterialTypeEnum.phong_shininess,
+            color: 0x60EEFF,
+            scale: {
+                width: 0.1,
+                height: 10,
+                depth: 10,
+            },
+            position: {
+                x: 0,
+                y: 0,
+                z: -1
+            },
+            rotation: {
+                x: 30,
+                y: 30,
+                z: 0
+            }
+        }
     ]
 };
