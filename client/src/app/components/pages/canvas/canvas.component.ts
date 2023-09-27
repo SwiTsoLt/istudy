@@ -47,7 +47,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     private readonly NEAR_CLIPPING_PLANE: number = 0.1; // canvas scene value
     private readonly FAR_CLIPPING_PLANE: number = 100; // canvas scene value
     private readonly CAMERA_MOVEMENT_SENSITIVITY: number = 0.01; // canvas scene value
-    private readonly UPDATE_CAMERA_DURATION = 16; // milliseconds
+    private readonly UPDATE_CAMERA_DURATION = 10; // milliseconds
 
     // Map
 
