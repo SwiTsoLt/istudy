@@ -212,31 +212,45 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     // Initialize entities
 
     private initEntity(entity: canvasInterface.IEntity) {
-        let model: canvasInterface.EntityClassType = new SquareEntity(this.subjectName, this.map.name, entity);
-
         switch (entity.type) {
         case canvasInterface.EntityTypeEnum.model:
-            model = new ModelEntity(this.subjectName, this.map.name, entity);
+            new ModelEntity(this.subjectName, this.map.name, entity)
+                .init()
+                .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
+                    this.scene.add(mesh);
+                });
             break;
         case canvasInterface.EntityTypeEnum.cube:
-            model = new CubeEntity(this.subjectName, this.map.name, entity);
+            new CubeEntity(this.subjectName, this.map.name, entity)
+                .init()
+                .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
+                    this.scene.add(mesh);
+                });
             break;
         case canvasInterface.EntityTypeEnum.sphere:
-            model = new SphereEntity(this.subjectName, this.map.name, entity);
+            new SphereEntity(this.subjectName, this.map.name, entity)
+                .init()
+                .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
+                    this.scene.add(mesh);
+                });
             break;
         case canvasInterface.EntityTypeEnum.square:
-            model = new SquareEntity(this.subjectName, this.map.name, entity);
+            new SquareEntity(this.subjectName, this.map.name, entity)
+                .init()
+                .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
+                    this.scene.add(mesh);
+                });
             break;
         case canvasInterface.EntityTypeEnum.circle:
-            model = new CircleEntity(this.subjectName, this.map.name, entity);
+            new CircleEntity(this.subjectName, this.map.name, entity)
+                .init()
+                .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
+                    this.scene.add(mesh);
+                });
             break;
         default:
             break;
         }
-
-        model.init().subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
-            this.scene.add(mesh);
-        });
     }
 
     // Initialize renderer
