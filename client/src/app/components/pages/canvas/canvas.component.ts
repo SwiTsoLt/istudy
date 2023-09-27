@@ -203,8 +203,8 @@ export class CanvasComponent implements OnInit, AfterViewInit {
                     ? this.CAMERA_MOVEMENT_SENSITIVITY * sector[1]
                     : -this.CAMERA_MOVEMENT_SENSITIVITY * sector[1],
                 y: pos.gamma > 0
-                    ? this.CAMERA_MOVEMENT_SENSITIVITY * sector[0]
-                    : -this.CAMERA_MOVEMENT_SENSITIVITY * sector[0],
+                    ? -this.CAMERA_MOVEMENT_SENSITIVITY * sector[0]
+                    : this.CAMERA_MOVEMENT_SENSITIVITY * sector[0],
                 z: this.mapInfo.camera.rotation.enableRotationZ
                     ? (pos.alpha > 0 ? 1 : -1)
                     : 0
