@@ -165,7 +165,6 @@ export class CanvasComponent implements OnInit, AfterViewInit {
             this.moveCameraStates
                 .pipe(take(1))
                 .subscribe((state: canvasInterface.IMoveCameraStates) => {
-                    console.log(state);
                     this.camera.rotation.x += state.x;
                     this.camera.rotation.y += state.y;
                     this.camera.rotation.z += state.z;
