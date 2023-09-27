@@ -63,9 +63,11 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     }
     private scene!: THREE.Scene;
 
-    // Static
-
-    private stats: Stats = new Stats();
+    // Stats
+    
+    private stats1: Stats = new Stats();
+    private stats2: Stats = new Stats();
+    private stats3: Stats = new Stats();
 
     constructor(
         private canvasStore$: Store<CanvasState>,
@@ -97,7 +99,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     // Create canvas
 
     createScene(mapInfo: canvasInterface.IMapData): void {
-        this.initStats();
+        this.initStats(); // Dev
         this.setCanvasSize();
 
         this.scene = new THREE.Scene();
@@ -117,8 +119,13 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     }
 
     private initStats() {
-        this.stats.showPanel(0);
-        document.body.appendChild(this.stats.dom);
+        this.stats1.showPanel(0);
+        this.stats2.showPanel(1);
+        this.stats3.showPanel(2);
+
+        document.body.appendChild(this.stats1.dom);
+        document.body.appendChild(this.stats2.dom);
+        document.body.appendChild(this.stats3.dom);
     }
 
     private setCanvasSize(): void {
@@ -276,10 +283,16 @@ export class CanvasComponent implements OnInit, AfterViewInit {
 
     private render() {
         const rend = () => {
-            this.stats.begin();
+            this.stats1.begin();
+            this.stats2.begin();
+            this.stats3.begin();
 
             this.renderer.render(this.scene, this.camera);
-            this.stats.end();
+
+            this.stats1.end();
+            this.stats2.end();
+            this.stats3.end();
+            
             requestAnimationFrame(rend);
         };
         rend();
