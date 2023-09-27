@@ -90,6 +90,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     ngAfterViewInit(): void {
         this.mapInfo = mapsData[this.subjectName][this.map.name];
         this.createScene(this.mapInfo);
+        this.initStats(); // Dev
 
         window.addEventListener("resize", () => {
             this.createScene(this.mapInfo);
@@ -99,7 +100,6 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     // Create canvas
 
     createScene(mapInfo: canvasInterface.IMapData): void {
-        this.initStats(); // Dev
         this.setCanvasSize();
 
         this.scene = new THREE.Scene();
@@ -126,6 +126,9 @@ export class CanvasComponent implements OnInit, AfterViewInit {
         document.body.appendChild(this.stats1.dom);
         document.body.appendChild(this.stats2.dom);
         document.body.appendChild(this.stats3.dom);
+
+        this.stats2.dom.style.marginLeft = this.stats2.dom.clientWidth + "px";
+        this.stats3.dom.style.marginLeft = this.stats3.dom.clientWidth * 2 + "px";
     }
 
     private setCanvasSize(): void {
