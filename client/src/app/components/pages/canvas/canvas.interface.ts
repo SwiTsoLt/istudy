@@ -105,6 +105,12 @@ export interface ICamera {
     rotation: ICameraRotation,
 }
 
+export interface IMoveCameraStates {
+    x: number,
+    y: number,
+    z: number,
+}
+
 export interface IMapData {
     title: string,
     map: string,

@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { Store, select } from "@ngrx/store";
-import { Observable } from "rxjs";
+import { Observable, of, take } from "rxjs";
 import * as THREE from "three";
 import { IPosition } from "../../pages/controller/controller.service";
 import * as canvasSelectors from "../../../store/canvas-store/canvas.selector";
@@ -33,21 +33,17 @@ export class CanvasComponent implements OnInit, AfterViewInit {
 
     private camera!: THREE.PerspectiveCamera;
     public cameraPosition$: Observable<IPosition> = this.canvasStore$.pipe(select(canvasSelectors.selectCameraPosition));
-    private moveCameraStates: {
-        x: number,
-        y: number,
-        z: number,
-    } = {
-            x: 0,
-            y: 0,
-            z: 0
-        };
+    private moveCameraStates: Observable<canvasInterface.IMoveCameraStates> = of({
+        x: 0,
+        y: 0,
+        z: 0
+    });
 
     private readonly FIELD_OF_VIEW: number = 50; // canvas scene value
     private readonly NEAR_CLIPPING_PLANE: number = 0.1; // canvas scene value
     private readonly FAR_CLIPPING_PLANE: number = 100; // canvas scene value
     private readonly CAMERA_MOVEMENT_SENSITIVITY: number = 0.01; // canvas scene value
-    private readonly UPDATE_CAMERA_DURATION = 16.667; // milliseconds ≈ 30fps
+    private readonly UPDATE_CAMERA_DURATION = 30; // milliseconds ≈ 120fps
 
     // Map
 
@@ -157,6 +153,17 @@ export class CanvasComponent implements OnInit, AfterViewInit {
             options.rotation.y * Math.PI / 180,
             options.rotation.z * Math.PI / 180
         );
+
+        setInterval(() => {
+            this.moveCameraStates
+                .pipe(take(1))
+                .subscribe((state: canvasInterface.IMoveCameraStates) => {
+                    console.log(state);
+                    this.camera.rotation.x += state.x;
+                    this.camera.rotation.y += state.y;
+                    this.camera.rotation.z += state.z;
+                });
+        }, this.UPDATE_CAMERA_DURATION);
     }
 
     private cameraPositionHandler(pos: IPosition): void {
@@ -182,28 +189,32 @@ export class CanvasComponent implements OnInit, AfterViewInit {
 
             const sector = sectorList[sectorIndex];
 
-            this.moveCameraStates.x = pos.gamma > 0
-                ? this.CAMERA_MOVEMENT_SENSITIVITY * sector[1]
-                : -this.CAMERA_MOVEMENT_SENSITIVITY * sector[1];
-            this.moveCameraStates.y = pos.beta > 0
-                ? this.CAMERA_MOVEMENT_SENSITIVITY * sector[0]
-                : -this.CAMERA_MOVEMENT_SENSITIVITY * sector[0];
+            this.moveCameraStates = of({
+                x: pos.beta > 0
+                    ? this.CAMERA_MOVEMENT_SENSITIVITY * sector[1]
+                    : -this.CAMERA_MOVEMENT_SENSITIVITY * sector[1],
+                y: pos.gamma > 0
+                    ? this.CAMERA_MOVEMENT_SENSITIVITY * sector[0]
+                    : -this.CAMERA_MOVEMENT_SENSITIVITY * sector[0],
+                z: this.mapInfo.camera.rotation.enableRotationZ
+                    ? (pos.alpha > 0 ? 1 : -1)
+                    : 0
+            });
         } else {
-            this.moveCameraStates.x = 0;
-            this.moveCameraStates.y = 0;
-        }
-
-        if (this.mapInfo.camera.rotation.enableRotationZ) {
-            this.moveCameraStates.z = pos.alpha > 0 ? 1 : -1;
-        } else {
-            this.moveCameraStates.z = 0;
+            this.moveCameraStates = of({
+                x: 0,
+                y: 0,
+                z: this.mapInfo.camera.rotation.enableRotationZ
+                    ? (pos.alpha > 0 ? 1 : -1)
+                    : 0
+            });
         }
     }
 
     // Initialize light
 
     private initLight(): void {
-        const light = new THREE.DirectionalLight(0xffffff, 0.5);
+        const light = new THREE.DirectionalLight(0xffffff, 3);
         light.position.set(-5, 5, -5);
 
         this.scene.add(light);
@@ -261,12 +272,6 @@ export class CanvasComponent implements OnInit, AfterViewInit {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.shadowMap.enabled = true;
         this.renderer.xr.enabled = true;
-
-        setInterval(() => {
-            this.camera.rotation.x += this.moveCameraStates.x;
-            this.camera.rotation.y += this.moveCameraStates.y;
-            this.camera.rotation.z += this.moveCameraStates.z;
-        }, this.UPDATE_CAMERA_DURATION);
     }
 
     private render() {
