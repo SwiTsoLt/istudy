@@ -183,11 +183,11 @@ export class CanvasComponent implements OnInit, AfterViewInit {
             const sector = sectorList[sectorIndex];
 
             this.moveCameraStates.x = pos.gamma > 0
-                ? this.CAMERA_MOVEMENT_SENSITIVITY * sector[0]
-                : -this.CAMERA_MOVEMENT_SENSITIVITY * sector[0];
-            this.moveCameraStates.y = pos.beta > 0
                 ? this.CAMERA_MOVEMENT_SENSITIVITY * sector[1]
                 : -this.CAMERA_MOVEMENT_SENSITIVITY * sector[1];
+            this.moveCameraStates.y = pos.beta > 0
+                ? this.CAMERA_MOVEMENT_SENSITIVITY * sector[0]
+                : -this.CAMERA_MOVEMENT_SENSITIVITY * sector[0];
         } else {
             this.moveCameraStates.x = 0;
             this.moveCameraStates.y = 0;
