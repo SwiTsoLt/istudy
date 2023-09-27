@@ -24,32 +24,50 @@ import * as Stats from "stats.js";
     styleUrls: ["./canvas.component.scss"]
 })
 export class CanvasComponent implements OnInit, AfterViewInit {
+    // Canvas
+
     @ViewChild("canvas")
     private canvasRef!: ElementRef<HTMLCanvasElement>;
 
+    //Camera
+
+    private camera!: THREE.PerspectiveCamera;
     public cameraPosition$: Observable<IPosition> = this.canvasStore$.pipe(select(canvasSelectors.selectCameraPosition));
-    private sensitivity: number = 0.01;
+    private moveCameraStates: {
+        x: number,
+        y: number,
+        z: number,
+    } = {
+            x: 0,
+            y: 0,
+            z: 0
+        };
+
+    private readonly FIELD_OF_VIEW: number = 50; // canvas scene value
+    private readonly NEAR_CLIPPING_PLANE: number = 0.1; // canvas scene value
+    private readonly FAR_CLIPPING_PLANE: number = 100; // canvas scene value
+    private readonly CAMERA_MOVEMENT_SENSITIVITY: number = 0.01; // canvas scene value
+    private readonly UPDATE_CAMERA_DURATION = 16; // milliseconds
+
+    // Map
 
     public map: ISelector = { title: "", name: "", imageName: "", disabled: true, childList: [] };
     public subjectName: string = "math";
+    public mapInfo!: canvasInterface.IMapData;
 
+    // Scene
+
+    private windowSize: canvasInterface.IWindowSize = {
+        width: window.innerWidth,
+        height: window.innerHeight
+    };
     private renderer!: THREE.WebGLRenderer;
     private get canvas(): HTMLCanvasElement {
         return this.canvasRef.nativeElement;
     }
     private scene!: THREE.Scene;
-    private camera!: THREE.PerspectiveCamera;
-    private windowSize: canvasInterface.IWindowSize = {
-        width: window.innerWidth,
-        height: window.innerHeight
-    };
 
-    private fieldOfView: number = 50;
-    private nearClippingPlane: number = 0.1;
-    private farClippingPlane: number = 100;
-
-    private directionalLight!: THREE.DirectionalLight;
-    private pointLight!: THREE.PointLight;
+    // Static
 
     private stats: Stats = new Stats();
 
@@ -57,6 +75,8 @@ export class CanvasComponent implements OnInit, AfterViewInit {
         private canvasStore$: Store<CanvasState>,
         private route: ActivatedRoute
     ) { }
+
+    // NgOnInit, NgAfterViewInit
 
     ngOnInit(): void {
         this.route.paramMap.subscribe(paramMap => {
@@ -70,11 +90,11 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        const mapInfo: canvasInterface.IMapData = mapsData[this.subjectName][this.map.name];
-        this.createScene(mapInfo);
+        this.mapInfo = mapsData[this.subjectName][this.map.name];
+        this.createScene(this.mapInfo);
 
         window.addEventListener("resize", () => {
-            this.createScene(mapInfo);
+            this.createScene(this.mapInfo);
         });
     }
 
@@ -88,8 +108,8 @@ export class CanvasComponent implements OnInit, AfterViewInit {
         this.scene.background = new THREE.Color(mapInfo.background);
 
         this.initPerspectiveCamera(mapInfo.camera);
-        this.cameraPosition$.subscribe((pos: IPosition) => this.cameraPositionHandler(pos, this.camera));
-        
+        this.cameraPosition$.subscribe((pos: IPosition) => this.cameraPositionHandler(pos));
+
         this.initLight();
 
         mapInfo.scene.forEach((entity: canvasInterface.IEntity) => {
@@ -120,10 +140,10 @@ export class CanvasComponent implements OnInit, AfterViewInit {
 
     private initPerspectiveCamera(options: canvasInterface.ICamera): void {
         this.camera = new THREE.PerspectiveCamera(
-            this.fieldOfView,
+            this.FIELD_OF_VIEW,
             window.innerWidth / window.innerHeight,
-            this.nearClippingPlane,
-            this.farClippingPlane
+            this.NEAR_CLIPPING_PLANE,
+            this.FAR_CLIPPING_PLANE
         );
 
         this.camera.position.set(
@@ -139,7 +159,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
         );
     }
 
-    private cameraPositionHandler(pos: IPosition, camera: THREE.PerspectiveCamera): void {
+    private cameraPositionHandler(pos: IPosition): void {
         const sectorList: number[][] = [[0, -1], [-1, -1], [-1, 0], [-1, 1], [0, 1], [1, 1], [1, 0], [1, -1]];
 
         const maxRadius = 37.5; // 50 * 0.75
@@ -162,12 +182,21 @@ export class CanvasComponent implements OnInit, AfterViewInit {
 
             const sector = sectorList[sectorIndex];
 
-            camera.rotation.y += pos.gamma > 0
-                ? this.sensitivity * sector[0]
-                : -this.sensitivity * sector[0];
-            camera.rotation.x += pos.beta > 0
-                ? -this.sensitivity * sector[1]
-                : this.sensitivity * sector[1];
+            this.moveCameraStates.x = pos.gamma > 0
+                ? this.CAMERA_MOVEMENT_SENSITIVITY * sector[0]
+                : -this.CAMERA_MOVEMENT_SENSITIVITY * sector[0];
+            this.moveCameraStates.y = pos.beta > 0
+                ? this.CAMERA_MOVEMENT_SENSITIVITY * sector[1]
+                : -this.CAMERA_MOVEMENT_SENSITIVITY * sector[1];
+        } else {
+            this.moveCameraStates.x = 0;
+            this.moveCameraStates.y = 0;
+        }
+
+        if (this.mapInfo.camera.rotation.enableRotationZ) {
+            this.moveCameraStates.z = pos.alpha > 0 ? 1 : -1;
+        } else {
+            this.moveCameraStates.z = 0;
         }
     }
 
@@ -183,57 +212,31 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     // Initialize entities
 
     private initEntity(entity: canvasInterface.IEntity) {
+        let model: canvasInterface.EntityClassType = new SquareEntity(this.subjectName, this.map.name, entity);
+
         switch (entity.type) {
         case canvasInterface.EntityTypeEnum.model:
-            this.initModel(entity);
+            model = new ModelEntity(this.subjectName, this.map.name, entity);
             break;
         case canvasInterface.EntityTypeEnum.cube:
-            this.initCube(entity);
+            model = new CubeEntity(this.subjectName, this.map.name, entity);
             break;
         case canvasInterface.EntityTypeEnum.sphere:
-            this.initSphere(entity);
+            model = new SphereEntity(this.subjectName, this.map.name, entity);
             break;
         case canvasInterface.EntityTypeEnum.square:
-            this.initSquare(entity);
+            model = new SquareEntity(this.subjectName, this.map.name, entity);
             break;
         case canvasInterface.EntityTypeEnum.circle:
-            this.initCircle(entity);
+            model = new CircleEntity(this.subjectName, this.map.name, entity);
             break;
-
         default:
             break;
         }
-    }
 
-    private initModel(entity: canvasInterface.IEntity) {
-        const modelEntity: ModelEntity = new ModelEntity(this.subjectName, this.map.name, entity);
-        modelEntity.init().subscribe((mesh: THREE.Object3D) => {
+        model.init().subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
             this.scene.add(mesh);
         });
-    }
-
-    private initCube(entity: canvasInterface.IEntity) {
-        const cubeEntity: CubeEntity = new CubeEntity(entity);
-        const mesh: THREE.Mesh = cubeEntity.init();
-        this.scene.add(mesh);
-    }
-
-    private initSphere(entity: canvasInterface.IEntity) {
-        const sphereEntity: SphereEntity = new SphereEntity(entity);
-        const mesh: THREE.Mesh = sphereEntity.init();
-        this.scene.add(mesh);
-    }
-
-    private initSquare(entity: canvasInterface.IEntity) {
-        const squareEntity: SquareEntity = new SquareEntity(this.subjectName, this.map.name, entity);
-        const mesh: THREE.Mesh = squareEntity.init();
-        this.scene.add(mesh);
-    }
-
-    private initCircle(entity: canvasInterface.IEntity) {
-        const circleEntity: CircleEntity = new CircleEntity(this.subjectName, this.map.name, entity);
-        const mesh: THREE.Mesh = circleEntity.init();
-        this.scene.add(mesh);
     }
 
     // Initialize renderer
@@ -244,11 +247,18 @@ export class CanvasComponent implements OnInit, AfterViewInit {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.shadowMap.enabled = true;
         this.renderer.xr.enabled = true;
+
+        setInterval(() => {
+            this.camera.rotation.x += this.moveCameraStates.x;
+            this.camera.rotation.y += this.moveCameraStates.y;
+            this.camera.rotation.z += this.moveCameraStates.z;
+        }, this.UPDATE_CAMERA_DURATION);
     }
 
     private render() {
         const rend = () => {
             this.stats.begin();
+
             this.renderer.render(this.scene, this.camera);
             this.stats.end();
             requestAnimationFrame(rend);

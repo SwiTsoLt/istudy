@@ -1,3 +1,9 @@
+import { CircleEntity } from "./entity/circle-entity";
+import { CubeEntity } from "./entity/cube-entity";
+import { ModelEntity } from "./entity/model-entity";
+import { SphereEntity } from "./entity/sphere-entity";
+import { SquareEntity } from "./entity/square-entity";
+
 export const ASSET_PATH = "/app/media/canvas/assets";
 
 export enum EntityTypeEnum {
@@ -90,12 +96,13 @@ export interface ICameraPosition {
 export interface ICameraRotation {
     x: number,
     y: number,
-    z: number
+    z: number,
+    enableRotationZ: boolean
 }
 
 export interface ICamera {
     position: ICameraPosition,
-    rotation: ICameraRotation
+    rotation: ICameraRotation,
 }
 
 export interface IMapData {
@@ -111,3 +118,5 @@ export interface IWindowSize {
     width: number,
     height: number
 }
+
+export type EntityClassType = ModelEntity | CubeEntity | SphereEntity | SquareEntity | CircleEntity
