@@ -6,7 +6,7 @@ import { SquareEntity } from "./entity/square-entity";
 
 export const ASSET_PATH = "/app/media/canvas/assets";
 
-export enum EntityTypeEnum {
+export enum entityTypeEnum {
     model = "model",
     cube = "cube",
     sphere = "sphere",
@@ -22,7 +22,7 @@ export enum EntityMaterialTypeEnum {
     lambert = "lambert"
 }
 
-export type EntityType = EntityTypeEnum.model | EntityTypeEnum.cube | EntityTypeEnum.sphere | EntityTypeEnum.square | EntityTypeEnum.circle;
+export type EntityType = entityTypeEnum.model | entityTypeEnum.cube | entityTypeEnum.sphere | entityTypeEnum.square | entityTypeEnum.circle;
 export type EntityMaterialType = EntityMaterialTypeEnum.basic | EntityMaterialTypeEnum.standard | EntityMaterialTypeEnum.phong | EntityMaterialTypeEnum.phong_shininess | EntityMaterialTypeEnum.lambert;
 
 export interface IEntityRotation {
@@ -43,17 +43,24 @@ export interface IEntityScale {
     depth: number
 }
 
+export enum modelTypeEnum {
+    gltf = "gltf",
+    glb = "glb",
+    fbx = "fbx",
+}
+
 export const EntityDefaults: Pick<
 IEntity, "title" | "type" | "texture" | "materialType"
-| "color" | "model" | "credit" | "multiplyScalar"
+| "color" | "model" | "modelType" | "credit" | "multiplyScalar"
 | "scale" | "position" | "rotation"
 > = {
     title: "unknown_map",
-    type: EntityTypeEnum.square,
+    type: entityTypeEnum.square,
     texture: "",
     materialType: EntityMaterialTypeEnum.basic,
     color: 0xFFFFFF,
     model: "",
+    modelType: modelTypeEnum.gltf,
     credit: "",
     multiplyScalar: 1,
     scale: {
@@ -80,6 +87,7 @@ export interface IEntity {
     materialType: EntityMaterialType,
     color: THREE.ColorRepresentation,
     model: string,
+    modelType: modelTypeEnum,
     credit: string,
     multiplyScalar: number,
     scale: IEntityScale,
@@ -123,6 +131,15 @@ export interface IMapData {
 export interface IWindowSize {
     width: number,
     height: number
+}
+
+export interface IEntityBasicCallback {
+    mesh: THREE.Mesh,
+}
+
+export interface IEntityModelCallback {
+    group: THREE.Group,
+    animationCallback: () => void
 }
 
 export type EntityClassType = ModelEntity | CubeEntity | SphereEntity | SquareEntity | CircleEntity

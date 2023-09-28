@@ -64,10 +64,8 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     private scene!: THREE.Scene;
 
     // Stats
-    
-    private stats1: Stats = new Stats();
-    private stats2: Stats = new Stats();
-    private stats3: Stats = new Stats();
+
+    private stats: Stats = new Stats();
 
     constructor(
         private canvasStore$: Store<CanvasState>,
@@ -94,6 +92,9 @@ export class CanvasComponent implements OnInit, AfterViewInit {
 
         window.addEventListener("resize", () => {
             this.createScene(this.mapInfo);
+            this.camera.aspect = window.innerWidth / window.innerHeight;
+            this.camera.updateProjectionMatrix();
+            this.renderer.setSize(window.innerWidth, window.innerHeight);
         });
     }
 
@@ -119,16 +120,8 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     }
 
     private initStats() {
-        this.stats1.showPanel(0);
-        this.stats2.showPanel(1);
-        this.stats3.showPanel(2);
-
-        document.body.appendChild(this.stats1.dom);
-        document.body.appendChild(this.stats2.dom);
-        document.body.appendChild(this.stats3.dom);
-
-        this.stats2.dom.style.marginLeft = this.stats2.dom.clientWidth + "px";
-        this.stats3.dom.style.marginLeft = this.stats3.dom.clientWidth * 2 + "px";
+        this.stats.showPanel(0);
+        document.body.appendChild(this.stats.dom);
     }
 
     private setCanvasSize(): void {
@@ -223,53 +216,59 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     // Initialize light
 
     private initLight(): void {
-        const light = new THREE.DirectionalLight(0xffffff, 3);
-        light.position.set(-5, 5, -5);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+        directionalLight.position.set(-5, 5, -5);
 
-        this.scene.add(light);
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.61);
+        hemiLight.position.set(-5, 50, -5);
+
+        const pointerLight = new THREE.PointLight(0xffffff, 0.2);
+        pointerLight.position.set(0, 9, -5);
+
+        this.scene.add(directionalLight, pointerLight, hemiLight);
     }
 
     // Initialize entities
 
     private initEntity(entity: canvasInterface.IEntity) {
         switch (entity.type) {
-        case canvasInterface.EntityTypeEnum.model:
-            new ModelEntity(this.subjectName, this.map.name, entity)
-                .init()
-                .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
-                    this.scene.add(mesh);
-                });
-            break;
-        case canvasInterface.EntityTypeEnum.cube:
-            new CubeEntity(this.subjectName, this.map.name, entity)
-                .init()
-                .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
-                    this.scene.add(mesh);
-                });
-            break;
-        case canvasInterface.EntityTypeEnum.sphere:
-            new SphereEntity(this.subjectName, this.map.name, entity)
-                .init()
-                .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
-                    this.scene.add(mesh);
-                });
-            break;
-        case canvasInterface.EntityTypeEnum.square:
-            new SquareEntity(this.subjectName, this.map.name, entity)
-                .init()
-                .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
-                    this.scene.add(mesh);
-                });
-            break;
-        case canvasInterface.EntityTypeEnum.circle:
-            new CircleEntity(this.subjectName, this.map.name, entity)
-                .init()
-                .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
-                    this.scene.add(mesh);
-                });
-            break;
-        default:
-            break;
+            case canvasInterface.entityTypeEnum.model:
+                new ModelEntity(this.subjectName, this.map.name, entity)
+                    .init(entity.modelType)
+                    .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
+                        this.scene.add(mesh);
+                    });
+                break;
+            case canvasInterface.entityTypeEnum.cube:
+                new CubeEntity(this.subjectName, this.map.name, entity)
+                    .init()
+                    .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
+                        this.scene.add(mesh);
+                    });
+                break;
+            case canvasInterface.entityTypeEnum.sphere:
+                new SphereEntity(this.subjectName, this.map.name, entity)
+                    .init()
+                    .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
+                        this.scene.add(mesh);
+                    });
+                break;
+            case canvasInterface.entityTypeEnum.square:
+                new SquareEntity(this.subjectName, this.map.name, entity)
+                    .init()
+                    .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
+                        this.scene.add(mesh);
+                    });
+                break;
+            case canvasInterface.entityTypeEnum.circle:
+                new CircleEntity(this.subjectName, this.map.name, entity)
+                    .init()
+                    .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
+                        this.scene.add(mesh);
+                    });
+                break;
+            default:
+                break;
         }
     }
 
@@ -285,16 +284,12 @@ export class CanvasComponent implements OnInit, AfterViewInit {
 
     private render() {
         const rend = () => {
-            this.stats1.begin();
-            this.stats2.begin();
-            this.stats3.begin();
+            this.stats.begin();
 
             this.renderer.render(this.scene, this.camera);
 
-            this.stats1.end();
-            this.stats2.end();
-            this.stats3.end();
-            
+            this.stats.end();
+
             requestAnimationFrame(rend);
         };
         rend();
