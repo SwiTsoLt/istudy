@@ -1,6 +1,6 @@
-import * as THREE from "three";
+import { CircleGeometry, DoubleSide, Mesh, MeshBasicMaterial, MeshBasicMaterialParameters, MeshLambertMaterial, MeshLambertMaterialParameters, MeshPhongMaterial, MeshPhongMaterialParameters, MeshStandardMaterial, MeshStandardMaterialParameters, Texture } from "three/src/Three";
 import * as canvasInterface from "../canvas.interface";
-import { loaderManager } from "../loadingManager";
+import { loaderManager } from "../loaderManager";
 import { Observable, Subscriber } from "rxjs";
 
 export class CircleEntity {
@@ -15,46 +15,46 @@ export class CircleEntity {
         this.mapName = mapName;
     }
 
-    public init(): Observable<THREE.Mesh> {
-        return new Observable((subscriber: Subscriber<THREE.Mesh>) => {
-            const geometry = new THREE.CircleGeometry(this.entity.scale.width, this.entity.scale.height);
+    public init(): Observable<Mesh> {
+        return new Observable((subscriber: Subscriber<Mesh>) => {
+            const geometry = new CircleGeometry(this.entity.scale.width, this.entity.scale.height);
 
             if (this.entity.texture) {
                 loaderManager.texture(`${canvasInterface.ASSET_PATH}/${this.subjectName}/${this.mapName}/${this.entity.texture}`)
-                    .subscribe((texture: THREE.Texture) => {
-                        let material!: THREE.MeshBasicMaterial
-                            | THREE.MeshStandardMaterial
-                            | THREE.MeshPhongMaterial
-                            | THREE.MeshLambertMaterial;
+                    .subscribe((texture: Texture) => {
+                        let material!: MeshBasicMaterial
+                            | MeshStandardMaterial
+                            | MeshPhongMaterial
+                            | MeshLambertMaterial;
 
-                        const materialOptions: THREE.MeshBasicMaterialParameters
-                            | THREE.MeshStandardMaterialParameters
-                            | THREE.MeshPhongMaterialParameters
-                            | THREE.MeshLambertMaterialParameters = {
+                        const materialOptions: MeshBasicMaterialParameters
+                            | MeshStandardMaterialParameters
+                            | MeshPhongMaterialParameters
+                            | MeshLambertMaterialParameters = {
                                 map: texture,
                                 color: this.entity.color,
-                                side: THREE.DoubleSide,
+                                side: DoubleSide,
                             };
 
                         switch (this.entity.materialType) {
                         case canvasInterface.EntityMaterialTypeEnum.basic:
-                            material = new THREE.MeshBasicMaterial(materialOptions);
+                            material = new MeshBasicMaterial(materialOptions);
                             break;
                         case canvasInterface.EntityMaterialTypeEnum.standard:
-                            material = new THREE.MeshStandardMaterial(materialOptions);
+                            material = new MeshStandardMaterial(materialOptions);
                             break;
                         case canvasInterface.EntityMaterialTypeEnum.phong:
-                            material = new THREE.MeshPhongMaterial(materialOptions);
+                            material = new MeshPhongMaterial(materialOptions);
                             break;
                         case canvasInterface.EntityMaterialTypeEnum.phong_shininess:
-                            material = new THREE.MeshPhongMaterial({ ...materialOptions, shininess: 100 });
+                            material = new MeshPhongMaterial({ ...materialOptions, shininess: 100 });
                             break;
                         case canvasInterface.EntityMaterialTypeEnum.lambert:
-                            material = new THREE.MeshLambertMaterial({ color: materialOptions.color });
+                            material = new MeshLambertMaterial({ color: materialOptions.color });
                             break;
                         }
 
-                        const mesh = new THREE.Mesh(geometry, material);
+                        const mesh = new Mesh(geometry, material);
 
                         mesh.position.set(
                             this.entity.position.x,
@@ -70,38 +70,38 @@ export class CircleEntity {
                         subscriber.next(mesh);
                     });
             } else {
-                let material!: THREE.MeshBasicMaterial
-                    | THREE.MeshStandardMaterial
-                    | THREE.MeshPhongMaterial
-                    | THREE.MeshLambertMaterial;
+                let material!: MeshBasicMaterial
+                    | MeshStandardMaterial
+                    | MeshPhongMaterial
+                    | MeshLambertMaterial;
 
-                const materialOptions: THREE.MeshBasicMaterialParameters
-                    | THREE.MeshStandardMaterialParameters
-                    | THREE.MeshPhongMaterialParameters
-                    | THREE.MeshLambertMaterialParameters = {
+                const materialOptions: MeshBasicMaterialParameters
+                    | MeshStandardMaterialParameters
+                    | MeshPhongMaterialParameters
+                    | MeshLambertMaterialParameters = {
                         color: this.entity.color,
-                        side: THREE.DoubleSide,
+                        side: DoubleSide,
                     };
 
                 switch (this.entity.materialType) {
                 case canvasInterface.EntityMaterialTypeEnum.basic:
-                    material = new THREE.MeshBasicMaterial(materialOptions);
+                    material = new MeshBasicMaterial(materialOptions);
                     break;
                 case canvasInterface.EntityMaterialTypeEnum.standard:
-                    material = new THREE.MeshStandardMaterial(materialOptions);
+                    material = new MeshStandardMaterial(materialOptions);
                     break;
                 case canvasInterface.EntityMaterialTypeEnum.phong:
-                    material = new THREE.MeshPhongMaterial(materialOptions);
+                    material = new MeshPhongMaterial(materialOptions);
                     break;
                 case canvasInterface.EntityMaterialTypeEnum.phong_shininess:
-                    material = new THREE.MeshPhongMaterial({ ...materialOptions, shininess: 100 });
+                    material = new MeshPhongMaterial({ ...materialOptions, shininess: 100 });
                     break;
                 case canvasInterface.EntityMaterialTypeEnum.lambert:
-                    material = new THREE.MeshLambertMaterial({ color: materialOptions.color });
+                    material = new MeshLambertMaterial({ color: materialOptions.color });
                     break;
                 }
 
-                const mesh = new THREE.Mesh(geometry, material);
+                const mesh = new Mesh(geometry, material);
 
                 mesh.position.set(
                     this.entity.position.x,

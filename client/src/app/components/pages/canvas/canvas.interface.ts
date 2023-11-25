@@ -3,6 +3,7 @@ import { CubeEntity } from "./entity/cube-entity";
 import { ModelEntity } from "./entity/model-entity";
 import { SphereEntity } from "./entity/sphere-entity";
 import { SquareEntity } from "./entity/square-entity";
+import { ColorRepresentation, Group, Mesh } from "three/src/Three";
 
 export const ASSET_PATH = "/app/media/canvas/assets";
 
@@ -85,7 +86,7 @@ export interface IEntity {
     type: EntityType,
     texture: string,
     materialType: EntityMaterialType,
-    color: THREE.ColorRepresentation,
+    color: ColorRepresentation,
     model: string,
     modelType: modelTypeEnum,
     credit: string,
@@ -119,12 +120,21 @@ export interface IMoveCameraStates {
     z: number,
 }
 
+export interface IMapAudio {
+    path: string,
+    volume: number,
+    interval: number,
+    loop: boolean,
+}
+
 export interface IMapData {
     title: string,
     map: string,
-    background: THREE.ColorRepresentation | undefined,
+    background: ColorRepresentation | undefined,
+    backgroundImage: string | null,
     subject: string,
     camera: ICamera,
+    audio: IMapAudio[] | null,
     scene: IEntity[]
 }
 
@@ -134,11 +144,11 @@ export interface IWindowSize {
 }
 
 export interface IEntityBasicCallback {
-    mesh: THREE.Mesh,
+    mesh: Mesh,
 }
 
 export interface IEntityModelCallback {
-    group: THREE.Group,
+    group: Group,
     animationCallback: () => void
 }
 

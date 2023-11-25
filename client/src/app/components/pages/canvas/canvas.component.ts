@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from "@angula
 import { ActivatedRoute } from "@angular/router";
 import { Store, select } from "@ngrx/store";
 import { Observable, of, take } from "rxjs";
-import * as THREE from "three";
+import * as THREE from "three/src/Three";
 import { IPosition } from "../../pages/controller/controller.service";
 import * as canvasSelectors from "../../../store/canvas-store/canvas.selector";
 import { ISelector } from "../room/subject/subject.component";
@@ -15,6 +15,7 @@ import { CircleEntity } from "./entity/circle-entity";
 import { CubeEntity } from "./entity/cube-entity";
 import { ModelEntity } from "./entity/model-entity";
 import { SphereEntity } from "./entity/sphere-entity";
+import { loaderManager } from "./loaderManager";
 
 import * as Stats from "stats.js";
 
@@ -28,6 +29,10 @@ export class CanvasComponent implements OnInit, AfterViewInit {
 
     @ViewChild("canvas")
     private canvasRef!: ElementRef<HTMLCanvasElement>;
+
+    // Audio
+    @ViewChild("audio")
+    private audioRef!: ElementRef<HTMLAudioElement>;
 
     //Camera
 
@@ -62,6 +67,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
         return this.canvasRef.nativeElement;
     }
     private scene!: THREE.Scene;
+    private audioReady: boolean = false;
 
     // Stats
 
@@ -92,9 +98,6 @@ export class CanvasComponent implements OnInit, AfterViewInit {
 
         window.addEventListener("resize", () => {
             this.createScene(this.mapInfo);
-            this.camera.aspect = window.innerWidth / window.innerHeight;
-            this.camera.updateProjectionMatrix();
-            this.renderer.setSize(window.innerWidth, window.innerHeight);
         });
     }
 
@@ -104,7 +107,13 @@ export class CanvasComponent implements OnInit, AfterViewInit {
         this.setCanvasSize();
 
         this.scene = new THREE.Scene();
+
         this.scene.background = new THREE.Color(mapInfo.background);
+
+        if (mapInfo.backgroundImage !== null) {
+            const loader = new THREE.TextureLoader();
+            this.scene.background = loader.load(`${canvasInterface.ASSET_PATH}/${mapInfo.subject}/${mapInfo.map}/${mapInfo.backgroundImage}`);
+        }
 
         this.initPerspectiveCamera(mapInfo.camera);
         this.cameraPosition$.subscribe((pos: IPosition) => this.cameraPositionHandler(pos));
@@ -114,6 +123,16 @@ export class CanvasComponent implements OnInit, AfterViewInit {
         mapInfo.scene.forEach((entity: canvasInterface.IEntity) => {
             this.initEntity(entity);
         });
+
+        const readyInterval = setInterval(() => {
+            loaderManager.$ready().pipe(take(1)).subscribe((state) => {
+                if (state && !this.audioReady) {
+                    this.initAudio(mapInfo);
+                    clearInterval(readyInterval);
+                    this.audioReady = true;
+                }
+            });
+        }, 500);
 
         this.initRenderer();
         this.render();
@@ -135,6 +154,41 @@ export class CanvasComponent implements OnInit, AfterViewInit {
         this.canvas.style.height = window.innerHeight + "px";
     }
 
+    // Initialize Audio
+
+    private initAudio(mapInfo: canvasInterface.IMapData): void {
+        const playAllAudio = () => {
+            if (mapInfo.audio !== null && this.audioRef) {
+                mapInfo.audio.forEach(audio => {
+                    const audioPath = `${canvasInterface.ASSET_PATH}/${mapInfo.subject}/${mapInfo.map}/audio/${audio.path}`;
+
+                    const newAudioElem = document.createElement("audio");
+
+                    newAudioElem.src = audioPath;
+                    newAudioElem.volume = audio.volume / 100;
+
+                    setTimeout(() => {
+                        if (audio.loop) {
+                            newAudioElem.play();
+                            setInterval(() => {
+                                newAudioElem.play();
+                            }, audio.interval);
+                        } else {
+                            setTimeout(() => {
+                                newAudioElem.play();
+                            }, audio.interval);
+                        }
+                    }, 10);
+
+                    this.audioRef.nativeElement.appendChild(newAudioElem);
+
+                    document.removeEventListener("click", playAllAudio, true);
+                });
+            }
+        };
+        playAllAudio();
+    }
+
     // Initialize Camera
 
     private initPerspectiveCamera(options: canvasInterface.ICamera): void {
@@ -152,17 +206,19 @@ export class CanvasComponent implements OnInit, AfterViewInit {
         );
 
         this.camera.rotation.set(
-            options.rotation.x * Math.PI / 180,
-            options.rotation.y * Math.PI / 180,
-            options.rotation.z * Math.PI / 180
+            THREE.MathUtils.degToRad(options.rotation.x),
+            THREE.MathUtils.degToRad(options.rotation.y),
+            THREE.MathUtils.degToRad(options.rotation.z)
         );
 
         setInterval(() => {
             this.moveCameraStates
                 .pipe(take(1))
                 .subscribe((state: canvasInterface.IMoveCameraStates) => {
-                    this.camera.rotation.x += state.x;
-                    this.camera.rotation.y += state.y;
+                    this.camera.rotation.y += -state.y;
+
+                    const kx = Math.abs(2 / 180 * THREE.MathUtils.radToDeg(this.camera.rotation.y)) - 1;
+                    this.camera.rotation.x += state.x * kx;
                     this.camera.rotation.z += state.z;
                 });
         }, this.UPDATE_CAMERA_DURATION);
@@ -232,43 +288,43 @@ export class CanvasComponent implements OnInit, AfterViewInit {
 
     private initEntity(entity: canvasInterface.IEntity) {
         switch (entity.type) {
-            case canvasInterface.entityTypeEnum.model:
-                new ModelEntity(this.subjectName, this.map.name, entity)
-                    .init(entity.modelType)
-                    .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
-                        this.scene.add(mesh);
-                    });
-                break;
-            case canvasInterface.entityTypeEnum.cube:
-                new CubeEntity(this.subjectName, this.map.name, entity)
-                    .init()
-                    .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
-                        this.scene.add(mesh);
-                    });
-                break;
-            case canvasInterface.entityTypeEnum.sphere:
-                new SphereEntity(this.subjectName, this.map.name, entity)
-                    .init()
-                    .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
-                        this.scene.add(mesh);
-                    });
-                break;
-            case canvasInterface.entityTypeEnum.square:
-                new SquareEntity(this.subjectName, this.map.name, entity)
-                    .init()
-                    .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
-                        this.scene.add(mesh);
-                    });
-                break;
-            case canvasInterface.entityTypeEnum.circle:
-                new CircleEntity(this.subjectName, this.map.name, entity)
-                    .init()
-                    .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
-                        this.scene.add(mesh);
-                    });
-                break;
-            default:
-                break;
+        case canvasInterface.entityTypeEnum.model:
+            new ModelEntity(this.subjectName, this.map.name, entity)
+                .init(entity.modelType)
+                .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
+                    this.scene.add(mesh);
+                });
+            break;
+        case canvasInterface.entityTypeEnum.cube:
+            new CubeEntity(this.subjectName, this.map.name, entity)
+                .init()
+                .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
+                    this.scene.add(mesh);
+                });
+            break;
+        case canvasInterface.entityTypeEnum.sphere:
+            new SphereEntity(this.subjectName, this.map.name, entity)
+                .init()
+                .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
+                    this.scene.add(mesh);
+                });
+            break;
+        case canvasInterface.entityTypeEnum.square:
+            new SquareEntity(this.subjectName, this.map.name, entity)
+                .init()
+                .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
+                    this.scene.add(mesh);
+                });
+            break;
+        case canvasInterface.entityTypeEnum.circle:
+            new CircleEntity(this.subjectName, this.map.name, entity)
+                .init()
+                .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
+                    this.scene.add(mesh);
+                });
+            break;
+        default:
+            break;
         }
     }
 

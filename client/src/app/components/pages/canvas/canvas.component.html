@@ -1,5 +1,11 @@
 <div class="canvas">
     <app-interface [cameraPosition$]="cameraPosition$"></app-interface>
     <canvas ngModel width="100%" height="100%" #canvas></canvas>
-    <div id="mapModelLoader">Loading 0%</div>
+    <div id="mapModelLoaderContainer" class="loader">
+        <div id="mapModelLoader">Загрузка текстур 0%</div>
+        <div id="progressContainer">
+            <div id="progress"></div>
+        </div>
+    </div>
+    <div ngModel #audio></div>
 </div>

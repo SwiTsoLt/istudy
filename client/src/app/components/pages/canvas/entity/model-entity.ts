@@ -1,8 +1,8 @@
-import * as THREE from "three";
+import { Group, Object3D } from "three/src/Three";
 import * as canvasInterface from "../canvas.interface";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 import { Observable, Subscriber } from "rxjs";
-import { loaderManager } from "../loadingManager";
+import { loaderManager } from "../loaderManager";
 
 export class ModelEntity {
 
@@ -16,13 +16,13 @@ export class ModelEntity {
         this.mapName = mapName;
     }
 
-    public init(modelType: canvasInterface.modelTypeEnum): Observable<THREE.Object3D> {
-        return new Observable((subscriber: Subscriber<THREE.Object3D>) => {
+    public init(modelType: canvasInterface.modelTypeEnum): Observable<Object3D> {
+        return new Observable((subscriber: Subscriber<Object3D>) => {
             switch (modelType) {
             case canvasInterface.modelTypeEnum.gltf:
                 loaderManager.gltf(`${canvasInterface.ASSET_PATH}/${this.subjectName}/${this.mapName}/${this.entity.model}`)
                     .subscribe((gltf: GLTF) => {
-                        const mesh: THREE.Object3D = gltf.scene.children[0];
+                        const mesh: Object3D = gltf.scene.children[0];
 
                         mesh.position.x = this.entity.position.x;
                         mesh.position.y = this.entity.position.y;
@@ -41,7 +41,7 @@ export class ModelEntity {
             case canvasInterface.modelTypeEnum.glb:
                 loaderManager.glb(`${canvasInterface.ASSET_PATH}/${this.subjectName}/${this.mapName}/${this.entity.model}`)
                     .subscribe((gltf: GLTF) => {
-                        const mesh: THREE.Object3D = gltf.scene;
+                        const mesh: Object3D = gltf.scene;
 
                         mesh.position.x = this.entity.position.x;
                         mesh.position.y = this.entity.position.y;
@@ -59,7 +59,7 @@ export class ModelEntity {
                 break;
             case canvasInterface.modelTypeEnum.fbx:
                 loaderManager.fbx(`${canvasInterface.ASSET_PATH}/${this.subjectName}/${this.mapName}/${this.entity.model}`)
-                    .subscribe((anim: THREE.Group) => {
+                    .subscribe((anim: Group) => {
                         anim.position.x = this.entity.position.x;
                         anim.position.y = this.entity.position.y;
                         anim.position.z = this.entity.position.z;
