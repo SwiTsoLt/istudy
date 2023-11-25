@@ -7,237 +7,244 @@ import * as interfaces from "../interfaces";
 @Injectable()
 @WebSocketGateway()
 export class GatewayService {
-  @WebSocketServer()
-    private server: Server;
+    @WebSocketServer()
+    private server!: Server;
 
-  private rooms: interfaces.IRoomList = {};
+    private rooms: interfaces.IRoomList = {};
 
-  private clients: interfaces.IClientList = {};
+    private clients: interfaces.IClientList = {};
 
-  public init() {
-      try {
-          this.server.on("connection", (socket: Socket) => {
-              this.connect(socket);
+    public init(): { type: string, msg: messageEnum } | undefined {
+        try {
+            this.server.on("connection", (socket: Socket) => {
+                this.connect(socket);
 
-              console.log(`connect ${socket.id}`);
+                console.log(`connect ${socket.id}`);
 
-              socket.on("disconnect", () => {
-                  this.disconnect(socket);
-              });
+                socket.on("disconnect", () => {
+                    this.disconnect(socket);
+                });
 
-              socket.on("error", () => {
-                  this.disconnect(socket);
-              });
-          });
-      } catch (err) {
-          console.log(err);
-          return { type: "error", msg: messageEnum.somethingWentWrong };
-      }
-  }
+                socket.on("error", () => {
+                    this.disconnect(socket);
+                });
 
-  public connect(socket: Socket) {
-      try {
-          this.clients[socket.id] = { ownerOf: "", joinTo: "" };
-      } catch (err) {
-          console.log(err);
-          return { type: "error", msg: messageEnum.somethingWentWrong };
-      }
-  }
+                return;
+            });
+        } catch (err) {
+            console.log(err);
+            return { type: "error", msg: messageEnum.somethingWentWrong };
+        }
+        return;
+    }
 
-  public disconnect(socket: Socket) {
-      try {
-          const client = this.clients[socket.id];
+    public connect(socket: Socket): { type: string, msg: messageEnum } | undefined {
+        try {
+            this.clients[socket.id] = { ownerOf: "", joinTo: "" };
+            return;
+        } catch (err) {
+            console.log(err);
+            return { type: "error", msg: messageEnum.somethingWentWrong };
+        }
+    }
 
-          if (client.joinTo) {
-              return this.leaveRoom(socket);
-          }
+    public disconnect(socket: Socket): { type: string, msg: messageEnum } | undefined {
+        try {
+            const client = this.clients[socket.id];
 
-          if (client.ownerOf) {
-              return this.removeRoom(socket);
-          }
-      } catch (err) {
-          console.log(err);
-          return { type: "error", msg: messageEnum.somethingWentWrong };
-      }
-  }
+            if (client.joinTo) {
+                this.leaveRoom(socket);
+                return;
+            }
 
-  public createRoom(socket: Socket): interfaces.IMessage {
-      try {
-          const client: interfaces.IClient = this.clients[socket.id];
+            if (client.ownerOf) {
+                this.removeRoom(socket);
+                return;
+            }
+        } catch (err) {
+            console.log(err);
+            return { type: "error", msg: messageEnum.somethingWentWrong };
+        }
+        return;
+    }
 
-          if (client.ownerOf.length) {
-              return { type: "error", msg: messageEnum.alreadyAuthor };
-          }
+    public createRoom(socket: Socket): interfaces.IMessage {
+        try {
+            const client: interfaces.IClient = this.clients[socket.id];
 
-          if (client.joinTo.length) {
-              return { type: "error", msg: messageEnum.alreadyJoin };
-          }
+            if (client.ownerOf.length) {
+                return { type: "error", msg: messageEnum.alreadyAuthor };
+            }
 
-          const roomCode: string = this.generateRoomCode();
+            if (client.joinTo.length) {
+                return { type: "error", msg: messageEnum.alreadyJoin };
+            }
 
-          this.rooms[roomCode] = { ownerId: socket.id, clientId: "" };
-          this.clients[socket.id].ownerOf = roomCode;
+            const roomCode: string = this.generateRoomCode();
 
-          socket.emit("createRoomSuccess", { roomCode });
-          return { type: "success", msg: messageEnum.createRoomSuccess };
-      } catch (err) {
-          console.log(err);
-          return { type: "error", msg: messageEnum.somethingWentWrong };
-      }
-  }
+            this.rooms[roomCode] = { ownerId: socket.id, clientId: "" };
+            this.clients[socket.id].ownerOf = roomCode;
 
-  public removeRoom(socket: Socket): interfaces.IMessage {
-      try {
-          const client = this.clients[socket.id];
+            socket.emit("createRoomSuccess", { roomCode });
+            return { type: "success", msg: messageEnum.createRoomSuccess };
+        } catch (err) {
+            console.log(err);
+            return { type: "error", msg: messageEnum.somethingWentWrong };
+        }
+    }
 
-          if (!client.ownerOf.length) {
-              return { type: "error", msg: messageEnum.notAuthor };
-          }
+    public removeRoom(socket: Socket): interfaces.IMessage {
+        try {
+            const client = this.clients[socket.id];
 
-          if (!this.rooms[client.ownerOf]) {
-              return { type: "error", msg: messageEnum.roomNotFound };
-          }
+            if (!client.ownerOf.length) {
+                return { type: "error", msg: messageEnum.notAuthor };
+            }
 
-          const clientSocket: Socket = this.server.sockets.sockets.get(
-              this.rooms[client.ownerOf]?.clientId
-          );
+            if (!this.rooms[client.ownerOf]) {
+                return { type: "error", msg: messageEnum.roomNotFound };
+            }
 
-          if (clientSocket) {
-              this.clients[clientSocket.id].joinTo = "";
-              clientSocket.emit("leaveRoomSuccess");
-              clientSocket.send({
-                  type: "success",
-                  msg: messageEnum.leaveRoomSuccess,
-              });
-          }
+            const clientSocket: Socket | undefined = this.server.sockets.sockets.get(
+                this.rooms[client.ownerOf]?.clientId
+            );
 
-          delete this.rooms[client.ownerOf];
-          this.clients[socket.id].ownerOf = "";
+            if (clientSocket) {
+                this.clients[clientSocket.id].joinTo = "";
+                clientSocket.emit("leaveRoomSuccess");
+                clientSocket.send({
+                    type: "success",
+                    msg: messageEnum.leaveRoomSuccess,
+                });
+            }
 
-          socket.emit("removeRoomSuccess");
-          return { type: "success", msg: messageEnum.roomRemovedSuccess };
-      } catch (err) {
-          console.log(err);
-          return { type: "error", msg: messageEnum.somethingWentWrong };
-      }
-  }
+            delete this.rooms[client.ownerOf];
+            this.clients[socket.id].ownerOf = "";
 
-  public joinRoom(socket: Socket, joinDto: JoinDto): interfaces.IMessage {
-      try {
-          const client: interfaces.IClient = this.clients[socket.id];
+            socket.emit("removeRoomSuccess");
+            return { type: "success", msg: messageEnum.roomRemovedSuccess };
+        } catch (err) {
+            console.log(err);
+            return { type: "error", msg: messageEnum.somethingWentWrong };
+        }
+    }
 
-          if (this.rooms[client.ownerOf]) {
-              socket.emit("joinRoomError");
-              return { type: "error", msg: messageEnum.alreadyAuthor };
-          }
+    public joinRoom(socket: Socket, joinDto: JoinDto): interfaces.IMessage {
+        try {
+            const client: interfaces.IClient = this.clients[socket.id];
 
-          if (client.joinTo.length) {
-              socket.emit("joinRoomError");
-              return { type: "error", msg: messageEnum.alreadyJoin };
-          }
+            if (this.rooms[client.ownerOf]) {
+                socket.emit("joinRoomError");
+                return { type: "error", msg: messageEnum.alreadyAuthor };
+            }
 
-          if (!this.rooms[joinDto.roomCode]) {
-              socket.emit("joinRoomError");
-              return { type: "error", msg: messageEnum.roomNotFound };
-          }
+            if (client.joinTo.length) {
+                socket.emit("joinRoomError");
+                return { type: "error", msg: messageEnum.alreadyJoin };
+            }
 
-          this.rooms[joinDto.roomCode].clientId = socket.id;
-          this.clients[socket.id].joinTo = joinDto.roomCode;
+            if (!this.rooms[joinDto.roomCode]) {
+                socket.emit("joinRoomError");
+                return { type: "error", msg: messageEnum.roomNotFound };
+            }
 
-          if (!this.rooms[joinDto.roomCode]?.ownerId) {
-              socket.emit("joinRoomError");
-              return { type: "error", msg: messageEnum.roomNotFound };
-          }
+            this.rooms[joinDto.roomCode].clientId = socket.id;
+            this.clients[socket.id].joinTo = joinDto.roomCode;
 
-          const ownerSocket: Socket = this.server.sockets.sockets.get(
-              this.rooms[joinDto.roomCode].ownerId
-          );
+            if (!this.rooms[joinDto.roomCode]?.ownerId) {
+                socket.emit("joinRoomError");
+                return { type: "error", msg: messageEnum.roomNotFound };
+            }
 
-          if (ownerSocket) {
-              ownerSocket.emit("joinRoomSuccess", { roomCode: joinDto.roomCode });
-              ownerSocket.send({ type: "success", msg: messageEnum.joinRoomSuccess });
-          }
+            const ownerSocket: Socket | undefined = this.server.sockets.sockets.get(
+                this.rooms[joinDto.roomCode].ownerId
+            );
 
-          socket.emit("joinRoomSuccess", { roomCode: joinDto.roomCode });
-          socket.emit("startWebRtcConnection", { roomCode: joinDto.roomCode });
-          return { type: "success", msg: messageEnum.joinRoomSuccess };
-      } catch (err) {
-          console.log(err);
-          return { type: "error", msg: messageEnum.somethingWentWrong };
-      }
-  }
+            if (ownerSocket) {
+                ownerSocket.emit("joinRoomSuccess", { roomCode: joinDto.roomCode });
+                ownerSocket.send({ type: "success", msg: messageEnum.joinRoomSuccess });
+            }
 
-  public leaveRoom(socket: Socket): interfaces.IMessage {
-      try {
-          const client: interfaces.IClient = this.clients[socket.id];
+            socket.emit("joinRoomSuccess", { roomCode: joinDto.roomCode });
+            socket.emit("startWebRtcConnection", { roomCode: joinDto.roomCode });
+            return { type: "success", msg: messageEnum.joinRoomSuccess };
+        } catch (err) {
+            console.log(err);
+            return { type: "error", msg: messageEnum.somethingWentWrong };
+        }
+    }
 
-          if (client.ownerOf.length) {
-              return { type: "error", msg: messageEnum.alreadyAuthor };
-          }
+    public leaveRoom(socket: Socket): interfaces.IMessage {
+        try {
+            const client: interfaces.IClient = this.clients[socket.id];
 
-          if (!client.joinTo.length) {
-              return { type: "error", msg: messageEnum.notJoined };
-          }
+            if (client.ownerOf.length) {
+                return { type: "error", msg: messageEnum.alreadyAuthor };
+            }
 
-          const ownerSocket = this.server.sockets.sockets.get(
-              this.rooms[client.joinTo].ownerId
-          );
+            if (!client.joinTo.length) {
+                return { type: "error", msg: messageEnum.notJoined };
+            }
 
-          this.rooms[this.clients[socket.id].joinTo].clientId = "";
-          this.clients[socket.id].joinTo = "";
-          socket.emit("leaveRoomSuccess");
+            const ownerSocket = this.server.sockets.sockets.get(
+                this.rooms[client.joinTo].ownerId
+            );
 
-          if (ownerSocket) {
-              ownerSocket.emit("leaveRoomSuccess");
-              ownerSocket.send({
-                  type: "success",
-                  msg: messageEnum.leaveRoomSuccess,
-              });
-          }
+            this.rooms[this.clients[socket.id].joinTo].clientId = "";
+            this.clients[socket.id].joinTo = "";
+            socket.emit("leaveRoomSuccess");
 
-          return { type: "success", msg: messageEnum.leaveRoomSuccess };
-      } catch (err) {
-          console.log(err);
-          return { type: "error", msg: messageEnum.somethingWentWrong };
-      }
-  }
+            if (ownerSocket) {
+                ownerSocket.emit("leaveRoomSuccess");
+                ownerSocket.send({
+                    type: "success",
+                    msg: messageEnum.leaveRoomSuccess,
+                });
+            }
 
-  private generateRoomCode(): string {
-      let roomCode = "";
+            return { type: "success", msg: messageEnum.leaveRoomSuccess };
+        } catch (err) {
+            console.log(err);
+            return { type: "error", msg: messageEnum.somethingWentWrong };
+        }
+    }
 
-      for (let i = 0; i <= 4; i++) {
-          const rand: number = Math.round(Math.random() * 9);
-          roomCode += rand.toString();
-      }
+    private generateRoomCode(): string {
+        let roomCode = "";
 
-      if (this.rooms[roomCode]) {
-          return this.generateRoomCode();
-      }
+        for (let i = 0; i <= 4; i++) {
+            const rand: number = Math.round(Math.random() * 9);
+            roomCode += rand.toString();
+        }
 
-      return roomCode;
-  }
+        if (this.rooms[roomCode]) {
+            return this.generateRoomCode();
+        }
 
-  // RTC
+        return roomCode;
+    }
 
-  public rtcData(
-      socket: Socket,
-      rtcData: RtcDataDto
-  ): interfaces.IMessage | null {
-      try {
-          const client = this.clients[socket.id];
+    // RTC
 
-          const clientSocket = client.ownerOf.length
-              ? this.server.sockets.sockets.get(this.rooms[client.ownerOf]?.clientId)
-              : this.server.sockets.sockets.get(this.rooms[client.joinTo]?.ownerId);
+    public rtcData(
+        socket: Socket,
+        rtcData: RtcDataDto
+    ): interfaces.IMessage | null {
+        try {
+            const client = this.clients[socket.id];
 
-          if (clientSocket) {
-              clientSocket.emit(rtcData.type, rtcData);
-          }
+            const clientSocket = client.ownerOf.length
+                ? this.server.sockets.sockets.get(this.rooms[client.ownerOf]?.clientId)
+                : this.server.sockets.sockets.get(this.rooms[client.joinTo]?.ownerId);
 
-          return null;
-      } catch (err) {
-          console.log(err);
-          return { type: "error", msg: messageEnum.somethingWentWrong };
-      }
-  }
+            if (clientSocket) {
+                clientSocket.emit(rtcData.type, rtcData);
+            }
+
+            return null;
+        } catch (err) {
+            console.log(err);
+            return { type: "error", msg: messageEnum.somethingWentWrong };
+        }
+    }
 }

@@ -1,8 +1,7 @@
 import { createReducer, on } from "@ngrx/store";
 import * as WebRtcActions from "./webrtc.actions";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-import * as freeice from "freeice";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const freeice = require("freeice");
 export const webRtcNode = "webRtc";
 
 export interface WebRtcReducerState {

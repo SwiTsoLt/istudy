@@ -69,7 +69,7 @@ export class GatewayController implements OnModuleInit {
     @ConnectedSocket() socket: Socket,
     @MessageBody() rtcDataDto: RtcDataDto
   ) {
-      const response: interfaces.IMessage = this.gatewayService.rtcData(
+      const response: interfaces.IMessage | null = this.gatewayService.rtcData(
           socket,
           rtcDataDto
       );
