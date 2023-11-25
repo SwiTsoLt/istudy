@@ -41,6 +41,7 @@
                 {
                   "type": "initial",
 <<<<<<< HEAD
+<<<<<<< HEAD
                   "maximumWarning": "2mb",
                   "maximumError": "4mb"
                 },
@@ -57,6 +58,15 @@
                   "maximumWarning": "500kb",
                   "maximumError": "1mb"
 >>>>>>> 67462619ed38e132b301e3fb0c29d5578eaaf0fa
+=======
+                  "maximumWarning": "2mb",
+                  "maximumError": "4mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2mb",
+                  "maximumError": "4mb"
+>>>>>>> f6b0840 (rebuild boat map; add audio; upgrade camera movement)
                 }
               ],
               "outputHashing": "all"
