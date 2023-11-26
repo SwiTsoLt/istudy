@@ -230,9 +230,6 @@ export class CanvasComponent implements OnInit, AfterViewInit {
                     }
 
                     this.camera.rotation.z += state.z;
-                    if (Math.abs(this.camera.rotation.z) > 360) {
-                        this.camera.rotation.z = 0;
-                    }
                 });
         }, this.UPDATE_CAMERA_DURATION);
     }

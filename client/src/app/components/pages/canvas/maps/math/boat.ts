@@ -23,7 +23,7 @@ export const map: canvasInterface.IMapData = {
         },
         {
             "path": "gull.mp3",
-            "volume": 50,
+            "volume": 20,
             "interval": 22000,
             "loop": true,
         },
