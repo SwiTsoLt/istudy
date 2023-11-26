@@ -45,7 +45,7 @@ export class ControllerComponent implements OnInit {
         this.controllerService.subscribeToDeviceOrientation()
             .subscribe(({ beta, gamma, alpha }) => {
                 if (this.isMoveEnabled) {
-                    const convertToCircle = this.convertToCircle(gamma, beta, alpha);
+                    const convertToCircle = this.convertToCircle(gamma, -beta, alpha);
 
                     [
                         this.position.gamma,
