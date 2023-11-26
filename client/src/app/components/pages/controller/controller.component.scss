@@ -178,7 +178,7 @@
     .notebook {
         display: flex;
         justify-content: center;
-        position: absolute;
+        position: fixed;
         left: 0;
         top: 0;
         transform: translateY(100%);
@@ -219,6 +219,7 @@
                     border: 2px solid #606060;
                     border-radius: 4px;
                     font-size: 16px;
+                    line-height: 32px;
                     text-align: center;
                     padding: 4px 10px;
                 }
