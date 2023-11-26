@@ -94,7 +94,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     ngAfterViewInit(): void {
         this.mapInfo = mapsData[this.subjectName][this.map.name];
         this.createScene(this.mapInfo);
-        this.initStats(); // Dev
+        // this.initStats(); // Dev
 
         window.addEventListener("resize", () => {
             this.createScene(this.mapInfo);
@@ -211,15 +211,28 @@ export class CanvasComponent implements OnInit, AfterViewInit {
             THREE.MathUtils.degToRad(options.rotation.z)
         );
 
+        // this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+
         setInterval(() => {
             this.moveCameraStates
                 .pipe(take(1))
                 .subscribe((state: canvasInterface.IMoveCameraStates) => {
                     this.camera.rotation.y += -state.y;
+                    if (Math.abs(this.camera.rotation.y) > 360) {
+                        this.camera.rotation.y = 0;
+                    }
 
                     const kx = Math.abs(2 / 180 * THREE.MathUtils.radToDeg(this.camera.rotation.y)) - 1;
+                   
                     this.camera.rotation.x += state.x * kx;
+                    if (Math.abs(this.camera.rotation.x) > 360) {
+                        this.camera.rotation.x = 0;
+                    }
+
                     this.camera.rotation.z += state.z;
+                    if (Math.abs(this.camera.rotation.z) > 360) {
+                        this.camera.rotation.z = 0;
+                    }
                 });
         }, this.UPDATE_CAMERA_DURATION);
     }
@@ -272,16 +285,15 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     // Initialize light
 
     private initLight(): void {
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
-        directionalLight.position.set(-5, 5, -5);
+        const light1 = new THREE.HemisphereLight(0xffffff, 0x444444, 0.8);
+        light1.position.set(0, 8, 0);
 
-        const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.61);
-        hemiLight.position.set(-5, 50, -5);
+        const light2 = new THREE.DirectionalLight(0xffffff, 0.8);
+        light2.position.set(0, 8, 0);
 
-        const pointerLight = new THREE.PointLight(0xffffff, 0.2);
-        pointerLight.position.set(0, 9, -5);
+        // const light3 = new THREE.DirectionalLight(0xffffff, 0.8);
 
-        this.scene.add(directionalLight, pointerLight, hemiLight);
+        this.scene.add(light1, light2);
     }
 
     // Initialize entities
@@ -290,7 +302,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
         switch (entity.type) {
         case canvasInterface.entityTypeEnum.model:
             new ModelEntity(this.subjectName, this.map.name, entity)
-                .init(entity.modelType)
+                .init(entity.modelType, entity.animation)
                 .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
                     this.scene.add(mesh);
                 });
@@ -335,6 +347,8 @@ export class CanvasComponent implements OnInit, AfterViewInit {
         this.renderer.setPixelRatio(devicePixelRatio);
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMapType = THREE.PCFSoftShadowMap;
+        this.renderer.outputEncoding = THREE.sRGBEncoding;
         this.renderer.xr.enabled = true;
     }
 

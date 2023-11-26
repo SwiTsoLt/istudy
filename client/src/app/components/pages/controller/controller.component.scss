@@ -127,6 +127,7 @@
         width: 100%;
         height: fit-content;
         padding: calc($p * 2) 0;
+        z-index: 6;
 
         button {
             width: 70px;
@@ -159,12 +160,82 @@
                 background-image: url('../../../media/controller/grab.svg');
             }
 
+            &.openNotebookButton>.icon {
+                background-image: url('../../../media/controller/notebook.svg');
+                background-size: 90%;
+            }
+
             &.active {
                 background-color: $m-c-r;
 
                 .icon {
                     background-image: url('../../../media/controller/deny.svg');
                 }
+            }
+        }
+    }
+
+    .notebook {
+        display: flex;
+        justify-content: center;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: #ffffff;
+        background-image: url('../../../media/controller/notebook.jpg');
+        background-size: cover;
+        z-index: 5;
+        transition: top 1s ease-in;
+        padding: 20px 20px 100px 20px;
+
+        &.active {
+            top: 0;
+        }
+
+        .notebookContainer {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            font-size: 14px;
+
+            h1 {
+                text-align: center;
+            }
+
+            p {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 10px;
+                font-size: 18px;
+
+                input {
+                    height: 100%;
+                    outline: none;
+                    background-color: transparent;
+                    border: 2px solid #606060;
+                    border-radius: 4px;
+                    font-size: 16px;
+                    text-align: center;
+                    padding: 4px 10px;
+                }
+            }
+
+            hr {
+                width: 100%;
+                height: 2px;
+                background-color: #aaaaaa;
+                border: none;
+            }
+
+            button {
+                background-color: #FFD002;
+                padding: 10px 30px;
+                border: 2px solid #606060;
+                border-radius: 8px;
+                font-weight: bold;
             }
         }
     }

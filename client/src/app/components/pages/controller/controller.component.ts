@@ -1,8 +1,13 @@
 import { Component, OnInit } from "@angular/core";
 import { ControllerService, IPosition } from "./controller.service";
 import { WebRtcService } from "../../../webrtc.service";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import * as webRtcInterface from "../../../store/webrtc-store/webrtc.interface";
+import { subjectData } from "../subjectData";
+import { ISelector } from "../room/subject/subject.component";
+import * as canvasInterface from "../canvas/canvas.interface";
+import { mapsData } from "../canvas/maps";
+
 
 @Component({
     selector: "app-controller",
@@ -12,13 +17,21 @@ import * as webRtcInterface from "../../../store/webrtc-store/webrtc.interface";
 export class ControllerComponent implements OnInit {
 
     constructor(
-    private controllerService: ControllerService,
-    private webRtcService: WebRtcService,
-    private router: Router
+        private controllerService: ControllerService,
+        private webRtcService: WebRtcService,
+        private router: Router,
+        private route: ActivatedRoute
     ) { }
+
+    public map: ISelector = { title: "", name: "", imageName: "", disabled: true, childList: [] };
+    public subjectName: string = "math";
+    public mapInfo!: canvasInterface.IMapData;
+
+    public task!: canvasInterface.IMapTaskInfo;
 
     public isMoveEnabled: boolean = false;
     public isGrabEnabled: boolean = false;
+    public isOpenNotebook: boolean = false;
 
     public position: IPosition = {
         beta: 0,
@@ -31,7 +44,7 @@ export class ControllerComponent implements OnInit {
             .subscribe(({ beta, gamma, alpha }) => {
                 if (this.isMoveEnabled) {
                     const convertToCircle = this.convertToCircle(gamma, beta, alpha);
-          
+
                     [
                         this.position.gamma,
                         this.position.beta,
@@ -41,7 +54,7 @@ export class ControllerComponent implements OnInit {
                         convertToCircle.beta,
                         convertToCircle.alpha
                     ];
-          
+
                     this.webRtcService.sendData(
                         webRtcInterface.DataChannelLabelEnum.positionChannel,
                         webRtcInterface.DataChannelPositionTypeEnum.setCameraPosition,
@@ -49,6 +62,18 @@ export class ControllerComponent implements OnInit {
                     );
                 }
             });
+
+        this.route.paramMap.subscribe(paramMap => {
+            const subjectId: number = Number(paramMap.get("subjectId"));
+            const mapId: number = Number(paramMap.get("mapId"));
+            const currentMap = subjectData.subjectList[subjectId].childList[mapId];
+    
+            this.map = currentMap;
+            this.subjectName = subjectData.subjectList[subjectId].name;
+            this.mapInfo = mapsData[this.subjectName][this.map.name];
+            
+            this.task = this.mapInfo.taskInfo;
+        });
     }
 
     public exit() {
@@ -80,5 +105,13 @@ export class ControllerComponent implements OnInit {
 
     public toggleEnableGrab() {
         this.isGrabEnabled = !this.isGrabEnabled;
+    }
+
+    public toggleOpenNotebook() {
+        this.isOpenNotebook = !this.isOpenNotebook;
+    }
+
+    public checkAnswer(value: string) {
+        console.log(value);
     }
 }

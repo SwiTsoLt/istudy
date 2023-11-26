@@ -16,11 +16,14 @@ export class ModelEntity {
         this.mapName = mapName;
     }
 
-    public init(modelType: canvasInterface.modelTypeEnum): Observable<Object3D> {
+    public init(modelType: canvasInterface.modelTypeEnum, animation: canvasInterface.IEntityAnimation): Observable<Object3D> {
         return new Observable((subscriber: Subscriber<Object3D>) => {
             switch (modelType) {
             case canvasInterface.modelTypeEnum.gltf:
-                loaderManager.gltf(`${canvasInterface.ASSET_PATH}/${this.subjectName}/${this.mapName}/${this.entity.model}`)
+                loaderManager.gltf(
+                    `${canvasInterface.ASSET_PATH}/${this.subjectName}/${this.mapName}/${this.entity.model}`,
+                    animation
+                )
                     .subscribe((gltf: GLTF) => {
                         const mesh: Object3D = gltf.scene.children[0];
 
@@ -39,7 +42,10 @@ export class ModelEntity {
                     });
                 break;
             case canvasInterface.modelTypeEnum.glb:
-                loaderManager.glb(`${canvasInterface.ASSET_PATH}/${this.subjectName}/${this.mapName}/${this.entity.model}`)
+                loaderManager.glb(
+                    `${canvasInterface.ASSET_PATH}/${this.subjectName}/${this.mapName}/${this.entity.model}`,
+                    animation
+                )
                     .subscribe((gltf: GLTF) => {
                         const mesh: Object3D = gltf.scene;
 
@@ -58,7 +64,10 @@ export class ModelEntity {
                     });
                 break;
             case canvasInterface.modelTypeEnum.fbx:
-                loaderManager.fbx(`${canvasInterface.ASSET_PATH}/${this.subjectName}/${this.mapName}/${this.entity.model}`)
+                loaderManager.fbx(
+                    `${canvasInterface.ASSET_PATH}/${this.subjectName}/${this.mapName}/${this.entity.model}`,
+                    animation
+                )
                     .subscribe((anim: Group) => {
                         anim.position.x = this.entity.position.x;
                         anim.position.y = this.entity.position.y;

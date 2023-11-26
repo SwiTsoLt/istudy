@@ -14,6 +14,7 @@ import { JoinerGuardService } from "./guards/joiner-guard.service";
 import { OwnerGuardService } from "./guards/owner-guard.service";
 import { PagesModule } from "./components/pages/pages.module";
 import { UIModule } from "./components/UI/ui.module";
+import { ConnectionGuardService } from "./guards/connection-guard.service";
 
 @NgModule({
     declarations: [
@@ -41,6 +42,7 @@ import { UIModule } from "./components/UI/ui.module";
         EffectsModule.forRoot([WSEffects, WebRtcEffects])
     ],
     providers: [
+        ConnectionGuardService,
         OwnerGuardService,
         JoinerGuardService
     ],

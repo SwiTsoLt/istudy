@@ -9,6 +9,9 @@ import { CanvasComponent } from "./components/pages/canvas/canvas.component";
 import { NotfoundComponent } from "./components/pages/notfound/notfound.component";
 // import { JoinerGuardService } from "./guards/joiner-guard.service";
 import { ControllerComponent } from "./components/pages/controller/controller.component";
+import { ConnectionGuardService } from "./guards/connection-guard.service";
+import { JoinerGuardService } from "./guards/joiner-guard.service";
+import { OwnerGuardService } from "./guards/owner-guard.service";
 
 // ConnectionGuardService, OwnerGuardService
 
@@ -17,26 +20,26 @@ const routes: Routes = [
     { path: "home", component: HomeComponent },
     {
         path: "room/subject/:subjectId/:mapId", component: CanvasComponent,
-    // canActivate: [ConnectionGuardService, OwnerGuardService]
+        canActivate: [ConnectionGuardService, OwnerGuardService]
     },
     {
         path: "room", component: RoomComponent, children: [
             {
                 path: "subject/:subjectId",
                 component: SubjectComponent,
-                // canActivate: [ConnectionGuardService, JoinerGuardService]
+                canActivate: [ConnectionGuardService, JoinerGuardService]
             },
             {
                 path: "subject",
                 component: SubjectComponent,
-                // canActivate: [ConnectionGuardService, JoinerGuardService]
+                canActivate: [ConnectionGuardService, JoinerGuardService]
             },
         ]
     },
     {
-        path: "controller",
+        path: "controller/:subjectId/:mapId",
         component: ControllerComponent,
-    // canActivate: [ConnectionGuardService, JoinerGuardService]
+        canActivate: [ConnectionGuardService, JoinerGuardService]
     },
     {
         path: "**",

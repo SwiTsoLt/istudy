@@ -56,6 +56,8 @@ export class CircleEntity {
 
                         const mesh = new Mesh(geometry, material);
 
+                        mesh.scale.multiplyScalar(this.entity.multiplyScalar);
+
                         mesh.position.set(
                             this.entity.position.x,
                             this.entity.position.y,
@@ -102,6 +104,8 @@ export class CircleEntity {
                 }
 
                 const mesh = new Mesh(geometry, material);
+
+                mesh.scale.multiplyScalar(this.entity.multiplyScalar);
 
                 mesh.position.set(
                     this.entity.position.x,

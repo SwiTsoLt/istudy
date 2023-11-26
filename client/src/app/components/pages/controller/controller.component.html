@@ -15,7 +15,7 @@
             </div>
         </div>
     </div>
- 
+
     <div class="interface">
         <button class="exitButton" (click)="exit()">
             <span class="icon bgimage"></span>
@@ -23,8 +23,27 @@
         <button class="moveButton" (click)="toggleEnableMove()" [ngClass]="{'active': isMoveEnabled}">
             <span class="icon bgimage"></span>
         </button>
-        <button class="grabButton" (click)="toggleEnableGrab()" [ngClass]="{'active': isGrabEnabled}">
+        <!-- <button class="grabButton" (click)="toggleEnableGrab()" [ngClass]="{'active': isGrabEnabled}">
+            <span class="icon bgimage"></span>
+        </button> -->
+        <button class="openNotebookButton" (click)="toggleOpenNotebook()" [ngClass]="{'active': isOpenNotebook}">
             <span class="icon bgimage"></span>
         </button>
+    </div>
+
+    <div class="notebook bgimage" [ngClass]="{'active': isOpenNotebook}">
+        <div class="notebookContainer">
+            <h1>Блокнот</h1>
+            <hr>
+            <p>{{ task.question }}</p>
+            <hr>
+            <p *ngFor="let field of task.fields">
+                {{ field.title }}
+                <input type="text" [placeholder]="field.placeholder">
+            </p>
+            <hr>
+            <p>Ответ: <input #answer type="text" placeholder="12:34"></p>
+            <button (click)="checkAnswer(answer.value)">Проверить</button>
+        </div>
     </div>
 </div>

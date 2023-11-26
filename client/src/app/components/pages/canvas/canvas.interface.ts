@@ -53,7 +53,7 @@ export enum modelTypeEnum {
 export const EntityDefaults: Pick<
 IEntity, "title" | "type" | "texture" | "materialType"
 | "color" | "model" | "modelType" | "credit" | "multiplyScalar"
-| "scale" | "position" | "rotation"
+| "animation" | "scale" | "position" | "rotation"
 > = {
     title: "unknown_map",
     type: entityTypeEnum.square,
@@ -64,6 +64,10 @@ IEntity, "title" | "type" | "texture" | "materialType"
     modelType: modelTypeEnum.gltf,
     credit: "",
     multiplyScalar: 1,
+    animation: {
+        rate: 1,
+        stopAt: null,
+    },
     scale: {
         width: 1,
         height: 1,
@@ -81,6 +85,11 @@ IEntity, "title" | "type" | "texture" | "materialType"
     }
 };
 
+export interface IEntityAnimation {
+    rate: number,
+    stopAt: number | null,
+}
+
 export interface IEntity {
     title: string,
     type: EntityType,
@@ -91,6 +100,7 @@ export interface IEntity {
     modelType: modelTypeEnum,
     credit: string,
     multiplyScalar: number,
+    animation: IEntityAnimation, 
     scale: IEntityScale,
     position: IEntityPosition,
     rotation: IEntityRotation,
@@ -127,9 +137,21 @@ export interface IMapAudio {
     loop: boolean,
 }
 
+export interface IMapTaskInfoField {
+    title: string,
+    placeholder: string,
+}
+
+export interface IMapTaskInfo {
+    question: string,
+    fields: IMapTaskInfoField[],
+    answer: string
+}
+
 export interface IMapData {
     title: string,
     map: string,
+    taskInfo: IMapTaskInfo,
     background: ColorRepresentation | undefined,
     backgroundImage: string | null,
     subject: string,

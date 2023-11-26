@@ -2,7 +2,7 @@ import * as THREE from "three/src/Three";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
-import { Observable, Subscriber, of } from "rxjs";
+import { Observable, Subscriber, of, take } from "rxjs";
 import * as canvasInterface from "./canvas.interface";
 
 const clock: THREE.Clock = new THREE.Clock();
@@ -91,9 +91,22 @@ export const loaderManager = {
             });
         });
     },
-    gltf: (url: string) => {
+    gltf: (url: string, animation: canvasInterface.IEntityAnimation) => {
         return new Observable((subscriber: Subscriber<GLTF>) => {
-            new GLTFLoader(manager).load(url, (gltf: GLTF) => {
+            new GLTFLoader(manager).load(url, (gltf) => {
+
+                // gltf.scene.traverse(c => {
+                //     const child = (gltf.scene.getObjectByName(c.name) as THREE.Mesh)
+
+                //     if (!child.isMesh) {
+                //         loaderManager.texture(url.replace("scene.gltf", "textures/texture.png"))
+                //             .pipe(take(1))
+                //             .subscribe((texture: THREE.Texture) => {
+                //                 const tempMaterial = new THREE.MeshStandardMaterial({ map: texture, normalMap: texture });
+                //                 child.material = tempMaterial;
+                //             });
+                //     }
+                // });
 
                 if (gltf.animations.length) {
                     gltf.animations.forEach((anim: THREE.AnimationClip) => {
@@ -102,69 +115,128 @@ export const loaderManager = {
                         const clip = new THREE.AnimationClip(anim.name, anim.duration, anim.tracks, anim.blendMode);
                         const action = mixer.clipAction(clip);
 
-                        function update() {
-                            mixer.update(clock.getDelta());
-                            requestAnimationFrame(update);
+                        function update(d: number) {
+                            mixer.update(d);
+                            // requestAnimationFrame(update);
                         }
-                        update();
+
+                        if (animation.stopAt !== null) {
+                            mixer.update(0);
+
+                            setTimeout(() => {
+                                animation.stopAt !== null && mixer.update(animation.rate * animation.stopAt);
+                            }, 0);
+                        } else {
+                            setInterval(() => {
+                                update(0.005);
+                            }, 100);
+                        }
 
                         action.play();
                     });
                 }
 
                 subscriber.next(gltf);
-            }, (progress: ProgressEvent<EventTarget>) => {
-                console.log(`${progress.loaded * 100}%`);
+            }, () => {
+                // console.log(`${progress.loaded * 100}%`);
             }, (error: ErrorEvent) => {
                 subscriber.error(error.message);
             });
         });
     },
-    glb: (url: string) => {
+    glb: (url: string, animation: canvasInterface.IEntityAnimation) => {
         return new Observable((subscriber: Subscriber<GLTF>) => {
             new GLTFLoader(manager).load(url, (glb: GLTF) => {
+                if (glb.animations.length) {
+                    glb.animations.forEach((anim: THREE.AnimationClip) => {
+                        const mesh: THREE.Object3D = glb.scene.children[0];
+                        const mixer = new THREE.AnimationMixer(mesh);
+                        const clip = new THREE.AnimationClip(anim.name, anim.duration, anim.tracks, anim.blendMode);
+                        const action = mixer.clipAction(clip);
+
+                        function update() {
+                            mixer.update(clock.getDelta());
+                            requestAnimationFrame(update);
+                        }
+
+                        if (animation.stopAt !== null) {
+                            mixer.update(0);
+
+                            setTimeout(() => {
+                                animation.stopAt !== null && mixer.update(animation.rate * animation.stopAt);
+                            }, 0);
+                        } else {
+                            update();
+                        }
+
+                        action.play();
+                    });
+                }
+
                 subscriber.next(glb);
-            }, () => { }, (error: ErrorEvent) => {
+            }, () => {
+                // console.log(`${progress.loaded * 100}%`);
+            }, (error: ErrorEvent) => {
                 subscriber.error(error.message);
             });
         });
     },
-    fbx: (url: string) => {
+    fbx: (url: string, animation: canvasInterface.IEntityAnimation) => {
         return new Observable((subscriber: Subscriber<THREE.Group>) => {
-            new FBXLoader(manager).load(url, (anim: THREE.Group) => {
-                loaderManager.texture(`${canvasInterface.ASSET_PATH}/math/boat/water/textures/Water_Diffuse.png`)
-                    .subscribe(texture => {
-                        // Set texture
+            new FBXLoader(manager).load(url, (fbx: THREE.Group) => {
+                fbx.scale.setScalar(1);
 
-                        const material = new THREE.MeshPhongMaterial({ map: texture, shininess: 80 });
+                fbx.traverse(child => {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                });
 
-                        anim.traverse(child => {
-                            child.castShadow = true;
-                            (child as THREE.Mesh).material = material;
+                const mixer = new THREE.AnimationMixer(fbx);
 
-                            // Set animation
+                const idle = mixer.clipAction(fbx.animations[0]);
+                idle.play();
 
-                            const mixer: THREE.AnimationMixer = new THREE.AnimationMixer(child);
-                            const clips = child.animations;
+                function update() {
+                    mixer.update(clock.getDelta());
+                    requestAnimationFrame(update);
+                }
 
-                            if (clips.length) {
-                                const clock: THREE.Clock = new THREE.Clock();
-                                mixer.clipAction(anim.animations[0]).play();
+                fbx.updateMatrix();
 
-                                const update: () => void = () => {
-                                    const delta: number = clock.getDelta();
-                                    mixer.update(delta);
-                                };
-                                setInterval(() => {
-                                    update();
-                                }, 16.667);
+                if (animation.stopAt !== null) {
+                    mixer.update(0);
 
+                    setTimeout(() => {
+                        animation.stopAt !== null && mixer.update(animation.rate * animation.stopAt);
+                    }, 0);
+                } else {
+                    update();
+                }
 
-                            }
-                        });
+                // new FBXLoader(manager).load(url, (anim: THREE.Group) => {
+                //     const mixer = new THREE.AnimationMixer(fbx);
+                //     mixers.push(mixer);
 
-                        subscriber.next(anim);
-                    });
+                //     const idle = mixer.clipAction(anim.animations[0]);
+                //     idle.play();
+
+                //     function update() {
+                //         mixer.update(clock.getDelta());
+                //         requestAnimationFrame(update);
+                //     }
+
+                //     if (animation.stopAt !== null) {
+                //         mixer.update(0);
+
+                //         setTimeout(() => {
+                //             animation.stopAt !== null && mixer.update(animation.rate * animation.stopAt);
+                //         }, 0);
+                //     } else {
+                //         update();
+                //     }
+                // });
+
+                subscriber.next(fbx);
             }, () => { }, (error: ErrorEvent) => {
                 subscriber.error(error.message);
             });
