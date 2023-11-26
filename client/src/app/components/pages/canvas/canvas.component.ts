@@ -218,11 +218,11 @@ export class CanvasComponent implements OnInit, AfterViewInit {
                 .pipe(take(1))
                 .subscribe((state: canvasInterface.IMoveCameraStates) => {
                     this.camera.rotation.y += -state.y;
+                    const kx = Math.abs(90 * THREE.MathUtils.radToDeg(this.camera.rotation.y)) - 1;
+
                     if (Math.abs(this.camera.rotation.y) > 360) {
                         this.camera.rotation.y = 0;
                     }
-
-                    const kx = Math.abs(2 / 180 * THREE.MathUtils.radToDeg(this.camera.rotation.y)) - 1;
                    
                     this.camera.rotation.x += state.x * kx;
                     if (Math.abs(this.camera.rotation.x) > 360) {
