@@ -180,7 +180,7 @@
         justify-content: center;
         position: absolute;
         left: 0;
-        top: 0;
+        top: 100%;
         width: 100%;
         height: 100vh;
         background-color: #ffffff;
@@ -220,6 +220,29 @@
                     font-size: 16px;
                     text-align: center;
                     padding: 4px 10px;
+                }
+
+                &.question, &.checkMessage {
+                    text-align: center;
+                }
+
+                &.checkMessage {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    background-color: #ff000030;
+                    border-radius: 8px;
+                    padding: 20px 0;
+                    opacity: 0;
+                    transition: all 0.2s ease-in-out;
+                }
+
+                &.checkMessage:not(:empty) {
+                    opacity: 1;
+                }
+
+                &.checkMessage.success {
+                    background-color: #00ff0030;
                 }
             }
 

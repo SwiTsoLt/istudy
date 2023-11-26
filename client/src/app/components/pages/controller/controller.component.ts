@@ -28,6 +28,8 @@ export class ControllerComponent implements OnInit {
     public mapInfo!: canvasInterface.IMapData;
 
     public task!: canvasInterface.IMapTaskInfo;
+    public isAnswerSuccess: boolean = false;
+    public checkMessage: string = "";
 
     public isMoveEnabled: boolean = false;
     public isGrabEnabled: boolean = false;
@@ -112,6 +114,17 @@ export class ControllerComponent implements OnInit {
     }
 
     public checkAnswer(value: string) {
-        console.log(value);
+        if (value === this.task.answer) {
+            this.isAnswerSuccess = true;
+            this.checkMessage = "Верно!";
+        } else {
+            this.isAnswerSuccess = false;
+            this.checkMessage = "Неверно... Возможно ты что-то упустил";
+        }
+
+        setTimeout(() => {
+            this.isAnswerSuccess = false;
+            this.checkMessage = "";
+        }, 5000);
     }
 }

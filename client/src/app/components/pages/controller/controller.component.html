@@ -35,7 +35,7 @@
         <div class="notebookContainer">
             <h1>Блокнот</h1>
             <hr>
-            <p>{{ task.question }}</p>
+            <p class="question">{{ task.question }}</p>
             <hr>
             <p *ngFor="let field of task.fields">
                 {{ field.title }}
@@ -44,6 +44,7 @@
             <hr>
             <p>Ответ: <input #answer type="text" placeholder="12:34"></p>
             <button (click)="checkAnswer(answer.value)">Проверить</button>
+            <p class="checkMessage" [ngClass]="{'success': isAnswerSuccess}">{{ checkMessage }}</p>
         </div>
     </div>
 </div>
