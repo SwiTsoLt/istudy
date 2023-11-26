@@ -4,16 +4,11 @@ import { RoomComponent } from "./components/pages/room/room.component";
 import { HomeComponent } from "./components/pages/home/home.component";
 import { SubjectComponent } from "./components/pages/room/subject/subject.component";
 import { CanvasComponent } from "./components/pages/canvas/canvas.component";
-// import { OwnerGuardService } from "./guards/owner-guard.service";
-// import { ConnectionGuardService } from "./guards/connection-guard.service";
 import { NotfoundComponent } from "./components/pages/notfound/notfound.component";
-// import { JoinerGuardService } from "./guards/joiner-guard.service";
 import { ControllerComponent } from "./components/pages/controller/controller.component";
 import { ConnectionGuardService } from "./guards/connection-guard.service";
 import { JoinerGuardService } from "./guards/joiner-guard.service";
 import { OwnerGuardService } from "./guards/owner-guard.service";
-
-// ConnectionGuardService, OwnerGuardService
 
 const routes: Routes = [
     { path: "", redirectTo: "home", pathMatch: "full" },
