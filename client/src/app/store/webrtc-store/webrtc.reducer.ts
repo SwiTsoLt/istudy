@@ -16,8 +16,8 @@ export const initialState: WebRtcReducerState = {
 
 export const WebRtcReducer = createReducer(
     initialState,
-    on(WebRtcActions.initWebRtcPeerConnection, state => ({
-        ...state, pc: new RTCPeerConnection({ iceServers: freeice() })
+    on(WebRtcActions.initWebRtcPeerConnection, () => ({
+        isConnected: false, pc: new RTCPeerConnection({ iceServers: freeice() })
     })),
     on(WebRtcActions.createDataChannel, (state) => state),
     on(WebRtcActions.createOffer, state => state),

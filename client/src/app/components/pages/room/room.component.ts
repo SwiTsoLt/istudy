@@ -30,27 +30,32 @@ export class RoomComponent implements OnInit {
     public isReady$: Observable<boolean> = this.wsStore$.pipe(select(wsSelectors.selectIsReady));
 
     public roomCode: string = "";
+    public hasToast = false;
 
     constructor(
-    private wsStore$: Store<WSReducerState>,
-    private toastStore$: Store<ToastState>,
-    private webSocketService: WebSocketService,
-    private webRtcService: WebRtcService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private titleService: Title
+        private wsStore$: Store<WSReducerState>,
+        private toastStore$: Store<ToastState>,
+        private webSocketService: WebSocketService,
+        private webRtcService: WebRtcService,
+        private route: ActivatedRoute,
+        private router: Router,
+        private titleService: Title
     ) { }
 
     ngOnInit(): void {
         this.titleService.setTitle("IStudy - Комната");
 
         this.subscribeAll();
-    
+
         this.webSocketService
             .listenMessage()
             .subscribe(({ type, msg }) => {
                 this.wsStore$.dispatch(WSActions.newMessage({ msg }));
-                this.toastStore$.dispatch(createToast({ toast: { type, text: msg } }));
+                !this.hasToast && this.toastStore$.dispatch(createToast({ toast: { type, text: msg } }));
+                this.hasToast = true;
+                setTimeout(() => {
+                    this.hasToast = false;
+                }, 1000);
             });
 
         this.isConnected$
@@ -106,7 +111,7 @@ export class RoomComponent implements OnInit {
     // Subscribe
 
     private subscribeAll() {
-    // ws
+        // ws
 
         this.webSocketService.subscribeAll();
 

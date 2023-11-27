@@ -96,10 +96,15 @@ export class WebRtcService {
                             case webRtcEnums.DataChannelDataTypeEnum.openMap:
                                 this.router.navigate([data.data]);
                                 break;
-                            case webRtcEnums.DataChannelDataTypeEnum.exitMap:
+                            case webRtcEnums.DataChannelDataTypeEnum.exitMap: {
+                                const audioContainer: HTMLElement | null = document.getElementById("audioContainer");
+                                if (audioContainer !== null) {
+                                    audioContainer.innerHTML = "";
+                                }
+
                                 this.router.navigate(["/room"]);
                                 break;
-
+                            }
                             default:
                                 break;
                             }

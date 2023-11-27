@@ -23,13 +23,13 @@
         color: $m-c-w;
 
         h1 {
-            font-size: calc($fs * 7);
+            font-size: calc($fs * 6);
             color: inherit;
         }
 
         h2 {
             font-size: calc($fs * 2);
-            line-height: calc($fs * 2);
+            line-height: $fs;
             color: inherit;
         }
 
@@ -38,6 +38,25 @@
             font-size: calc($fs * 1.2);
             margin-top: calc($p * 5);
             color: $m-c-w;
+        }
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .home > .title {
+        h1 {
+            font-size: calc($fs * 4);
+        }
+
+        h2 {
+            font-family: 'Concert One', cursive;
+            font-size: $fs;
+            line-height: calc($fs * 4);
+        }
+
+        app-my-button {
+            font-family: 'Concert One', cursive;
+            margin-top: calc($p * 3);
         }
     }
 }

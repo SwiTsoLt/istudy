@@ -16,6 +16,7 @@ let $ready: Observable<boolean> = of(false);
 
 const manager = new THREE.LoadingManager();
 manager.onStart = () => {
+    $ready = of(false);
     loaderContainer = document.getElementById("mapModelLoaderContainer");
     loaderElement = document.getElementById("mapModelLoader");
     progressContainer = document.getElementById("progressContainer");

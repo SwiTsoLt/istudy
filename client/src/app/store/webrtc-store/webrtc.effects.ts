@@ -81,10 +81,17 @@ export class WebRtcEffects {
             map(() => {
                 this.pc$.subscribe((pc: RTCPeerConnection | null) => {
                     if (pc) {
-                        from(pc.createAnswer())
+                        from(
+                            pc.createAnswer()
+                                .then((a: RTCSessionDescriptionInit) => a)
+                                .catch((err) => {
+                                    console.log(err);
+                                    return null;
+                                })
+                        )
                             .pipe(
-                                take(1),
-                                map((description: RTCSessionDescriptionInit) => {
+                                map((description: RTCSessionDescriptionInit | null) => {
+                                    if(description === null) return EMPTY;
                                     this.store$.dispatch(setLocalDescription({ description }));
                                     this.webSocketService.emit(wsEventsEnum.rtcData, { type: webRtcDataTypeEnum.answer, description });
                                     return EMPTY;
@@ -121,9 +128,9 @@ export class WebRtcEffects {
     public sendMessage$ = createEffect(() =>
         this.actions$.pipe(
             ofType(webRtcActionsEnum.sendMessage),
-            map((message: { label: DataChannelLabelEnum, dataType: DataChannelMessageType,  data: DataChannelMessageType }) => {
+            map((message: { label: DataChannelLabelEnum, dataType: DataChannelMessageType, data: DataChannelMessageType }) => {
                 this.pc$.pipe(take(1))
-                    .subscribe((pc: RTCPeerConnection | null) => {                        
+                    .subscribe((pc: RTCPeerConnection | null) => {
                         if (
                             pc?.connectionState === "connected" &&
                             this.dataChannelList[message.label]?.readyState === "open"

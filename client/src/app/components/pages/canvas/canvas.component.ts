@@ -89,6 +89,8 @@ export class CanvasComponent implements OnInit, AfterViewInit {
             this.map = currentMap;
             this.subjectName = subjectData.subjectList[subjectId].name;
         });
+
+        this.audioReady = false;
     }
 
     ngAfterViewInit(): void {
@@ -170,9 +172,6 @@ export class CanvasComponent implements OnInit, AfterViewInit {
                     setTimeout(() => {
                         if (audio.loop) {
                             newAudioElem.play();
-                            setInterval(() => {
-                                newAudioElem.play();
-                            }, audio.interval);
                         } else {
                             setTimeout(() => {
                                 newAudioElem.play();
@@ -217,8 +216,18 @@ export class CanvasComponent implements OnInit, AfterViewInit {
             this.moveCameraStates
                 .pipe(take(1))
                 .subscribe((state: canvasInterface.IMoveCameraStates) => {
+                    if (this.camera.rotation.y > 360) this.camera.rotation.y = 0;
+                    if (this.camera.rotation.x > 360) this.camera.rotation.x = 0;
+                    if (this.camera.rotation.z > 360) this.camera.rotation.z = 0;
+
                     this.camera.rotation.y += -state.y;
-                    this.camera.rotation.x += -state.x;
+
+                    if (Math.abs(this.camera.rotation.y) > THREE.MathUtils.degToRad(90)) {
+                        this.camera.rotation.x += state.x;
+                    } else {
+                        this.camera.rotation.x += -state.x;
+                    }
+
                     this.camera.rotation.z += state.z;
                 });
         }, this.UPDATE_CAMERA_DURATION);

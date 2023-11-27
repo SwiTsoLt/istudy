@@ -31,7 +31,7 @@
         [callback]="leaveRoom.bind(this)" />
     </div>
 
-    <div *ngIf="(showOwnerPopupState$ | async) && !(isConnected$ | async)" class="popup">
+    <div *ngIf="(((showOwnerPopupState$ | async) && !(isConnected$ | async)) || (!(isConnected$ | async) && (isOwner$ | async)))" class="popup">
       <div *ngIf="isReady$ | async; else notReady" class="form">
         <qrcode [qrdata]="(inviteQrCodeUrl$ | async) || '' " [width]="256" errorCorrectionLevel="Q" elementType="url">
         </qrcode>
