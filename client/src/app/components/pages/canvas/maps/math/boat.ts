@@ -170,7 +170,7 @@ export const map: canvasInterface.IMapData = {
         },
         {
             ...canvasInterface.EntityDefaults,
-            "title": "Sea",
+            "title": "Ocean",
             "type": canvasInterface.entityTypeEnum.model,
             "model": "ocean/ocean.glb",
             "modelType": canvasInterface.modelTypeEnum.glb,
