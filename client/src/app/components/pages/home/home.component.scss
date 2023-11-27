@@ -23,11 +23,13 @@
         color: $m-c-w;
 
         h1 {
-            font-size: 7em;
+            font-size: calc($fs * 7);
             color: inherit;
         }
 
         h2 {
+            font-size: calc($fs * 2);
+            line-height: calc($fs * 2);
             color: inherit;
         }
 

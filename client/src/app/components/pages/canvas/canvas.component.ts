@@ -45,7 +45,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     });
 
     private readonly FIELD_OF_VIEW: number = 50; // canvas scene value
-    private readonly NEAR_CLIPPING_PLANE: number = 0.1; // canvas scene value
+    private readonly NEAR_CLIPPING_PLANE: number = 0.001; // canvas scene value
     private readonly FAR_CLIPPING_PLANE: number = 100; // canvas scene value
     private readonly CAMERA_MOVEMENT_SENSITIVITY: number = 0.01; // canvas scene value
     private readonly UPDATE_CAMERA_DURATION = 30; // milliseconds ≈ 120fps
@@ -211,7 +211,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
             THREE.MathUtils.degToRad(options.rotation.z)
         );
 
-        // this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+        // this.camera.lookAt(new THREE.Vector3(0, 6, 0));
 
         setInterval(() => {
             this.moveCameraStates
@@ -272,15 +272,16 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     // Initialize light
 
     private initLight(): void {
-        const light1 = new THREE.HemisphereLight(0xffffff, 0x444444, 0.8);
-        light1.position.set(0, 8, 0);
+        const light1 = new THREE.HemisphereLight(0xffffff, 0x444444, 0.4);
+        light1.position.set(-3, 3, -3);
 
-        const light2 = new THREE.DirectionalLight(0xffffff, 0.8);
-        light2.position.set(0, 8, 0);
+        const light2 = new THREE.DirectionalLight(0xffffff, 0.4);
+        light2.position.set(-3, 6, -2);
 
-        // const light3 = new THREE.DirectionalLight(0xffffff, 0.8);
+        const light3 = new THREE.PointLight(0xffffff, 0.6);
+        light3.position.set(-3, 6, -2);
 
-        this.scene.add(light1, light2);
+        this.scene.add(light1, light2, light3);
     }
 
     // Initialize entities
@@ -291,7 +292,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
             new ModelEntity(this.subjectName, this.map.name, entity)
                 .init(entity.modelType, entity.animation)
                 .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
-                    this.scene.add(mesh);
+                    this.scene.add(mesh);                        
                 });
             break;
         case canvasInterface.entityTypeEnum.cube:
@@ -342,11 +343,8 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     private render() {
         const rend = () => {
             this.stats.begin();
-
             this.renderer.render(this.scene, this.camera);
-
             this.stats.end();
-
             requestAnimationFrame(rend);
         };
         rend();

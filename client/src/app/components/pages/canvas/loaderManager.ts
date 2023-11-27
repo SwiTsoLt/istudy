@@ -86,6 +86,11 @@ export const loaderManager = {
     obj: (url: string) => {
         return new Observable((subscriber: Subscriber<THREE.Object3D>) => {
             new OBJLoader(manager).load(url, (obj: THREE.Object3D) => {
+                obj.traverse(child => {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                });
+                
                 subscriber.next(obj);
             }, () => { }, (error: ErrorEvent) => {
                 subscriber.error(error.message);
@@ -95,19 +100,10 @@ export const loaderManager = {
     gltf: (url: string, animation: canvasInterface.IEntityAnimation) => {
         return new Observable((subscriber: Subscriber<GLTF>) => {
             new GLTFLoader(manager).load(url, (gltf) => {
-
-                // gltf.scene.traverse(c => {
-                //     const child = (gltf.scene.getObjectByName(c.name) as THREE.Mesh)
-
-                //     if (!child.isMesh) {
-                //         loaderManager.texture(url.replace("scene.gltf", "textures/texture.png"))
-                //             .pipe(take(1))
-                //             .subscribe((texture: THREE.Texture) => {
-                //                 const tempMaterial = new THREE.MeshStandardMaterial({ map: texture, normalMap: texture });
-                //                 child.material = tempMaterial;
-                //             });
-                //     }
-                // });
+                gltf.scene.traverse((child) => {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                });
 
                 if (gltf.animations.length) {
                     gltf.animations.forEach((anim: THREE.AnimationClip) => {
@@ -148,6 +144,7 @@ export const loaderManager = {
     glb: (url: string, animation: canvasInterface.IEntityAnimation) => {
         return new Observable((subscriber: Subscriber<GLTF>) => {
             new GLTFLoader(manager).load(url, (glb: GLTF) => {
+                console.log(url);
                 if (glb.animations.length) {
                     glb.animations.forEach((anim: THREE.AnimationClip) => {
                         const mesh: THREE.Object3D = glb.scene.children[0];
@@ -173,6 +170,11 @@ export const loaderManager = {
                         action.play();
                     });
                 }
+
+                glb.scene.children.forEach(child => {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                });
 
                 subscriber.next(glb);
             }, () => {

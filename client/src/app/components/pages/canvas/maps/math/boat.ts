@@ -38,8 +38,8 @@ export const map: canvasInterface.IMapData = {
     "camera": {
         "position": {
             "x": 0,
-            "y": -1,
-            "z": 0
+            "y": 2.1, // 3
+            "z": 0.13
         },
         "rotation": {
             "x": 0,
@@ -63,8 +63,8 @@ export const map: canvasInterface.IMapData = {
             },
             "position": {
                 "x": 0,
-                "y": -1.6,
-                "z": -0.12
+                "y": 1.5,
+                "z": 0
             },
             "rotation": {
                 "x": -90,
@@ -78,21 +78,43 @@ export const map: canvasInterface.IMapData = {
             "type": canvasInterface.entityTypeEnum.model,
             "model": "map/scene.gltf",
             "modelType": canvasInterface.modelTypeEnum.gltf,
-            "multiplyScalar": 0.03,
+            "multiplyScalar": 0.028,
             "scale": {
                 "width": 1,
                 "height": 1,
                 "depth": 1,
             },
             "position": {
-                "x": 0.21,
-                "y": -1.13,
-                "z": -0.225
+                "x": 0.2,
+                "y": 1.98,
+                "z": -0.1
             },
             "rotation": {
                 "x": -120,
                 "y": 15,
                 "z": 90
+            }
+        },
+        {
+            ...canvasInterface.EntityDefaults,
+            "title": "Way",
+            "texture": "way/way.png",
+            "type": canvasInterface.entityTypeEnum.circle,
+            "multiplyScalar": 0.015,
+            "scale": {
+                "width": 1.5,
+                "height": 32,
+                "depth": 0,
+            },
+            "position": {
+                "x": 0.1,
+                "y": 2.004,
+                "z": -0.11
+            },
+            "rotation": {
+                "x": -75,
+                "y": 10,
+                "z": 0
             }
         },
         {
@@ -113,8 +135,8 @@ export const map: canvasInterface.IMapData = {
             },
             "position": {
                 "x": 0,
-                "y": -1.03,
-                "z": 0.3
+                "y": 2.05,
+                "z": 0.46
             },
             "rotation": {
                 "x": 0,
@@ -137,8 +159,8 @@ export const map: canvasInterface.IMapData = {
             },
             "position": {
                 "x": 0,
-                "y": -1.15,
-                "z": 0.19
+                "y": 1.95,
+                "z": 0.31
             },
             "rotation": {
                 "x": 90,
@@ -146,144 +168,22 @@ export const map: canvasInterface.IMapData = {
                 "z": 0
             }
         },
-        {
-            ...canvasInterface.EntityDefaults,
-            "title": "Way",
-            "texture": "way/way.png",
-            "type": canvasInterface.entityTypeEnum.circle,
-            "multiplyScalar": 0.015,
-            "scale": {
-                "width": 1.5,
-                "height": 32,
-                "depth": 0,
-            },
-            "position": {
-                "x": 0.1,
-                "y": -1.1,
-                "z": -0.22
-            },
-            "rotation": {
-                "x": 90,
-                "y": 180,
-                "z": 20
-            }
-
-        },
-        {
-            ...canvasInterface.EntityDefaults,
-            "title": "Tachometer",
-            "type": canvasInterface.entityTypeEnum.model,
-            "modelType": canvasInterface.modelTypeEnum.glb,
-            "model": "sea/sea.glb",
-            "credit": "This work is based on \"Trabant tachometer\" (https://sketchfab.com/3d-models/trabant-tachometer-2819c6fae8ac438eba43a35c2347d097) by takeboncog (https://sketchfab.com/takeboncog) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
-            "multiplyScalar": 0.1,
-            "scale": {
-                "width": 50,
-                "height": 1,
-                "depth": 50
-            },
-            "position": {
-                "x": 0,
-                "y": -2,
-                "z": 0
-            },
-            "rotation": {
-                "x": 0,
-                "y": 0,
-                "z": 0
-            }
-        },
-        // {
-        //     ...canvasInterface.EntityDefaults,
-        //     "title": "Sea",
-        //     "texture": "sea/sea.jpg",
-        //     "scale": {
-        //         "width": 50,
-        //         "height": 50,
-        //         "depth": 0
-        //     },
-        //     "position": {
-        //         "x": 0,
-        //         "y": -1,
-        //         "z": 0
-        //     },
-        //     "rotation": {
-        //         "x": -90,
-        //         "y": 0,
-        //         "z": 0
-        //     }
-        // },
         {
             ...canvasInterface.EntityDefaults,
             "title": "Sea",
-            "type":  canvasInterface.entityTypeEnum.model,
+            "type": canvasInterface.entityTypeEnum.model,
             "model": "ocean/ocean.glb",
             "modelType": canvasInterface.modelTypeEnum.glb,
-            "credit": "This work is based on \"Trabant tachometer\" (https://sketchfab.com/3d-models/trabant-tachometer-2819c6fae8ac438eba43a35c2347d097) by takeboncog (https://sketchfab.com/takeboncog) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
-            "multiplyScalar": 0.1,
+            "credit": "This work created by Fyodr Semerenko",
+            "multiplyScalar": 2,
             "scale": {
                 "width": 1,
-                "height": 1,
+                "height": 0.5,
                 "depth": 1,
             },
             "position": {
-                "x": 10,
-                "y": -4,
-                "z": 10
-            },
-            "rotation": {
-                "x": 0,
-                "y": 0,
-                "z": 0
-            }
-        },
-        {
-            ...canvasInterface.EntityDefaults,
-            "title": "Sky 1",
-            "texture": "sky/sky.jpg",
-            "scale": {
-                "width": 60,
-                "height": 50,
-                "depth": 0
-            },
-            "position": {
-                "x": 0,
-                "y": 0,
-                "z": -28
-            },
-        },
-        {
-            ...canvasInterface.EntityDefaults,
-            "title": "Sky 2",
-            "texture": "sky/sky.jpg",
-            "scale": {
-                "width": 60,
-                "height": 50,
-                "depth": 0
-            },
-            "position": {
-                "x": 0,
-                "y": 0,
-                "z": 28
-            },
-            "rotation": {
-                "x": 0,
-                "y": 180,
-                "z": 0
-            }
-        },
-        {
-            ...canvasInterface.EntityDefaults,
-            "title": "Sky 3",
-            "texture": "sky/sky.jpg",
-            "scale": {
-                "width": 60,
-                "height": 50,
-                "depth": 0
-            },
-            "position": {
-                "x": -28,
-                "y": 0,
+                "x": -4,
+                "y": 1,
                 "z": 0
             },
             "rotation": {
@@ -294,21 +194,25 @@ export const map: canvasInterface.IMapData = {
         },
         {
             ...canvasInterface.EntityDefaults,
-            "title": "Sky 4",
-            "texture": "sky/sky.jpg",
+            "title": "Sky",
+            "type": canvasInterface.entityTypeEnum.model,
+            "model": "sky/sky.glb",
+            "modelType": canvasInterface.modelTypeEnum.glb,
+            "credit": "",
+            "multiplyScalar": 50,
             "scale": {
-                "width": 60,
-                "height": 50,
-                "depth": 0
+                "width": 1,
+                "height": 1,
+                "depth": 1,
             },
             "position": {
-                "x": 28,
-                "y": 0,
-                "z": 0
+                "x": -50,
+                "y": -25,
+                "z": -10
             },
             "rotation": {
                 "x": 0,
-                "y": 90,
+                "y": -90,
                 "z": 0
             }
         },
