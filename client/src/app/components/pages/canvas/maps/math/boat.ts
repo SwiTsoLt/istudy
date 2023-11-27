@@ -12,7 +12,7 @@ export const map: canvasInterface.IMapData = {
             { "title": "Текущее время", "placeholder": "12:34" },
         ]
     },
-    "background": 0x55c1ff,
+    "background": 0x1F8DFC,
     "backgroundImage": null,
     "audio": [
         {
