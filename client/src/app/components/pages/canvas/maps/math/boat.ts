@@ -38,11 +38,11 @@ export const map: canvasInterface.IMapData = {
     "camera": {
         "position": {
             "x": 0,
-            "y": -1, // 0.7
+            "y": -1,
             "z": 0
         },
         "rotation": {
-            "x": -20,
+            "x": 0,
             "y": 0,
             "z": 0,
             "enableRotationZ": false,
@@ -213,30 +213,30 @@ export const map: canvasInterface.IMapData = {
         //         "z": 0
         //     }
         // },
-        // {
-        //     ...canvasInterface.EntityDefaults,
-        //     "title": "Sea",
-        //     "type":  canvasInterface.entityTypeEnum.model,
-        //     "model": "sea/Water.glb",
-        //     "modelType": canvasInterface.modelTypeEnum.glb,
-        //     "credit": "This work is based on \"Trabant tachometer\" (https://sketchfab.com/3d-models/trabant-tachometer-2819c6fae8ac438eba43a35c2347d097) by takeboncog (https://sketchfab.com/takeboncog) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
-        //     "multiplyScalar": 2,
-        //     "scale": {
-        //         "width": 1,
-        //         "height": 1,
-        //         "depth": 1,
-        //     },
-        //     "position": {
-        //         "x": 0,
-        //         "y": -4,
-        //         "z": 0
-        //     },
-        //     "rotation": {
-        //         "x": 180,
-        //         "y": 0,
-        //         "z": 0
-        //     }
-        // },
+        {
+            ...canvasInterface.EntityDefaults,
+            "title": "Sea",
+            "type":  canvasInterface.entityTypeEnum.model,
+            "model": "ocean/ocean.glb",
+            "modelType": canvasInterface.modelTypeEnum.glb,
+            "credit": "This work is based on \"Trabant tachometer\" (https://sketchfab.com/3d-models/trabant-tachometer-2819c6fae8ac438eba43a35c2347d097) by takeboncog (https://sketchfab.com/takeboncog) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+            "multiplyScalar": 0.1,
+            "scale": {
+                "width": 1,
+                "height": 1,
+                "depth": 1,
+            },
+            "position": {
+                "x": 10,
+                "y": -2,
+                "z": 10
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        },
         {
             ...canvasInterface.EntityDefaults,
             "title": "Sky 1",

@@ -2,6 +2,7 @@ import * as THREE from "three/src/Three";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
+import { type Collada, ColladaLoader } from "three/examples/jsm/loaders/ColladaLoader";
 import { Observable, Subscriber, of, take } from "rxjs";
 import * as canvasInterface from "./canvas.interface";
 
@@ -239,6 +240,13 @@ export const loaderManager = {
                 subscriber.next(fbx);
             }, () => { }, (error: ErrorEvent) => {
                 subscriber.error(error.message);
+            });
+        });
+    },
+    dae: (url: string) => {
+        return new Observable((subscriber: Subscriber<THREE.Mesh>) => {
+            new ColladaLoader(manager).load(url, (dae: Collada) => {   
+                subscriber.next(dae.scene.children[0] as unknown as THREE.Mesh);
             });
         });
     }

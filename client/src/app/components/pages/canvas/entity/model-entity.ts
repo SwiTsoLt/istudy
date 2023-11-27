@@ -1,8 +1,9 @@
-import { Group, Object3D } from "three/src/Three";
+import * as THREE from "three/src/Three";
 import * as canvasInterface from "../canvas.interface";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 import { Observable, Subscriber } from "rxjs";
 import { loaderManager } from "../loaderManager";
+
 
 export class ModelEntity {
 
@@ -16,8 +17,8 @@ export class ModelEntity {
         this.mapName = mapName;
     }
 
-    public init(modelType: canvasInterface.modelTypeEnum, animation: canvasInterface.IEntityAnimation): Observable<Object3D> {
-        return new Observable((subscriber: Subscriber<Object3D>) => {
+    public init(modelType: canvasInterface.modelTypeEnum, animation: canvasInterface.IEntityAnimation): Observable<THREE.Object3D> {
+        return new Observable((subscriber: Subscriber<THREE.Object3D>) => {
             switch (modelType) {
             case canvasInterface.modelTypeEnum.gltf:
                 loaderManager.gltf(
@@ -25,7 +26,7 @@ export class ModelEntity {
                     animation
                 )
                     .subscribe((gltf: GLTF) => {
-                        const mesh: Object3D = gltf.scene.children[0];
+                        const mesh: THREE.Object3D = gltf.scene.children[0];
 
                         mesh.position.x = this.entity.position.x;
                         mesh.position.y = this.entity.position.y;
@@ -47,7 +48,7 @@ export class ModelEntity {
                     animation
                 )
                     .subscribe((gltf: GLTF) => {
-                        const mesh: Object3D = gltf.scene;
+                        const mesh: THREE.Object3D = gltf.scene;
 
                         mesh.position.x = this.entity.position.x;
                         mesh.position.y = this.entity.position.y;
@@ -68,7 +69,7 @@ export class ModelEntity {
                     `${canvasInterface.ASSET_PATH}/${this.subjectName}/${this.mapName}/${this.entity.model}`,
                     animation
                 )
-                    .subscribe((anim: Group) => {
+                    .subscribe((anim: THREE.Group) => {
                         anim.position.x = this.entity.position.x;
                         anim.position.y = this.entity.position.y;
                         anim.position.z = this.entity.position.z;
@@ -79,6 +80,16 @@ export class ModelEntity {
 
                         anim.scale.set(this.entity.scale.width, this.entity.scale.height, this.entity.scale.depth);
                         anim.scale.multiplyScalar(this.entity.multiplyScalar);
+
+                        subscriber.next(anim);
+                    });
+                break;
+
+            case canvasInterface.modelTypeEnum.dae:
+                loaderManager.dae(
+                    `${canvasInterface.ASSET_PATH}/${this.subjectName}/${this.mapName}/${this.entity.model}`
+                )
+                    .subscribe((anim: THREE.Mesh) => {
 
                         subscriber.next(anim);
                     });

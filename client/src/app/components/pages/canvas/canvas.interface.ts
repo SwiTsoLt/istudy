@@ -48,6 +48,7 @@ export enum modelTypeEnum {
     gltf = "gltf",
     glb = "glb",
     fbx = "fbx",
+    dae = "dae",
 }
 
 export const EntityDefaults: Pick<
