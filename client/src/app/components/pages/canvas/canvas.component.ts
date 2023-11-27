@@ -220,10 +220,10 @@ export class CanvasComponent implements OnInit, AfterViewInit {
                     if (this.camera.rotation.x > 360) this.camera.rotation.x = 0;
                     if (this.camera.rotation.z > 360) this.camera.rotation.z = 0;
 
-                    this.camera.rotation.y += -state.y;
+                    this.camera.rotation.y += -state.y * 1.6;
 
                     if (Math.abs(this.camera.rotation.y) > THREE.MathUtils.degToRad(90)) {
-                        this.camera.rotation.x += state.x;
+                        this.camera.rotation.x += state.x * 1.2;
                     } else {
                         this.camera.rotation.x += -state.x;
                     }
