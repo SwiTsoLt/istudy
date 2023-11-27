@@ -171,7 +171,9 @@ export class CanvasComponent implements OnInit, AfterViewInit {
 
                     setTimeout(() => {
                         if (audio.loop) {
-                            newAudioElem.play();
+                            setInterval(() => {
+                                newAudioElem.play();
+                            }, audio.interval);
                         } else {
                             setTimeout(() => {
                                 newAudioElem.play();
