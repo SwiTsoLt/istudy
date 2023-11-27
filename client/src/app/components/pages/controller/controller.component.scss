@@ -213,16 +213,17 @@
                 font-size: 18px;
 
                 input {
-                    height: 100%;
-                    min-height: 32px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 40px;
                     outline: none;
                     background-color: transparent;
                     border: 2px solid #606060;
                     border-radius: 4px;
                     font-size: 16px;
-                    line-height: 32px;
                     text-align: center;
-                    padding: 4px 10px;
+                    padding: 0 10px;
                 }
 
                 &.question, &.checkMessage {

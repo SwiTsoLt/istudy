@@ -3,7 +3,7 @@ import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import { type Collada, ColladaLoader } from "three/examples/jsm/loaders/ColladaLoader";
-import { Observable, Subscriber, of, take } from "rxjs";
+import { Observable, Subscriber, of } from "rxjs";
 import * as canvasInterface from "./canvas.interface";
 
 const clock: THREE.Clock = new THREE.Clock();
@@ -213,29 +213,6 @@ export const loaderManager = {
                 } else {
                     update();
                 }
-
-                // new FBXLoader(manager).load(url, (anim: THREE.Group) => {
-                //     const mixer = new THREE.AnimationMixer(fbx);
-                //     mixers.push(mixer);
-
-                //     const idle = mixer.clipAction(anim.animations[0]);
-                //     idle.play();
-
-                //     function update() {
-                //         mixer.update(clock.getDelta());
-                //         requestAnimationFrame(update);
-                //     }
-
-                //     if (animation.stopAt !== null) {
-                //         mixer.update(0);
-
-                //         setTimeout(() => {
-                //             animation.stopAt !== null && mixer.update(animation.rate * animation.stopAt);
-                //         }, 0);
-                //     } else {
-                //         update();
-                //     }
-                // });
 
                 subscriber.next(fbx);
             }, () => { }, (error: ErrorEvent) => {

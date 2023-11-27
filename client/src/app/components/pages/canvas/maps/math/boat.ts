@@ -18,7 +18,7 @@ export const map: canvasInterface.IMapData = {
         {
             "path": "ocean.mp3",
             "volume": 50,
-            "interval": 100000,
+            "interval": 0,
             "loop": true,
         },
         {
@@ -228,7 +228,7 @@ export const map: canvasInterface.IMapData = {
             },
             "position": {
                 "x": 10,
-                "y": -2,
+                "y": -4,
                 "z": 10
             },
             "rotation": {
