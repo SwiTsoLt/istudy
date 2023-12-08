@@ -51,6 +51,98 @@ export const map: canvasInterface.IMapData = {
     "scene": [
         {
             ...canvasInterface.EntityDefaults,
+            "title": "Island",
+            "type": canvasInterface.entityTypeEnum.model,
+            "modelType": canvasInterface.modelTypeEnum.glb,
+            "model": "island2/island.glb",
+            "multiplyScalar": 2,
+            "scale": {
+                "width": 1,
+                "height": 1,
+                "depth": 1,
+            },
+            "position": {
+                "x": 15,
+                "y": 1,
+                "z": 1
+            },
+            "rotation": {
+                "x": 0,
+                "y": -45,
+                "z": 0
+            }
+        },
+        {
+            ...canvasInterface.EntityDefaults,
+            "title": "Island",
+            "type": canvasInterface.entityTypeEnum.model,
+            "modelType": canvasInterface.modelTypeEnum.glb,
+            "model": "island/island.glb",
+            "multiplyScalar": 0.2,
+            "scale": {
+                "width": 1,
+                "height": 1,
+                "depth": 1,
+            },
+            "position": {
+                "x": -30,
+                "y": 1,
+                "z": -1
+            },
+            "rotation": {
+                "x": 0,
+                "y": 110,
+                "z": 0
+            }
+        },
+        {
+            ...canvasInterface.EntityDefaults,
+            "title": "Seagull fly",
+            "type": canvasInterface.entityTypeEnum.model,
+            "modelType": canvasInterface.modelTypeEnum.glb,
+            "model": "seagull_fly/seagull.glb",
+            "multiplyScalar": 0.01,
+            "scale": {
+                "width": 1,
+                "height": 1,
+                "depth": 1,
+            },
+            "position": {
+                "x": -1,
+                "y": 3,
+                "z": -1
+            },
+            "rotation": {
+                "x": 0,
+                "y": -20,
+                "z": 0
+            }
+        },
+        {
+            ...canvasInterface.EntityDefaults,
+            "title": "Seagull sit",
+            "type": canvasInterface.entityTypeEnum.model,
+            "modelType": canvasInterface.modelTypeEnum.glb,
+            "model": "seagull_sit/seagull.glb",
+            "multiplyScalar": 0.0015,
+            "scale": {
+                "width": 1,
+                "height": 1,
+                "depth": 1,
+            },
+            "position": {
+                "x": 0.13,
+                "y": 1.996,
+                "z": -0.3
+            },
+            "rotation": {
+                "x": 0,
+                "y": -20,
+                "z": 0
+            }
+        },
+        {
+            ...canvasInterface.EntityDefaults,
             "title": "Boat",
             "type": canvasInterface.entityTypeEnum.model,
             "model": "boat/scene.gltf",
@@ -199,15 +291,15 @@ export const map: canvasInterface.IMapData = {
             "model": "sky/sky.glb",
             "modelType": canvasInterface.modelTypeEnum.glb,
             "credit": "",
-            "multiplyScalar": 50,
+            "multiplyScalar": 80,
             "scale": {
                 "width": 1,
                 "height": 1,
                 "depth": 1,
             },
             "position": {
-                "x": -50,
-                "y": -25,
+                "x": -70,
+                "y": -30,
                 "z": -10
             },
             "rotation": {

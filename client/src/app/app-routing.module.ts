@@ -15,7 +15,7 @@ const routes: Routes = [
     { path: "home", component: HomeComponent },
     {
         path: "room/subject/:subjectId/:mapId", component: CanvasComponent,
-        canActivate: [ConnectionGuardService, OwnerGuardService]
+        // canActivate: [ConnectionGuardService, OwnerGuardService]
     },
     {
         path: "room", component: RoomComponent, children: [
