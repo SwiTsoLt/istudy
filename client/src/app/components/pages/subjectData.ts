@@ -25,6 +25,21 @@ export const subjectData: { subjectList: ISelector[] } = {
             "disabled": false
         },
         {
+            "title": "Биология",
+            "name": "biology",
+            "imageName": "biology.jpg",
+            "disabled": false,
+            "childList": [
+                {
+                    "title": "Строение клетки",
+                    "name": "cell",
+                    "imageName": "cell.jpg",
+                    "disabled": false,
+                    "childList": []
+                },
+            ],
+        },
+        {
             "title": "Геометрия",
             "name": "geometry",
             "imageName": "geometry.jpg",

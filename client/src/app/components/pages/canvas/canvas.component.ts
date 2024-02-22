@@ -8,6 +8,7 @@ import * as canvasSelectors from "../../../store/canvas-store/canvas.selector";
 import { ISelector } from "../room/subject/subject.component";
 import * as canvasInterface from "./canvas.interface";
 import { mapsData } from "./maps";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 import { subjectData } from "../subjectData";
 import { SquareEntity } from "./entity/square-entity";
@@ -66,6 +67,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
     private get canvas(): HTMLCanvasElement {
         return this.canvasRef.nativeElement;
     }
+    private controls!: OrbitControls;
     private scene!: THREE.Scene;
     private audioReady: boolean = false;
 
@@ -137,6 +139,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
         }, 500);
 
         this.initRenderer();
+        this.initOrbitControls();
         this.render();
     }
 
@@ -235,6 +238,14 @@ export class CanvasComponent implements OnInit, AfterViewInit {
         }, this.UPDATE_CAMERA_DURATION);
     }
 
+    private initOrbitControls(): void {
+        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+        this.controls.target.set(0, 0, 0.4);
+        this.controls.enablePan = false;
+        this.controls.enableDamping = true;
+        this.controls.update();
+    }
+
     private cameraPositionHandler(pos: IPosition): void {
         const sectorList: number[][] = [[0, -1], [-1, -1], [-1, 0], [-1, 1], [0, 1], [1, 1], [1, 0], [1, -1]];
 
@@ -303,7 +314,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
             new ModelEntity(this.subjectName, this.map.name, entity)
                 .init(entity.modelType, entity.animation)
                 .subscribe((mesh: THREE.Mesh | THREE.Object3D) => {
-                    this.scene.add(mesh);                        
+                    this.scene.add(mesh);
                 });
             break;
         case canvasInterface.entityTypeEnum.cube:
@@ -356,6 +367,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
             this.stats.begin();
             this.renderer.render(this.scene, this.camera);
             this.stats.end();
+            this.controls.update();
             requestAnimationFrame(rend);
         };
         rend();

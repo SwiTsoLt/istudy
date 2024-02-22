@@ -3,6 +3,7 @@ import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import { type Collada, ColladaLoader } from "three/examples/jsm/loaders/ColladaLoader";
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 import { Observable, Subscriber, of } from "rxjs";
 import * as canvasInterface from "./canvas.interface";
 
@@ -11,6 +12,9 @@ let loaderContainer = document.getElementById("mapModelLoaderContainer");
 let loaderElement = document.getElementById("mapModelLoader");
 let progressContainer = document.getElementById("progressContainer");
 let progressElem = document.getElementById("progress");
+
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath( "/node_modules/three/examples/jsm/libs/draco/gltf" );
 
 let $ready: Observable<boolean> = of(false);
 
@@ -100,7 +104,9 @@ export const loaderManager = {
     },
     gltf: (url: string, animation: canvasInterface.IEntityAnimation) => {
         return new Observable((subscriber: Subscriber<GLTF>) => {
-            new GLTFLoader(manager).load(url, (gltf) => {
+            const gltfLoader = new GLTFLoader(manager);
+            gltfLoader.setDRACOLoader(dracoLoader);
+            gltfLoader.load(url, (gltf) => {
                 gltf.scene.traverse((child) => {
                     child.castShadow = true;
                     child.receiveShadow = true;
