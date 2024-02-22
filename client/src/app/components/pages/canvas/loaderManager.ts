@@ -14,7 +14,7 @@ let progressContainer = document.getElementById("progressContainer");
 let progressElem = document.getElementById("progress");
 
 const dracoLoader = new DRACOLoader();
-dracoLoader.setDecoderPath( "/node_modules/three/examples/jsm/libs/draco/gltf" );
+dracoLoader.setDecoderPath("/node_modules/three/examples/jsm/libs/draco/gltf");
 
 let $ready: Observable<boolean> = of(false);
 
@@ -95,7 +95,7 @@ export const loaderManager = {
                     child.castShadow = true;
                     child.receiveShadow = true;
                 });
-                
+
                 subscriber.next(obj);
             }, () => { }, (error: ErrorEvent) => {
                 subscriber.error(error.message);
@@ -119,21 +119,23 @@ export const loaderManager = {
                         const clip = new THREE.AnimationClip(anim.name, anim.duration, anim.tracks, anim.blendMode);
                         const action = mixer.clipAction(clip);
 
-                        function update(d: number) {
-                            mixer.update(d);
+                        function update() {
+                            mixer.update(animation.step ?? clock.getDelta());
                             // requestAnimationFrame(update);
                         }
 
-                        if (animation.stopAt !== null) {
+                        if (animation.stopAt) {
                             mixer.update(0);
 
                             setTimeout(() => {
-                                animation.stopAt !== null && mixer.update(animation.rate * animation.stopAt);
+                                if (animation.rate && animation.stopAt) {
+                                    animation.stopAt !== null && mixer.update(animation.rate * animation.stopAt);
+                                }
                             }, 0);
                         } else {
                             setInterval(() => {
-                                update(animation.rate ?? 0.005);
-                            }, 100);
+                                update();
+                            }, animation.speed ?? 100);
                         }
 
                         action.play();
@@ -160,18 +162,22 @@ export const loaderManager = {
                         const action = mixer.clipAction(clip);
 
                         function update() {
-                            mixer.update(clock.getDelta());
-                            requestAnimationFrame(update);
+                            mixer.update(animation.step ?? clock.getDelta());
+                            // requestAnimationFrame(update);
                         }
 
-                        if (animation.stopAt !== null) {
+                        if (animation.stopAt) {
                             mixer.update(0);
 
                             setTimeout(() => {
-                                animation.stopAt !== null && mixer.update(animation.rate * animation.stopAt);
+                                if (animation.rate && animation.stopAt) {
+                                    animation.stopAt !== null && mixer.update(animation.rate * animation.stopAt);
+                                }
                             }, 0);
                         } else {
-                            update();
+                            setInterval(() => {
+                                update();
+                            }, animation.speed ?? 100);
                         }
 
                         action.play();
@@ -207,20 +213,24 @@ export const loaderManager = {
                 idle.play();
 
                 function update() {
-                    mixer.update(clock.getDelta());
-                    requestAnimationFrame(update);
+                    mixer.update(animation.step ?? clock.getDelta());
+                    // requestAnimationFrame(update);
                 }
-
+                
                 fbx.updateMatrix();
 
-                if (animation.stopAt !== null) {
+                if (animation.stopAt) {
                     mixer.update(0);
 
                     setTimeout(() => {
-                        animation.stopAt !== null && mixer.update(animation.rate * animation.stopAt);
+                        if (animation.rate && animation.stopAt) {
+                            animation.stopAt !== null && mixer.update(animation.rate * animation.stopAt);
+                        }
                     }, 0);
                 } else {
-                    update();
+                    setInterval(() => {
+                        update();
+                    }, animation.speed ?? 100);
                 }
 
                 subscriber.next(fbx);
@@ -231,7 +241,7 @@ export const loaderManager = {
     },
     dae: (url: string) => {
         return new Observable((subscriber: Subscriber<THREE.Mesh>) => {
-            new ColladaLoader(manager).load(url, (dae: Collada) => {   
+            new ColladaLoader(manager).load(url, (dae: Collada) => {
                 subscriber.next(dae.scene.children[0] as unknown as THREE.Mesh);
             });
         });

@@ -217,6 +217,7 @@ export const map: canvasInterface.IMapData = {
             "modelType": canvasInterface.modelTypeEnum.glb,
             "multiplyScalar": 0.3,
             "animation": {
+                "speed": 100,
                 "rate": 0.0694445,
                 "stopAt": (3 * 12) + 9
             },

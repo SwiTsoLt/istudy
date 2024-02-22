@@ -66,8 +66,9 @@ IEntity, "title" | "type" | "texture" | "materialType"
     credit: "",
     multiplyScalar: 1,
     animation: {
+        step: 0.05,
+        speed: 100,
         rate: 1,
-        stopAt: null,
     },
     scale: {
         width: 1,
@@ -87,8 +88,10 @@ IEntity, "title" | "type" | "texture" | "materialType"
 };
 
 export interface IEntityAnimation {
-    rate: number,
-    stopAt: number | null,
+    step?: number,
+    speed?: number,
+    rate?: number,
+    stopAt?: number,
 }
 
 export interface IEntity {
