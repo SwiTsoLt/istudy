@@ -139,7 +139,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
         }, 500);
 
         this.initRenderer();
-        this.initOrbitControls();
+        // this.initOrbitControls();
         this.render();
     }
 
@@ -367,7 +367,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
             this.stats.begin();
             this.renderer.render(this.scene, this.camera);
             this.stats.end();
-            this.controls.update();
+            // this.controls.update();
             requestAnimationFrame(rend);
         };
         rend();

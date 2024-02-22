@@ -45,6 +45,10 @@ export const map: canvasInterface.IMapData = {
                 "y": 0,
                 "z": 0
             },
+            "animation": {
+                rate: 0.1,
+                stopAt: 0,
+            },
             "rotation": {
                 "x": -60,
                 "y": 0,

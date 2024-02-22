@@ -132,7 +132,7 @@ export const loaderManager = {
                             }, 0);
                         } else {
                             setInterval(() => {
-                                update(0.005);
+                                update(animation.rate ?? 0.005);
                             }, 100);
                         }
 
