@@ -139,7 +139,7 @@ export class CanvasComponent implements OnInit, AfterViewInit {
         }, 500);
 
         this.initRenderer();
-        // this.initOrbitControls();
+        this.initOrbitControls();
         this.render();
     }
 

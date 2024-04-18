@@ -34,7 +34,7 @@ export const map: canvasInterface.IMapData = {
             "modelType": canvasInterface.modelTypeEnum.gltf,
             "materialType": canvasInterface.EntityMaterialTypeEnum.phong_shininess,
             "credit": "",
-            "multiplyScalar": 0.01,
+            "multiplyScalar": 1,
             "scale": {
                 "width": 1,
                 "height": 1,
@@ -54,7 +54,7 @@ export const map: canvasInterface.IMapData = {
             "rotation": {
                 "x": -60,
                 "y": 0,
-                "z": 90
+                "z": -90
             }
         },
     ]
